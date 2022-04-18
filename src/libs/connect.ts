@@ -8,6 +8,7 @@ export const connectState = {
   userAddr: '',
   currency: 'BOBA',
   signer: Object(),
+  signed: false,
   bundlrProvider: Object(),
 };
 

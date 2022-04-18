@@ -8,6 +8,8 @@ import * as constant from "../constant"
 
 import * as connect from "./connect"
 
+import { fileType } from "./utils"
+
 //get bundlr node api by chain id
 const getBundlrNetwork = (chainId:number) => {
   switch(chainId){
@@ -221,14 +223,63 @@ export const withdrawBalance = async (price:number) => {
 };
 
 //upload file to arweave through bundlr
-export const uploadFile = async (data: string | ArrayBuffer, tags?: { name: string, value: string }[]) => {
+export const uploadFile = async (file: any) => {
   const currentbunldr = await getBunldr();
 
   if (currentbunldr==null){
     throw new Error(`Init bundlr failed!`);
   }
 
-  const tx = currentbunldr.createTransaction(data, { tags });
+  const tags = [{ name: "Content-Type", value: fileType(file.name)}];
+
+  const data = await file.raw.arrayBuffer();  
+
+  const tx =  currentbunldr.createTransaction(data, { tags });
   await tx.sign();
+
   return await tx.upload();
 }
+
+export const uploadFolder = async (dirPath: string, files: any[]) => {
+  const currentbunldr = await getBunldr();
+
+  if (currentbunldr == null){
+    throw new Error(`Init bundlr failed!`);
+  }
+
+  const manifest = {
+    manifest: "arweave/paths",
+    version: "0.1.0",
+    paths: Object(),
+    index: {
+      path: '',
+    },
+  };  
+
+  for (const i in files) {
+    const tags = [{ name: "Content-Type", value: fileType(files[i].name)}];
+
+    const data = await files[i].raw.arrayBuffer();
+
+    const tx =  currentbunldr.createTransaction(data, { tags });
+
+    await tx.sign();
+
+    const res = await tx.upload();
+
+    manifest.paths[files[i].name] = {id: res.data.id};
+  }
+
+  const tags = [{ name: "Type", value: "manifest" }, { name: "Content-Type", value: "application/x.arweave-manifest+json" }];
+
+  const data = JSON.stringify(manifest);
+
+  const tx =  currentbunldr.createTransaction(data, { tags });
+  await tx.sign();
+
+  const res = await tx.upload();
+
+  return res;
+}
+
+

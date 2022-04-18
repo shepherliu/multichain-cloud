@@ -54,6 +54,7 @@ import type { UploadInstance, UploadProps, UploadRawFile, UploadFile, UploadFile
 
 import * as utils from '../libs/utils'
 import * as bundlr from '../libs/bundlr'
+import * as element from "../libs/element"
 
 export default {
   name: 'UploadFile',
@@ -162,12 +163,15 @@ export default {
     }
 
     const onUploadFile = async () => {
+      if(toRaw(fileList.value).length === 0){
+        element.elMessage('warning', 'You have not select any file or folder to upload!');
+        return;
+      }
+
       if(!isFolder.value){
-        const tags = [{ name: "Content-Type", value: fileDescription.value[1].value}];
-        const data = await toRaw(fileList.value)[0].raw.arrayBuffer()
-        await bundlr.uploadFile(data, tags);
+        await bundlr.uploadFile(toRaw(fileList.value)[0]);
       } else {
-        console.log(toRaw(fileList.value));
+        await bundlr.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
       }
     }
 

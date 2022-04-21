@@ -37,6 +37,10 @@ a {
   border-bottom: none;
 }
 
+.el-select {
+  margin-left: 10px;
+}
+
 .el-header {
   padding: 0 0;
   background-color: #606266;

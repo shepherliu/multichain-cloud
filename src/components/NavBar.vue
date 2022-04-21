@@ -82,13 +82,19 @@
   </el-row>
   
   <!-- side drawer component-->
-  <el-drawer v-model="showSwitchNetwork" direction="rtl" destroy-on-close>
+  <el-drawer v-model="showSwitchNetwork" direction="rtl" destroy-on-close @open="onDrawerOpen">
       <template #title>
         <h4>Select to swith the network</h4>   
       </template>
       <template #default>
-        <div>
-          <el-select v-model="networkSelected" placeholder="Select Network" :popper-append-to-body="false" filterable clearable>
+        <div style="margin-bottom: 50px;">Network:
+          <el-select 
+            v-model="networkSelected" 
+            placeholder="Select Network" 
+            :popper-append-to-body="false"
+            @change="onNetworkSelected"
+            filterable
+          >
             <el-option
               v-for="item in networkOptions"
               :key="item.chainName"
@@ -97,6 +103,22 @@
             />
           </el-select> 
         </div>
+        <div style="margin-bottom: 50px;">Storage:
+          <el-select v-model="storageSelected" placeholder="Select Storage" :popper-append-to-body="false" filterable>
+            <el-option key="swarm" label="Swarm Network" value="swarm"/>
+            <el-option key="bundlr" label="Bundlr Network" value="bundlr"/>
+          </el-select> 
+        </div>
+        <div style="margin-bottom: 50px;">Token:
+          <el-select v-model="tokenSelected" placeholder="Select Network" :popper-append-to-body="false" filterable>
+            <el-option
+              v-for="item in tokenOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select> 
+        </div>           
       </template>
       <template #footer>
         <div style="flex: auto">
@@ -108,6 +130,14 @@
 </template>
 
 <script lang="ts">  
+export default {
+  name: 'NavBar',
+  props: {
+  },
+}
+</script>
+
+<script setup lang="ts">
 import { ref } from "vue"
 
 import * as utils from "../libs/utils"
@@ -116,154 +146,156 @@ import * as network from "../libs/network"
 import * as element from "../libs/element"
 
 import * as constant from "../constant"
+  
+const logo = require('@/assets/logo.png');
+const metamask = require('@/assets/metamask.svg');
+const userAddr = ref("");
+const networkName = ref("");
+const shortAddr = ref("");
+const searchContent = ref("");
+const activeIndex = ref("1");
+const connectStatus = ref("Connect Wallet");
+const showSwitchNetwork = ref(false);
+const networkSelected = ref(connect.connectState.chainId);
+const storageSelected = ref(connect.connectState.storage);
+const tokenSelected = ref(connect.connectState.currency);
+const networkOptions = constant.chainList;
+const tokenOptions = ref((constant.tokenList as any)[connect.connectState.chainId]);
 
-export default {
-  name: 'NavBar',
-  props: {
-  },
-  setup() {
-    const logo = require('@/assets/logo.png');
-    const metamask = require('@/assets/metamask.svg');
-    const userAddr = ref("");
-    const networkName = ref("");
-    const shortAddr = ref("");
-    const searchContent = ref("");
-    const activeIndex = ref("1");
-    const connectStatus = ref("Connect Wallet");
-    const showSwitchNetwork = ref(false);
-    const networkSelected = ref('');
-    const networkOptions = constant.chainList;
+//on drawer open
+const onDrawerOpen = async () => {
+  networkSelected.value = connect.connectState.chainId;
+  storageSelected.value = connect.connectState.storage;
+  tokenSelected.value = connect.connectState.currency;
+  tokenOptions.value = (constant.tokenList as any)[connect.connectState.chainId];
 
-    //connect to metamask
-    const connectNetwork = async () => {
-      const res = await connect.networkConnect();
-      if(res){
-        userAddr.value = connect.connectState.userAddr;
-        networkName.value = network.getChainName(connect.connectState.chainId);
-        shortAddr.value = utils.shortString(userAddr.value);
-        connectStatus.value = "Cancel Connect";
-
-        element.elMessage('success', 'You have connected to the wallet.');
-    
-      } else{
-        userAddr.value = "";
-        shortAddr.value = "";
-        networkName.value = "";
-        connectStatus.value = "Connect Wallet";
-
-        element.elMessage('error', 'Connect to the wallet failed.');              
-      }
+  //make sure token is avaiable in selected network
+  for(const i in tokenOptions.value){
+    if(tokenOptions.value[i] === tokenSelected.value){
+      return;
     }
-
-    //disconnect from metamask
-    const disConnectNetwork = async () => {
-        await connect.cancelConnect();
-
-        connectStatus.value = "Connect Wallet";
-        userAddr.value = "";
-        shortAddr.value = "";
-        networkName.value = "";
-
-        element.elMessage('warning', 'You have disconnected to the wallet.');                     
-    }
-
-    //on wallet address changed
-    const accountsChanged = async () => {
-      if(!connect.connected()){
-        return await disConnectNetwork();
-      }
-
-      if(connectStatus.value === "Cancel Connect"){
-        return await connectNetwork();
-      }
-    }
-
-    connect.accountsChanged(accountsChanged);
-
-    //on wallet network changed
-    const networkChanged = async () => {
-      if(!connect.connected()){
-        return await disConnectNetwork();
-      }
-
-      if(connectStatus.value === "Cancel Connect"){
-        return await connectNetwork();
-      } 
-    }
-
-    connect.networkChanged(networkChanged); 
-
-    //on connect clicked
-    const onConnect = async () => {
-      if(connectStatus.value === "Cancel Connect"){      
-        return await disConnectNetwork();
-      } else {
-        return await connectNetwork();
-      }
-    };
-
-    //on menus selected
-    const handleSelect = (key: string, keyPath: string[]) => {
-      activeIndex.value = key;
-      console.log(key, keyPath);
-    };    
-
-    //on click to copy address
-    const onClickToCopy = async () => {
-      utils.clickToCopy(userAddr.value);
-      
-      element.elMessage('success', 'Copy address to clipboard success.');     
-    };
-
-    //on cancel switch network clicked
-    const cancelSwitchNetwork = async () => {
-      showSwitchNetwork.value = false;
-      networkSelected.value = '';
-    }
-
-    //on confirm swithc network clicked
-    const confirmSwitchNetwork = async () => {
-      showSwitchNetwork.value = false;
-      if(Number(networkSelected.value) > 0){
-        const res = await network.switchNetwork(Number(networkSelected.value));
-        if(res && !connect.connected()){
-          await connectNetwork();
-        }
-      }
-      networkSelected.value = '';    
-    }
-
-    //on switch network clicked
-    const onSwitchNetwork = async () => {
-      networkSelected.value = '';
-      showSwitchNetwork.value = true;
-    }
-
-    //on profile settings clicked
-    const onProfileSettings = async () => {
-
-    }
-
-    return {
-      logo,
-      metamask,
-      userAddr,
-      networkName,
-      shortAddr,
-      searchContent,
-      activeIndex,
-      connectStatus,
-      showSwitchNetwork,
-      networkSelected,
-      networkOptions,
-      handleSelect,
-      onConnect,
-      onClickToCopy,
-      onSwitchNetwork,
-      onProfileSettings,
-      cancelSwitchNetwork,
-      confirmSwitchNetwork,
-    };
   }
+  tokenSelected.value = tokenOptions.value[0];      
+}
+
+//connect to metamask
+const connectNetwork = async () => {
+  const res = await connect.networkConnect();
+  if(res){
+    userAddr.value = connect.connectState.userAddr;
+    networkName.value = network.getChainName(connect.connectState.chainId);
+    shortAddr.value = utils.shortString(userAddr.value);
+    connectStatus.value = "Cancel Connect";
+
+    element.elMessage('success', 'You have connected to the wallet.');
+
+  } else{
+    userAddr.value = "";
+    shortAddr.value = "";
+    networkName.value = "";
+    connectStatus.value = "Connect Wallet";
+
+    element.elMessage('error', 'Connect to the wallet failed.');              
+  }
+}
+
+//disconnect from metamask
+const disConnectNetwork = async () => {
+    await connect.cancelConnect();
+
+    connectStatus.value = "Connect Wallet";
+    userAddr.value = "";
+    shortAddr.value = "";
+    networkName.value = "";
+
+    element.elMessage('warning', 'You have disconnected to the wallet.');                     
+}
+
+//on wallet address changed
+const accountsChanged = async () => {
+  if(!connect.connected()){
+    return await disConnectNetwork();
+  }
+
+  if(connectStatus.value === "Cancel Connect"){
+    return await connectNetwork();
+  }
+}
+
+connect.accountsChanged(accountsChanged);
+
+//on wallet network changed
+const networkChanged = async () => {
+  if(!connect.connected()){
+    return await disConnectNetwork();
+  }
+
+  if(connectStatus.value === "Cancel Connect"){
+    return await connectNetwork();
+  } 
+}
+
+connect.networkChanged(networkChanged); 
+
+//on connect clicked
+const onConnect = async () => {
+  if(connectStatus.value === "Cancel Connect"){      
+    return await disConnectNetwork();
+  } else {
+    return await connectNetwork();
+  }
+};
+
+//on menus selected
+const handleSelect = (key: string, keyPath: string[]) => {
+  activeIndex.value = key;
+  console.log(key, keyPath);
+};    
+
+//on click to copy address
+const onClickToCopy = async () => {
+  utils.clickToCopy(userAddr.value);
+  
+  element.elMessage('success', 'Copy address to clipboard success.');     
+};
+
+//on select the network
+const onNetworkSelected = async () => {
+  tokenOptions.value = (constant.tokenList as any)[networkSelected.value];
+  for(const i in tokenOptions.value){
+    if(tokenOptions.value[i] === tokenSelected.value){
+      return;
+    }
+  }
+
+  tokenSelected.value = tokenOptions.value[0];
+}
+
+//on cancel switch network clicked
+const cancelSwitchNetwork = async () => {
+  showSwitchNetwork.value = false;
+}
+
+//on confirm swithc network clicked
+const confirmSwitchNetwork = async () => {
+  showSwitchNetwork.value = false;
+  if(Number(networkSelected.value) > 0){
+    const res = await network.switchNetwork(Number(networkSelected.value));
+    if(res && !connect.connected()){
+      await connectNetwork();
+    }
+  }
+  connect.connectState.storage = storageSelected.value;
+  connect.connectState.currency = tokenSelected.value;
+}
+
+//on switch network clicked
+const onSwitchNetwork = async () => {
+  showSwitchNetwork.value = true;
+}
+
+//on profile settings clicked
+const onProfileSettings = async () => {
+
 }
 </script>

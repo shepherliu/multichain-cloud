@@ -1,3 +1,22 @@
+//swarm ts-tar metafile name
+export const META_FILE_NAME = '.swarmgatewaymeta.json';
+
+//swarm api getway for download files from swarm
+export const swarmGateway = "https://api.gateway.ethswarm.org/bzz/";
+
+//swarm api gateway for upload files to swarm
+export const swarmGatewayList = [
+  "https://gateway-proxy-bee-0-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-1-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-2-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-3-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-4-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-5-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-6-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-7-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-8-0.gateway.ethswarm.org/bzz",
+  "https://gateway-proxy-bee-9-0.gateway.ethswarm.org/bzz"
+];
 //arweave mainnet url
 export const arweaveUrl = "https://arweave.net/";
 
@@ -15,6 +34,28 @@ export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b83
 
 //contract address
 export const contractAddress = "0x4ED518EF02b8928114b781C2ff94fC6c129457Ff";
+
+//token List
+export const tokenList = {
+  1: ['ETH'],
+  3: ['ETH'],
+  4: ['ETH'],
+  5: ['ETH'],
+  10: ['ETH'],
+  28: ['BOBA', 'ETH'],
+  42: ['ETH'],
+  50: ['XDC'],  
+  56: ['BNB'],
+  66: ['OKT'],  
+  100: ['xDAI'],
+  128: ['HT'],
+  137: ['MATIC'],  
+  250: ['FTM'],
+  288: ['BOBA', 'ETH'],
+  4689: ['IOTX'],
+  42161: ['ETH'],
+  43114: ['AVAX'],
+};
 
 //chain list
 export const chainList = [
@@ -47,6 +88,20 @@ export const chainList = [
     blockExplorerUrls: 'https://goerli.etherscan.io',
   },
   {
+    chainId: 10,
+    chainName: 'Optimistic Chain Mainnet',
+    nativeCurrency: 'ETH',
+    rpcUrls: 'https://mainnet.optimism.io/',
+    blockExplorerUrls: 'https://optimism.io',
+  },  
+  {
+    chainId: 28,
+    chainName: 'Boba Chain Testnet',
+    nativeCurrency: 'ETH',
+    rpcUrls: 'https://rinkeby.boba.network/',
+    blockExplorerUrls: 'https://blockexplorer.rinkeby.boba.network/',
+  },    
+  {
     chainId: 42,
     chainName: 'Kovan Chain Testnet',
     nativeCurrency: 'ETH',
@@ -54,12 +109,12 @@ export const chainList = [
     blockExplorerUrls: 'https://kovan.etherscan.io',
   },
   {
-    chainId: 100,
-    chainName: "Gnosis Chain Mainnet",
-    nativeCurrency: "xDAI",
-    rpcUrls: 'https://rpc.xdaichain.com/',
-    blockExplorerUrls: 'https://blockscout.com/poa/xdai',
-  },
+    chainId: 50,
+    chainName: 'XDC Chain Mainnet',
+    nativeCurrency: 'XDC',
+    rpcUrls: 'https://rpc.xinfin.network',
+    blockExplorerUrls: 'https://explorer.xinfin.network/',
+  },  
   {
     chainId: 56,
     chainName: 'BSC Chain Mainnet',
@@ -73,6 +128,13 @@ export const chainList = [
     nativeCurrency: 'OKT',
     rpcUrls: 'https://exchainrpc.okex.org',
     blockExplorerUrls: 'https://www.oklink.com/okexchain/',
+  },  
+  {
+    chainId: 100,
+    chainName: "Gnosis Chain Mainnet",
+    nativeCurrency: "xDAI",
+    rpcUrls: 'https://rpc.xdaichain.com/',
+    blockExplorerUrls: 'https://blockscout.com/poa/xdai',
   },
   {
     chainId: 128,
@@ -82,54 +144,19 @@ export const chainList = [
     blockExplorerUrls: 'https://hecoinfo.com',
   },
   {
-    chainId: 43114,
-    chainName: 'AVAX Chain Mainnet',
-    nativeCurrency: 'AVAX',
-    rpcUrls: 'https://api.avax.network/ext/bc/C/rpc',
-    blockExplorerUrls: 'https://cchain.explorer.avax.network',
-  },
-  {
     chainId: 137,
     chainName: 'Polygon Chain Mainnet',
     nativeCurrency: 'MATIC',
     rpcUrls: 'https://rpc-mainnet.matic.network',
     blockExplorerUrls: 'https://polygonscan.com/',
-  },
-  {
-    chainId: 42161,
-    chainName: 'Arbitrum Chain Mainnet',
-    nativeCurrency: 'ETH',
-    rpcUrls: 'https://arb1.arbitrum.io/rpc',
-    blockExplorerUrls: 'https://arbiscan.io',
-  },
-  {
-    chainId: 10,
-    chainName: 'Optimistic Chain Mainnet',
-    nativeCurrency: 'ETH',
-    rpcUrls: 'https://mainnet.optimism.io/',
-    blockExplorerUrls: 'https://optimism.io',
-  },
+  },  
   {
     chainId: 250,
     chainName: 'Fantom Chain Mainnet',
     nativeCurrency: 'FTM',
     rpcUrls: 'https://rpc.ftm.tools',
     blockExplorerUrls: 'https://ftmscan.com',    
-  },
-  {
-    chainId: 4689,
-    chainName: 'IoTex Chain Mainnet',
-    nativeCurrency: 'IOTX',
-    rpcUrls: 'https://babel-api.mainnet.iotex.io',
-    blockExplorerUrls: 'https://iotexscan.io',
-  },
-  {
-    chainId: 50,
-    chainName: 'XDC Chain Mainnet',
-    nativeCurrency: 'XDC',
-    rpcUrls: 'https://rpc.xinfin.network',
-    blockExplorerUrls: 'https://explorer.xinfin.network/',
-  },
+  },  
   {
     chainId: 288,
     chainName: 'Boba Chain Mainnet',
@@ -138,10 +165,24 @@ export const chainList = [
     blockExplorerUrls: 'https://blockexplorer.boba.network',
   },
   {
-    chainId: 28,
-    chainName: 'Boba Chain Testnet',
+    chainId: 4689,
+    chainName: 'IoTex Chain Mainnet',
+    nativeCurrency: 'IOTX',
+    rpcUrls: 'https://babel-api.mainnet.iotex.io',
+    blockExplorerUrls: 'https://iotexscan.io',
+  },  
+  {
+    chainId: 42161,
+    chainName: 'Arbitrum Chain Mainnet',
     nativeCurrency: 'ETH',
-    rpcUrls: 'https://rinkeby.boba.network/',
-    blockExplorerUrls: 'https://blockexplorer.rinkeby.boba.network/',
+    rpcUrls: 'https://arb1.arbitrum.io/rpc',
+    blockExplorerUrls: 'https://arbiscan.io',
+  },  
+  {
+    chainId: 43114,
+    chainName: 'AVAX Chain Mainnet',
+    nativeCurrency: 'AVAX',
+    rpcUrls: 'https://api.avax.network/ext/bc/C/rpc',
+    blockExplorerUrls: 'https://cchain.explorer.avax.network',
   },
 ];

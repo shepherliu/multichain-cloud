@@ -1,14 +1,17 @@
 // example imports 
 import { providers, utils, Contract } from "ethers"
 
+import * as constant from '../constant'
+
 export const connectState = {
   provider: new providers.Web3Provider((window as any).ethereum),
-  chainId: 28,
+  chainId: 288,
   chainName: '',
   userAddr: '',
   currency: 'BOBA',
   signer: Object(),
   signed: false,
+  storage: 'bundlr',
   bundlrProvider: Object(),
 };
 
@@ -31,6 +34,18 @@ export const networkConnect = async () => {
   }else{
     return false;
   }
+}
+
+//detect currency
+export const detectCurrency = async (chainId: number) => {
+    const tokenList = (constant.tokenList as any)[chainId];
+    for (const i in tokenList){
+      if(connectState.currency === tokenList[i]){
+        return;
+      }
+    }
+
+    connectState.currency = tokenList[0];
 }
 
 //deteck network
@@ -59,6 +74,9 @@ export const detectNetwork = async () => {
   //chain name
   connectState.chainName = res.name;
 
+  //chain token
+  detectCurrency(res.chainId);
+
   return true;  
 }
 
@@ -80,7 +98,7 @@ export const accountsChanged = async (accountsChanged:Function) => {
 
 //on wallet netwokr change
 export const networkChanged = async (networkChanged:Function) => {
-  (window as any).ethereum.on('networkChanged', async () => {
+  (window as any).ethereum.on('chainChanged', async () => {
     await networkChanged();
   });    
 }

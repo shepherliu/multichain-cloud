@@ -1,6 +1,8 @@
 // example imports 
 import { providers, utils } from "ethers"
 
+import * as path from "path"
+
 // import WebBundlr
 import { WebBundlr } from "@bundlr-network/client"
 
@@ -240,11 +242,16 @@ export const uploadFile = async (file: any) => {
   return await tx.upload();
 }
 
+//upload folder to arweave through bundlr
 export const uploadFolder = async (dirPath: string, files: any[]) => {
   const currentbunldr = await getBunldr();
 
   if (currentbunldr == null){
     throw new Error(`Init bundlr failed!`);
+  }
+
+  if (files.length === 0){
+   throw new Error(`no files selected to upload!`); 
   }
 
   const manifest = {
@@ -267,7 +274,13 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
     const res = await tx.upload();
 
-    manifest.paths[files[i].name] = {id: res.data.id};
+    const relpath = ((files[i].raw) as any).webkitRelativePath.split(path.sep).slice(1,).join(path.sep);
+
+    if(relpath === 'index.html') {
+      manifest.index.path = relpath;
+    }
+
+    manifest.paths[relpath] = {id: res.data.id};
   }
 
   const tags = [{ name: "Type", value: "manifest" }, { name: "Content-Type", value: "application/x.arweave-manifest+json" }];

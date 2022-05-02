@@ -78,7 +78,7 @@
           </el-dropdown>
       </div>  
     </el-col>
-  
+
   </el-row>
   
   <!-- side drawer component-->
@@ -87,38 +87,74 @@
         <h4>Select to swith the network</h4>   
       </template>
       <template #default>
-        <div style="margin-bottom: 50px;">Network:
-          <el-select 
-            v-model="networkSelected" 
-            placeholder="Select Network" 
-            :popper-append-to-body="false"
-            @change="onNetworkSelected"
-            filterable
-          >
-            <el-option
-              v-for="item in networkOptions"
-              :key="item.chainName"
-              :label="item.chainName"
-              :value="item.chainId"
-            />
-          </el-select> 
-        </div>
-        <div style="margin-bottom: 50px;">Storage:
-          <el-select v-model="storageSelected" placeholder="Select Storage" :popper-append-to-body="false" filterable>
-            <el-option key="swarm" label="Swarm Network" value="swarm"/>
-            <el-option key="bundlr" label="Bundlr Network" value="bundlr"/>
-          </el-select> 
-        </div>
-        <div style="margin-bottom: 50px;">Token:
-          <el-select v-model="tokenSelected" placeholder="Select Network" :popper-append-to-body="false" filterable>
-            <el-option
-              v-for="item in tokenOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select> 
-        </div>           
+        <table style="margin-left: 50px;">
+          <tr>
+            <td style="width:100px">Network</td>
+            <td style="width:200px">
+              <el-select 
+                v-model="networkSelected"
+                style="width:200px" 
+                placeholder="Select Network" 
+                :popper-append-to-body="false"
+                @change="onNetworkSelected"
+                filterable
+              >
+                <el-option
+                  v-for="item in networkOptions"
+                  :key="item.chainName"
+                  :label="item.chainName"
+                  :value="item.chainId"
+                />
+              </el-select>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:100px">Storage</td>
+            <td style="width:200px">
+              <el-select 
+                v-model="storageSelected"
+                style="width:200px"
+                placeholder="Select Storage"
+                :popper-append-to-body="false"
+                filterable
+              >
+                <el-option key="swarm" label="Swarm Network" value="swarm"/>
+                <el-option key="bundlr" label="Bundlr Network" value="bundlr"/>
+                <el-option key="filcoin" label="Filcoin Network" value="filcoin"/>
+              </el-select> 
+            </td>
+          </tr>
+          <tr v-if="storageSelected==='bundlr'">
+            <td style="width:100px">Token</td>
+            <td style="width:200px">
+              <el-select
+                v-model="tokenSelected"
+                style="width:200px"
+                placeholder="Select Network"
+                :popper-append-to-body="false"
+                filterable
+              >
+                <el-option
+                  v-for="item in tokenOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>               
+            </td>
+          </tr>
+          <tr v-if="storageSelected==='filcoin'">
+            <td style="width:100px">ApiToken</td>
+            <td style="width:200px;">
+              <el-input
+                v-model="apiTokenSelected"
+                style="width:200px;margin-left: 10px;"
+                clearable
+              >
+              </el-input>
+            </td>
+          </tr>
+        </table>         
       </template>
       <template #footer>
         <div style="flex: auto">
@@ -159,6 +195,7 @@ const showSwitchNetwork = ref(false);
 const networkSelected = ref(connect.connectState.chainId);
 const storageSelected = ref(connect.connectState.storage);
 const tokenSelected = ref(connect.connectState.currency);
+const apiTokenSelected = ref(connect.connectState.web3Storage==='' ? constant.web3StorageAppKey : connect.connectState.web3Storage);
 const networkOptions = constant.chainList;
 const tokenOptions = ref((constant.tokenList as any)[connect.connectState.chainId]);
 
@@ -286,7 +323,18 @@ const confirmSwitchNetwork = async () => {
     }
   }
   connect.connectState.storage = storageSelected.value;
-  connect.connectState.currency = tokenSelected.value;
+
+  if (storageSelected.value === 'bundlr'){
+    connect.connectState.currency = tokenSelected.value;
+  }
+
+  if (storageSelected.value === 'filcoin'){
+    if (apiTokenSelected.value === ''){
+      apiTokenSelected.value = constant.web3StorageAppKey;
+    }
+
+    connect.connectState.web3Storage = apiTokenSelected.value;
+  }
 }
 
 //on switch network clicked

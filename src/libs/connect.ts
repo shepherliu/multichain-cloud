@@ -12,6 +12,7 @@ export const connectState = {
   signer: Object(),
   signed: false,
   storage: 'bundlr',
+  web3Storage: '',
   bundlrProvider: Object(),
 };
 

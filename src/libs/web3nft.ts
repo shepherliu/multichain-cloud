@@ -7,9 +7,9 @@ import * as connect from "./connect"
 
 //contract abis
 const abi = [
-	"function mint(string memory tokenType, string memory tokenURI) public returns (uint)",
+	"function mint(string memory tokenType, string memory tokenURI) public returns (uint256)",
 	"function burn(uint256 tokenId) public payable returns (bool)",
-	"function tokenURI(uint256 tokenId) public view override (ERC721, ERC721URIStorage) returns (string memory)",
+	"function tokenURI(uint256 tokenId) returns (string memory)",
 	"function tokenType(uint256 tokenId) public view returns (string memory)",
 	"function hateNft(uint256 tokenId) public returns (bool)",
 	"function likeNft(uint256 tokenId) public returns (bool)",

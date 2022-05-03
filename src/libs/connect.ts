@@ -11,7 +11,7 @@ export const connectState = {
   currency: 'BOBA',
   signer: Object(),
   signed: false,
-  storage: 'bundlr',
+  storage: 'filcoin',
   web3Storage: '',
   bundlrProvider: Object(),
 };

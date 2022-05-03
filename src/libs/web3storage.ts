@@ -23,16 +23,20 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   const client = getClient();
 
   const data = [];
-  for(const i in files){
-    const file = files[i].raw;
-    const relpath = (file as any).webkitRelativePath.split(path.sep).slice(1,).join(path.sep);
-    data.push(new File([file], relpath));
+  if(files.length===1){
+    data.push(files[0].raw);
+  }else{
+    for(const i in files){
+      const file = files[i].raw;
+      const relpath = (file as any).webkitRelativePath.split(path.sep).slice(1,).join(path.sep);
+      data.push(new File([file], relpath));
+    }
   }
 
   return await client.put(data, {
     name: dirPath,
     maxRetries: 3,
-  });  
+  });
 }
 
 export const getFiles = async (cid:string) => {

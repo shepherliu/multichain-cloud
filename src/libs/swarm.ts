@@ -58,7 +58,7 @@ export const uploadDataToSwarm = async (data: Uint8Array) => {
         "credentials": "omit"
       });
 
-      return await (res.json() as any).reference;
+      return ((await res.json()) as any).reference;
 
     } catch(e){
       continue;
@@ -70,7 +70,7 @@ export const uploadDataToSwarm = async (data: Uint8Array) => {
 
 //upload file
 export const uploadFile = async (file: any) => {
-  return await uploadFolder('', [file]);
+  return await uploadFolder(file.name, [file]);
 }
 
 //upload folder

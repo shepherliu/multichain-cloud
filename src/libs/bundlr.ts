@@ -226,20 +226,7 @@ export const withdrawBalance = async (price:number) => {
 
 //upload file to arweave through bundlr
 export const uploadFile = async (file: any) => {
-  const currentbunldr = await getBunldr();
-
-  if (currentbunldr==null){
-    throw new Error(`Init bundlr failed!`);
-  }
-
-  const tags = [{ name: "Content-Type", value: fileType(file.name)}];
-
-  const data = await file.raw.arrayBuffer();  
-
-  const tx =  currentbunldr.createTransaction(data, { tags });
-  await tx.sign();
-
-  return await tx.upload();
+  return await uploadFolder(file.name, [file]);
 }
 
 //upload folder to arweave through bundlr
@@ -274,6 +261,10 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
     const res = await tx.upload();
 
+    if(files.length==1){
+      return res.data.id;
+    }
+
     const relpath = ((files[i].raw) as any).webkitRelativePath.split(path.sep).slice(1,).join(path.sep);
 
     if(relpath === 'index.html') {
@@ -292,7 +283,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
   const res = await tx.upload();
 
-  return res;
+  return res.data.id;
 }
 
 

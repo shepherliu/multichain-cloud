@@ -21,11 +21,10 @@
         active-text-color="#ffd04b"
         @select="handleSelect"
       >
-        <el-menu-item index="1">Medias</el-menu-item>
-        <el-menu-item index="2">Docs</el-menu-item>
-        <el-menu-item index="3">Folders</el-menu-item>
-        <el-menu-item index="4">Websites</el-menu-item>
-        <el-menu-item index="5">Nfts</el-menu-item>
+        <el-menu-item index="1">Files</el-menu-item>
+        <el-menu-item index="2">Folders</el-menu-item>
+        <el-menu-item index="3">Websites</el-menu-item>
+        <el-menu-item index="4">Nfts</el-menu-item>
       </el-menu>
     </el-col>
 
@@ -36,7 +35,7 @@
     </el-col>
     
     <el-col :span="1">
-      <el-button circle color="#606266" size="large" style="margin-top: 10px;">
+      <el-button circle color="#606266" size="large" style="margin-top: 10px;" @click="onSearchContent">
         <el-icon :size="20"><search /></el-icon>
       </el-button>
     </el-col>  
@@ -175,6 +174,7 @@ export default {
 
 <script setup lang="ts">
 import { ref } from "vue"
+import { useStore } from 'vuex'
 
 import * as utils from "../libs/utils"
 import * as connect from "../libs/connect"
@@ -182,7 +182,8 @@ import * as network from "../libs/network"
 import * as element from "../libs/element"
 
 import * as constant from "../constant"
-  
+
+const store = useStore();
 const logo = require('@/assets/logo.png');
 const metamask = require('@/assets/metamask.svg');
 const userAddr = ref("");
@@ -286,7 +287,7 @@ const onConnect = async () => {
 //on menus selected
 const handleSelect = (key: string, keyPath: string[]) => {
   activeIndex.value = key;
-  console.log(key, keyPath);
+  store.state.activeIndex = Number(activeIndex.value);
 };    
 
 //on click to copy address
@@ -345,5 +346,10 @@ const onSwitchNetwork = async () => {
 //on profile settings clicked
 const onProfileSettings = async () => {
 
+}
+
+//on content search
+const onSearchContent = async () => {
+  store.state.search = searchContent.value.trim();
 }
 </script>

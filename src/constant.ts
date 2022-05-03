@@ -7,6 +7,9 @@ export const META_FILE_NAME = '.swarmgatewaymeta.json';
 //web3 storage appkey
 export const web3StorageAppKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEJlY0Q2MDVmZGZiNWVFRTdhYUZlYmVhNzUxMjVCMDBCNDkzMDMxOUUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTEzNjE4MTAwNDIsIm5hbWUiOiJ0ZXN0In0.SqcXP8E9fJEQ_7AGjrHaliBsoKCl2l2mA2q1-Lejkp4';
 
+//web3 gateway
+export const web3Gateway = "https://dweb.link/ipfs/"
+
 //swarm api getway for download files from swarm
 export const swarmGateway = "https://api.gateway.ethswarm.org/bzz/";
 
@@ -39,10 +42,10 @@ export const bundlrTestUrl = "https://devnet.bundlr.network";
 export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b8309";
 
 //file contract address
-export const fileContractAddress = "0x4ED518EF02b8928114b781C2ff94fC6c129457Ff";
+export const fileContractAddress = "0xf59a1dB4593B748Fe1b94cb6646bA1b32a4b26DD";
 
 //nft contract address
-export const nftContractAddress = "0xB5397Ea5F57F47F11A47ffe725a4B9257c806bcc";
+export const nftContractAddress = "0xAfDFc17A327269d1aDeE4E737CA6b91B669ddfa8";
 
 //token List
 export const tokenList = {

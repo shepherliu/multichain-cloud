@@ -1,9 +1,14 @@
 import { createApp } from 'vue'
+import { createStore } from 'vuex'
+
 import App from './App.vue'
 
 //import element plus ui 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+
+//import vuex
+import Vuex from 'vuex'
 
 //import icons
 import * as ElIcons from '@element-plus/icons-vue'
@@ -16,4 +21,11 @@ for (const name in ElIcons){
 	app.component(name, (ElIcons as any)[name])
 }
 
-app.use(ElementPlus).mount('#app')
+const store = createStore({
+	state: {
+		activeIndex: 1,
+		search: '',
+	}
+});
+
+app.use(store).use(ElementPlus).mount('#app')

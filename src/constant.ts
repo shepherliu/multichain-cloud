@@ -45,7 +45,7 @@ export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b83
 export const fileContractAddress = "0xf59a1dB4593B748Fe1b94cb6646bA1b32a4b26DD";
 
 //nft contract address
-export const nftContractAddress = "0xAfDFc17A327269d1aDeE4E737CA6b91B669ddfa8";
+export const nftContractAddress = "0x36cD562DA3D6C33A591756Cc0E363896e921C153";
 
 //token List
 export const tokenList = {

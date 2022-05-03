@@ -59,7 +59,7 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
         return super.supportsInterface(interfaceId);
     }    
 
-    function mint(string memory tokenType, string memory tokenURI) public returns (uint) {
+    function mint(string memory tokenType, string memory tokenURI) public returns (uint256) {
         if(!isStringEqual(tokenType, "image")&&!isStringEqual(tokenType, "audio")&&!isStringEqual(tokenType, "video")){
             revert("unknow token type!");
         }
@@ -199,5 +199,9 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
         }        
 
         return rewards;
+    }
+
+    function minted(string memory tokenURI) public view returns (bool){
+        return _tokenUri[tokenURI];
     }
 }

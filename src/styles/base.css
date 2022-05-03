@@ -41,6 +41,10 @@ a {
   margin-left: 10px;
 }
 
+.el-link {
+  margin-left: 5px;
+}
+
 .el-header {
   padding: 0 0;
   background-color: #606266;

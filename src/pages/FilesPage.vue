@@ -10,35 +10,41 @@
         </el-tabs>
       </el-header>
       <el-main style="height: 450px;">
-        <template v-for="file in fileList" :key="file[2]">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <el-popover placement="bottom-start" :width="300" :title="file[0]">
-                    <template #reference>
-                      <span><a target="_blank" :href="file[2]">{{file[0]}}</a></span>
-                    </template>
-                    <img v-if="file[1]==='image'" :src="file[2]" style="width: 300px;" />
-                    <audio v-if="file[1]==='audio'" :src="file[2]" controls preload style="width: 300px;" />
-                    <video v-if="file[1]==='video'" :src="file[2]" controls preload style="width: 300px;" />
-                    <embed v-if="file[1]==='docs'" type="text/html" :src="file[2]" style="height:100%;width: 100%;" />
-                  </el-popover>
-                  <span>{{file[3]}}</span>
-                </div>
-              </template>
-              <el-button 
-                type="primary"
-                round
-                v-if="file[1]==='image'||file[1]=='audio'||file[1]=='video'"
-                @click="onMintNft(file[1], file[2])"
-              >
-                Mint<el-icon><share /></el-icon>
-              </el-button>
-              <el-button type="danger" round @click="onDeleteFile(file[2])">
-                Delete<el-icon><delete /></el-icon>
-              </el-button>
-            </el-card>
-        </template>
+        <el-row :gutter="20">
+          <template v-for="file in fileList" :key="file[2]">
+              <el-col :span="8">
+                <el-card class="box-card">
+                  <template #header>
+                    <div class="card-header">
+                      <el-popover placement="bottom-start" :width="300" :title="file[0]">
+                        <template #reference>
+                          <span><a target="_blank" :href="file[2]">{{file[0]}}</a></span>
+                        </template>
+                        <img v-if="file[1]==='image'" :src="file[2]" style="width: 300px;" />
+                        <audio v-if="file[1]==='audio'" :src="file[2]" controls preload style="width: 300px;" />
+                        <video v-if="file[1]==='video'" :src="file[2]" controls preload style="width: 300px;" />
+                        <embed v-if="file[1]==='docs'" type="text/html" :src="file[2]" style="height:100%;width: 100%;" />
+                      </el-popover>
+                      <span>{{file[3]}}</span>
+                    </div>
+                  </template>
+                  <el-button-group>
+                    <el-button 
+                      type="primary"
+                      v-if="file[1]==='image'||file[1]=='audio'||file[1]=='video'"
+                      :disabled="file[4]"
+                      @click="onMintNft(file[1], file[2])"
+                    >
+                      Mint<el-icon><share /></el-icon>
+                    </el-button>
+                    <el-button type="danger" @click="onDeleteFile(file[2])">
+                      Delete<el-icon><delete /></el-icon>
+                    </el-button>
+                  </el-button-group>
+                </el-card>
+              </el-col>
+          </template>
+        </el-row>
       </el-main>
       <el-footer>
         <div>
@@ -78,7 +84,7 @@ const store = useStore();
 
 const activeName = ref("image");
 
-const pageSize = ref(10);
+const pageSize = ref(9);
 const currentPage = ref(0);
 
 const fileTotal = ref(0);
@@ -93,22 +99,20 @@ const getFileCount = async (filetype:string) => {
   for(const i in res){
     const index = res[i].toNumber();
     const fileInfo = await filemanager.getFileInfoByIndex(index);
-    
-    if(store.state.search === ''){
-      newFileList.push(fileInfo.slice(0,));
-      continue;
-    }
-
     const name = fileInfo[0];
-    if(name.indexOf(store.state.search)!=-1 || name.search(store.state.search)!=-1){
+    
+    if(store.state.search === '' ||
+      name.indexOf(store.state.search) != -1 ||
+      name.search(store.state.search) != -1) {
+
       newFileList.push(fileInfo.slice(0,));
-      continue
     }
   }
 
   fileList.value = newFileList;
   for(const i in fileList.value){
     fileList.value[i][3] = utils.fileSize(fileList.value[i][3].toNumber());
+    fileList.value[i].push(await web3nft.minted(fileList.value[i][2]));
   }
 
   fileTotal.value = fileList.value.length;

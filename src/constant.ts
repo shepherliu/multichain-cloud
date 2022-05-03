@@ -38,8 +38,11 @@ export const bundlrTestUrl = "https://devnet.bundlr.network";
 //boba toekn testnet contract address 
 export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b8309";
 
-//contract address
-export const contractAddress = "0x4ED518EF02b8928114b781C2ff94fC6c129457Ff";
+//file contract address
+export const fileContractAddress = "0x4ED518EF02b8928114b781C2ff94fC6c129457Ff";
+
+//nft contract address
+export const nftContractAddress = "0xB5397Ea5F57F47F11A47ffe725a4B9257c806bcc";
 
 //token List
 export const tokenList = {

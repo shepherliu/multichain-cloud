@@ -13,8 +13,8 @@
         :default-active="activeIndex"
         class="el-menu-demo"
         mode="horizontal"
-        ellipsis="false"
-        unique-opened="true"
+        :ellipsis="false"
+        :unique-opened="true"
         background-color="#606266"
         style="float: left;width: 100%;"
         text-color="#fff"
@@ -95,7 +95,7 @@
                 v-model="networkSelected"
                 style="width:200px" 
                 placeholder="Select Network" 
-                :popper-append-to-body="false"
+                :teleported="false"
                 @change="onNetworkSelected"
                 filterable
               >
@@ -115,7 +115,7 @@
                 v-model="storageSelected"
                 style="width:200px"
                 placeholder="Select Storage"
-                :popper-append-to-body="false"
+                :teleported="false"
                 filterable
               >
                 <el-option key="swarm" label="Swarm Network" value="swarm"/>
@@ -131,7 +131,7 @@
                 v-model="tokenSelected"
                 style="width:200px"
                 placeholder="Select Network"
-                :popper-append-to-body="false"
+                :teleported="false"
                 filterable
               >
                 <el-option

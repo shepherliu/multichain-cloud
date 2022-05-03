@@ -15,6 +15,7 @@
       multiple
       class="upload-folder"
       ref="upload"
+      action=""
       @change="onChangeSelectFiles"
       @click="onSelectFiles"
       @drop="scanFiles"

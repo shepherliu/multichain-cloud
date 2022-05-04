@@ -69,13 +69,14 @@
           </el-button>
         </template>
         <el-row :gutter="20">
-          <template v-for="tx in transactions" :key="tx">
+          <template v-for="tx in transactions.reverse()" :key="tx">
             <el-col :span="20">
               <el-link type="primary" :href="transactionExplorerUrl(tx)" target="_blank">{{tools.shortString(tx)}}</el-link>
               <el-icon @click="onClickToCopy(tx)" style="margin-left: 10px;"><document-copy /></el-icon>
             </el-col>
           </template>
         </el-row>
+        <el-button size="small" type="primary" style="float: right;" @click="onClearTransactions">Clear</el-button>
       </el-popover> 
     </el-col>       
     
@@ -102,8 +103,7 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="onConnect" :innerText="connectStatus"></el-dropdown-item>
-                <el-dropdown-item @click="onSwitchNetwork">Switch Network</el-dropdown-item>
-                <el-dropdown-item @click="onProfileSettings">Profile Settings</el-dropdown-item>
+                <el-dropdown-item @click="onNetworkConfig">Network Config</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -115,7 +115,7 @@
   <!-- side drawer component-->
   <el-drawer v-model="showSwitchNetwork" direction="rtl" destroy-on-close @open="onDrawerOpen">
       <template #title>
-        <h4>Select to swith the network</h4>   
+        <h4>Select to config the network</h4>   
       </template>
       <template #default>
         <table style="margin-left: 50px;">
@@ -216,9 +216,9 @@ import * as constant from "../constant"
 
 const logo = require('@/assets/logo.png');
 const metamask = require('@/assets/metamask.svg');
-const userAddr = ref("");
+const userAddr = connect.connectState.userAddr;
+const shortAddr = connect.connectState.shortAddr;
 const networkName = ref("");
-const shortAddr = ref("");
 const searchContent = ref("");
 const activeIndex = ref("1");
 const connectStatus = ref("Connect Wallet");
@@ -248,10 +248,6 @@ const transactionExplorerUrl = (transaction:string) => {
 const connectNetwork = async () => {
   const res = await connect.networkConnect();
   if(res){
-    userAddr.value = connect.connectState.userAddr;
-    networkName.value = network.getChainName(connect.connectState.chainId);
-    shortAddr.value = tools.shortString(userAddr.value);
-    connectStatus.value = "Cancel Connect";
 
     element.elMessage('success', 'You have connected to the wallet.');
 
@@ -266,6 +262,14 @@ const connectNetwork = async () => {
     element.elMessage('error', 'Connect to the wallet failed.');              
   }
 }
+
+//set connect callback function
+connect.connectState.connectCallback = async () => {
+    userAddr.value = connect.connectState.userAddr.value;
+    networkName.value = network.getChainName(connect.connectState.chainId);
+    shortAddr.value = tools.shortString(userAddr.value);
+    connectStatus.value = "Cancel Connect";  
+};
 
 //disconnect from metamask
 const disConnectNetwork = async () => {
@@ -340,28 +344,43 @@ const cancelSwitchNetwork = async () => {
 
 //on confirm swithc network clicked
 const confirmSwitchNetwork = async () => {
-  showSwitchNetwork.value = false;
-  if(Number(networkSelected.value) > 0){
-    const res = await network.switchNetwork(Number(networkSelected.value));
-    if(res && !connect.connected()){
-      await connectNetwork();
+  try{
+
+    showSwitchNetwork.value = false;
+    if(Number(networkSelected.value) > 0){
+      const res = await network.switchNetwork(Number(networkSelected.value));
+      if(res && !connect.connected()){
+        await connectNetwork();
+      }
     }
-  }
-  connect.connectState.storage = storageSelected.value;
+    connect.connectState.storage = storageSelected.value;
 
-  if (storageSelected.value === 'bundlr'){
-    connect.connectState.currency = tokenSelected.value;
-  }
-
-  if (storageSelected.value === 'filcoin'){
-    if (apiTokenSelected.value === ''){
-      apiTokenSelected.value = constant.web3StorageAppKey;
+    if (storageSelected.value === 'bundlr'){
+      connect.connectState.currency = tokenSelected.value;
     }
 
-    connect.connectState.web3Storage = apiTokenSelected.value;
+    if (storageSelected.value === 'filcoin'){
+      if (apiTokenSelected.value === ''){
+        apiTokenSelected.value = constant.web3StorageAppKey;
+      }
+
+      connect.connectState.web3Storage = apiTokenSelected.value;
+    }
+
+    element.elMessage('success', 'Config network success!');
+  }catch(e){
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
+    }
+    element.elMessage('error', e.stack);
   }
 }
 
+//on click to clear transtractions
+const onClearTransactions = async () => {
+  connectState.transactions.value = new Array();
+  connectState.transactionCount.value = 0; 
+}
 //on click to copy address
 const onClickToCopy = async (content:string) => {
   tools.clickToCopy(content);
@@ -392,13 +411,8 @@ const onConnect = async () => {
 };
 
 //on switch network clicked
-const onSwitchNetwork = async () => {
+const onNetworkConfig = async () => {
   showSwitchNetwork.value = true;
-}
-
-//on profile settings clicked
-const onProfileSettings = async () => {
-
 }
 
 //on menus selected

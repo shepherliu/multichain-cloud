@@ -3,16 +3,19 @@ import { providers, Contract } from "ethers"
 
 import * as constant from '../constant'
 
+import { shortString } from "./tools"
+
 import { ref } from "vue"
 
 export const connectState = {
-  provider: new providers.Web3Provider((window as any).ethereum),
   chainId: 288,
   chainName: '',
-  userAddr: '',
+  userAddr: ref(''),
+  shortAddr: ref(''),
   currency: 'BOBA',
-  signer: Object(),
   signed: false,
+  provider: new providers.Web3Provider((window as any).ethereum),
+  signer: Object(),
   storage: 'filcoin',
   web3Storage: '',
   bundlrProvider: Object(),
@@ -20,6 +23,7 @@ export const connectState = {
   activeName: ref(''),
   search: '',
   searchCallback: async () => {},
+  connectCallback: async () => {},
   transactions: ref(new Array()),
   transactionCount: ref(0),
 };
@@ -31,12 +35,12 @@ export const networkConnect = async () => {
 
   if(res.length > 0){
     //user address changed
-    if(connectState.userAddr !== res[0]){
+    if(connectState.userAddr.value !== res[0]){
       connectState.bundlrProvider = null;
     }
 
     //user address
-    connectState.userAddr = res[0];
+    connectState.userAddr.value = res[0];
 
     return await detectNetwork();
 
@@ -86,12 +90,15 @@ export const detectNetwork = async () => {
   //chain token
   detectCurrency(res.chainId);
 
+  //connect call back
+  connectState.connectCallback();  
+
   return true;  
 }
 
 //disconnect to metamask wallet
 export const cancelConnect = async () => {
-  connectState.userAddr = "";
+  connectState.userAddr.value = "";
   connectState.chainId = 1;
   connectState.chainName = "";
   connectState.signer = null;

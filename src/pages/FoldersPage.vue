@@ -44,10 +44,11 @@
           <el-pagination
             background
             layout="total, prev, pager, next"
-            v-model="currentPage"
-            :total="fileTotal"
+            v-model:currentPage="currentPage"
+            :total="nftTotal"
             :page-size="pageSize"
             style="float: right;"
+             @current-change="handleClick"
           />
       </div>
       </el-footer>
@@ -75,7 +76,7 @@ import * as constant from "../constant"
 
 const activeName = ref("folder");
 const loadStatus = ref(false);
-const pageSize = ref(9);
+const pageSize = ref(6);
 const currentPage = ref(0);
 const fileTotal = ref(0);
 const fileList = ref(new Array());

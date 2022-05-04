@@ -42,7 +42,7 @@
                       :disabled="file[4]"
                       @click="onMintNft(file[1], file[2])"
                     >
-                      Mint<el-icon><share /></el-icon>
+                      {{file[4] ? "Minted" : "Mint"}}<el-icon><share /></el-icon>
                     </el-button>
                     <el-button type="danger" @click="onDeleteFile(file[2])">
                       Delete<el-icon><delete /></el-icon>
@@ -58,10 +58,11 @@
           <el-pagination
             background
             layout="total, prev, pager, next"
-            v-model="currentPage"
-            :total="fileTotal"
+            v-model:currentPage="currentPage"
+            :total="nftTotal"
             :page-size="pageSize"
             style="float: right;"
+             @current-change="handleClick"
           />
       </div>
       </el-footer>
@@ -90,7 +91,7 @@ import * as constant from "../constant"
 
 const activeName = ref("image");
 const loadStatus = ref(false);
-const pageSize = ref(9);
+const pageSize = ref(6);
 const currentPage = ref(0);
 const fileTotal = ref(0);
 const fileList = ref(new Array());

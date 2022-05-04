@@ -46,10 +46,11 @@
           <el-pagination
             background
             layout="total, prev, pager, next"
-            v-model="currentPage"
+            v-model:currentPage="currentPage"
             :total="nftTotal"
             :page-size="pageSize"
             style="float: right;"
+             @current-change="handleClick"
           />
       </div>
       </el-footer>
@@ -79,7 +80,7 @@ import * as tools from "../libs/tools"
 const activeName = ref("all");
 const loadStatus = ref(false);
 const userRewards = ref(0);
-const pageSize = ref(6);
+const pageSize = ref(3);
 const currentPage = ref(0);
 const nftTotal = ref(0);
 const nftList = ref(new Array());  
@@ -188,7 +189,7 @@ const onBurnNft = async (tokenId:number) => {
 const onClaimRewards = async () => {
   try{
 
-    const rewards = await web3nft.getAddressRewards(connectState.userAddr);
+    const rewards = await web3nft.getAddressRewards(connectState.userAddr.value);
   
     if(rewards > 0){
       const tx = await web3nft.claim();
@@ -273,10 +274,10 @@ const getNftCount = async (nfttype:string) => {
       }
     }
   }else{
-    const total = await web3nft.balanceOf(connectState.userAddr);
+    const total = await web3nft.balanceOf(connectState.userAddr.value);
     
     for(let i = 0; i < total.toNumber(); i++){
-      const tokenId = await web3nft.tokenOfOwnerByIndex(connectState.userAddr, i);
+      const tokenId = await web3nft.tokenOfOwnerByIndex(connectState.userAddr.value, i);
       const tokenType = await web3nft.tokenType(tokenId);
       if(connectState.search === '' ||
         tokenType.indexOf(connectState.search) != -1 ||
@@ -318,6 +319,9 @@ const handleClick = async () => {
       totalPage += 1;
     }
 
+    console.log(totalPage);
+    console.log(currentPage.value);
+
     if(currentPage.value > totalPage){
       currentPage.value = totalPage;
     }
@@ -335,7 +339,7 @@ const handleClick = async () => {
 
     nftList.value = nftList.value.slice(start, end);
 
-    const rewards = await web3nft.getAddressRewards(connectState.userAddr);
+    const rewards = await web3nft.getAddressRewards(connectState.userAddr.value);
 
     userRewards.value = Number(utils.formatEther(rewards)).toFixed(3);
 

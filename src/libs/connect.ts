@@ -116,6 +116,10 @@ export const accountsChanged = async (accountsChanged:Function) => {
 export const networkChanged = async (networkChanged:Function) => {
   (window as any).ethereum.on('chainChanged', async () => {
     await networkChanged();
+
+    //clear transactions when network changed
+    connectState.transactions.value = new Array();
+    connectState.transactionCount.value = 0;
   });    
 }
 

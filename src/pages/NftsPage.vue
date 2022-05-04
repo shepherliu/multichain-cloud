@@ -22,7 +22,7 @@
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <span>TokenId: <a target="_blank" :href="tokenExplorerUrl(nft[0], nft[2])">{{nft[0]}}</a></span>
+                      <span>NFT ID: <a target="_blank" :href="tokenExplorerUrl(nft[0], nft[2])">{{nft[0]}}</a></span>
                       <el-button v-if="activeName==='mine'" type="danger" @click="onBurnNft(nft[0])">
                         Burn<el-icon><delete /></el-icon>
                       </el-button>

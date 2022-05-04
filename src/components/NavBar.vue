@@ -378,8 +378,8 @@ const confirmSwitchNetwork = async () => {
 
 //on click to clear transtractions
 const onClearTransactions = async () => {
-  connectState.transactions.value = new Array();
-  connectState.transactionCount.value = 0; 
+  connect.connectState.transactions.value = new Array();
+  connect.connectState.transactionCount.value = 0; 
 }
 //on click to copy address
 const onClickToCopy = async (content:string) => {

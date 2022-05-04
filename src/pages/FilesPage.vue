@@ -23,14 +23,14 @@
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <el-popover placement="bottom-start" :width="300" :title="file[0]">
+                      <el-popover placement="bottom-start" :width="600" :title="file[0]">
                         <template #reference>
                           <span><a target="_blank" :href="file[2]">{{file[0]}}</a></span>
                         </template>
-                        <img v-if="file[1]==='image'" :src="file[2]" style="width: 300px;" />
-                        <audio v-if="file[1]==='audio'" :src="file[2]" controls preload style="width: 300px;" />
-                        <video v-if="file[1]==='video'" :src="file[2]" controls preload style="width: 300px;" />
-                        <embed v-if="file[1]==='docs'" type="text/html" :src="file[2]" style="height:100%;width: 100%;" />
+                        <img v-if="file[1]==='image'" :src="file[2]" style="width: 400px;" />
+                        <audio v-if="file[1]==='audio'" :src="file[2]" controls preload style="width: 400px;" />
+                        <video v-if="file[1]==='video'" :src="file[2]" controls preload style="width: 600px;" />
+                        <embed v-if="file[1]==='docs'" type="text/html" :src="file[2]" style="height:600px;width: 600px;" />
                       </el-popover>
                       <span>{{file[3]}}</span>
                     </div>

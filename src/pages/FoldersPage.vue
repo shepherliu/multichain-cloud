@@ -20,11 +20,11 @@
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <el-popover placement="bottom-start" :width="300" :title="file[0]">
+                      <el-popover placement="bottom-start" :width="600" :title="file[0]">
                         <template #reference>
                           <span><a target="_blank" :href="file[2]">{{file[0]}}</a></span>
                         </template>
-                        <embed v-if="file[1]==='folder'" type="text/html" :src="file[2]" style="height:100%;width: 100%;" />
+                        <embed v-if="file[1]==='folder'" type="text/html" :src="file[2]" style="height:600px;width: 600px;" />
                       </el-popover>
                       <span>{{file[3]}}</span>
                     </div>

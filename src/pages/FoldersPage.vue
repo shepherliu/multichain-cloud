@@ -30,7 +30,7 @@
                     </div>
                   </template>
                   <el-button-group>
-                    <el-button type="danger" @click="onDeleteFile(file[2])">
+                    <el-button type="danger" size="small" @click="onDeleteFile(file[2])">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>

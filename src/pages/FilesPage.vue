@@ -40,11 +40,12 @@
                       type="primary"
                       v-if="file[1]==='image'||file[1]=='audio'||file[1]=='video'"
                       :disabled="file[4]"
+                      size="small"
                       @click="onMintNft(file[1], file[2])"
                     >
                       {{file[4] ? "Minted" : "Mint"}}<el-icon><share /></el-icon>
                     </el-button>
-                    <el-button type="danger" @click="onDeleteFile(file[2])">
+                    <el-button type="danger" size="small" @click="onDeleteFile(file[2])">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>

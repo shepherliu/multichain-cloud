@@ -64,9 +64,12 @@ export const tokenList = {
   137: ['MATIC'],  
   250: ['FTM'],
   288: ['BOBA', 'ETH'],
+  588: ['METIS', 'ETH'],
+  1088: ['METIS', 'ETH'],
   4689: ['IOTX'],
   42161: ['ETH'],
   43114: ['AVAX'],
+  80001: ['MATIC'],
 };
 
 //chain list
@@ -177,6 +180,20 @@ export const chainList = [
     blockExplorerUrls: 'https://blockexplorer.boba.network',
   },
   {
+    chainId: 588,
+    chainName: 'Metis Stardust Testnet',
+    nativeCurrency: 'METIS',
+    rpcUrls: 'https://stardust.metis.io/?owner=588',
+    blockExplorerUrls: 'https://stardust-explorer.metis.io',
+  },
+  {
+    chainId: 1088,
+    chainName: 'Metis Andromeda Mainnet',
+    nativeCurrency: 'METIS',
+    rpcUrls: 'https://andromeda.metis.io/?owner=1088',
+    blockExplorerUrls: 'https://andromeda-explorer.metis.io',
+  },    
+  {
     chainId: 4689,
     chainName: 'IoTex Chain Mainnet',
     nativeCurrency: 'IOTX',
@@ -197,4 +214,11 @@ export const chainList = [
     rpcUrls: 'https://api.avax.network/ext/bc/C/rpc',
     blockExplorerUrls: 'https://cchain.explorer.avax.network',
   },
+  {
+    chainId: 80001,
+    chainName: 'Polygon Mumbai Testnet',
+    nativeCurrency: 'MATIC',
+    rpcUrls: 'https://matic-mumbai.chainstacklabs.com',
+    blockExplorerUrls: 'https://mumbai.polygonscan.com',
+  },  
 ];

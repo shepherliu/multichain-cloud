@@ -77,6 +77,13 @@ export const getBundlrCurrency = (chainId:number, currency: string) => {
         default:
           return "boba";
       }
+    case 588:case 1088:
+      switch(currency){
+        case 'METIS':
+          return 'metis';
+        default:
+          return 'metis';
+      }      
     case 43114:
       switch(currency){
         case 'ETH':

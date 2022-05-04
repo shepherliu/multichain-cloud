@@ -73,7 +73,7 @@ import type { UploadInstance, UploadProps, UploadRawFile, UploadFile, UploadFile
 
 import * as path from "path"
 
-import * as utils from '../libs/utils'
+import * as tools from '../libs/tools'
 import * as storage from '../libs/storage'
 import * as element from "../libs/element"
 import { connectState } from "../libs/connect"
@@ -206,7 +206,7 @@ const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFi
   for (const i in files) {
     fileSize += (files[i].raw as any).size;
     if(!isFolder.value){
-      fileType = utils.fileType((files[0].raw as any).name);
+      fileType = tools.fileType((files[0].raw as any).name);
       break;
     }
 
@@ -221,7 +221,7 @@ const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFi
   fileDescription.value = [
     { description: 'Name', value: selectedFile.value,},
     { description: 'Type', value: fileType,},
-    { description: 'Size', value: utils.fileSize(fileSize),},
+    { description: 'Size', value: tools.fileSize(fileSize),},
     { description: 'Cost', value: 0,},         
   ];
 }

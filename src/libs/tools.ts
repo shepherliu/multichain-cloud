@@ -59,3 +59,29 @@ export const fileSize = (size: number) => {
 
 	return size.toFixed(2) + 'GB'
 }
+
+export const getUrlParamter = (name:string) => {
+	const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  const r = (window as any).location.search.substr(1).match(reg);
+  if (r != null) {
+    return unescape(r[2]);
+  }
+  return '';
+}
+
+export const setUrlParamter = (name:string, value:string) => {
+  const oldUrl = (window as any).location.href.toString();
+  const re = new RegExp(name + '=[^&]*', 'gi');
+  const paramter = name + '=' + value;
+  let newUrl = oldUrl.replace(re, paramter);
+
+  if(newUrl.indexOf(name + '=') === -1 ){
+    if(newUrl.indexOf('?') === -1){
+      newUrl = newUrl + '?' + paramter;
+    }else{
+      newUrl = newUrl + '&' + paramter;
+    }
+  }
+
+  (window as any).history.pushState(null, null, newUrl);
+}

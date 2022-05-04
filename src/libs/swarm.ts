@@ -2,7 +2,7 @@ import * as path from "path"
 
 import { Tar } from './tar'
 
-import { fileType } from "./utils"
+import { fileType } from "./tools"
 import * as constant from "../constant"
 
 // fetch file from swarm by hash

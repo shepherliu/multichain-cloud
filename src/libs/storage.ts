@@ -6,7 +6,7 @@ import * as web3storage from './web3storage'
 
 
 import { connectState } from './connect'
-import * as utils from "./utils"
+import * as tools from "./tools"
 import * as filemanager from "./filemanager"
 
 import * as constant from "../constant"
@@ -49,7 +49,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
   let filetype = '';
   if(files.length===1){
-    filetype = utils.fileType(files[0].name).split('/')[0];
+    filetype = tools.fileType(files[0].name).split('/')[0];
     if(filetype!='image'&&filetype!='audio'&&filetype!='video'){
       filetype = 'docs';
     }

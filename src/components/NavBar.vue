@@ -71,7 +71,7 @@
         <el-row :gutter="20">
           <template v-for="tx in transactions" :key="tx">
             <el-col :span="20">
-              <el-link type="primary" :href="transactionExplorerUrl(tx)" target="_blank">{{utils.shortString(tx)}}</el-link>
+              <el-link type="primary" :href="transactionExplorerUrl(tx)" target="_blank">{{tools.shortString(tx)}}</el-link>
               <el-icon @click="onClickToCopy(tx)" style="margin-left: 10px;"><document-copy /></el-icon>
             </el-col>
           </template>
@@ -207,7 +207,7 @@ export default {
 <script setup lang="ts">
 import { ref } from "vue"
 
-import * as utils from "../libs/utils"
+import * as tools from "../libs/tools"
 import * as connect from "../libs/connect"
 import * as network from "../libs/network"
 import * as element from "../libs/element"
@@ -250,7 +250,7 @@ const connectNetwork = async () => {
   if(res){
     userAddr.value = connect.connectState.userAddr;
     networkName.value = network.getChainName(connect.connectState.chainId);
-    shortAddr.value = utils.shortString(userAddr.value);
+    shortAddr.value = tools.shortString(userAddr.value);
     connectStatus.value = "Cancel Connect";
 
     element.elMessage('success', 'You have connected to the wallet.');
@@ -364,7 +364,7 @@ const confirmSwitchNetwork = async () => {
 
 //on click to copy address
 const onClickToCopy = async (content:string) => {
-  utils.clickToCopy(content);
+  tools.clickToCopy(content);
   
   element.elMessage('success', 'Copy ' + content + ' to clipboard success.');     
 };
@@ -405,7 +405,24 @@ const onProfileSettings = async () => {
 const handleSelect = (key: string, keyPath: string[]) => {
   activeIndex.value = key;
   connect.connectState.activeIndex.value = Number(activeIndex.value);
+
+  tools.setUrlParamter('activeIndex', activeIndex.value);
 };    
 
+//try get activeIndex from the url paramter
+try{
+  activeIndex.value = parseInt(tools.getUrlParamter('activeIndex'));
+  if(isNaN(activeIndex.value) || activeIndex.value < 1 || activeIndex.value > 4){
+    activeIndex.value = 1;
+  }
+}catch(e){
+  activeIndex.value = 1;
+}
+
+//set activeIndex to connectState and location.href
+connect.connectState.activeIndex.value = activeIndex.value;
+tools.setUrlParamter('activeIndex', activeIndex.value);
+
+//try connect to metamask
 connectNetwork();
 </script>

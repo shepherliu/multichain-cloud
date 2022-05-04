@@ -1,5 +1,5 @@
 // example imports 
-import { providers, utils, Contract } from "ethers"
+import { providers, Contract } from "ethers"
 
 import * as constant from "../constant"
 

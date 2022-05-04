@@ -11,8 +11,7 @@
       </el-header>
       <el-main
         style="height: 450px;" 
-        v-loading="loadStatus" 
-        v-loading.lock="loadStatus"
+        v-loading="loadStatus"
         element-loading-text="Loading..."
         :element-loading-spinner="svg"
         element-loading-svg-view-box="-10, -10, 50, 50"
@@ -84,7 +83,7 @@ import { ref } from "vue"
 
 import * as filemanager from "../libs/filemanager"
 import * as web3nft from "../libs/web3nft"
-import * as utils from "../libs/utils"
+import * as tools from "../libs/tools"
 import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
 import * as constant from "../constant"
@@ -181,7 +180,7 @@ const getFileCount = async (filetype:string) => {
 
   fileList.value = newFileList;
   for(const i in fileList.value){
-    fileList.value[i][3] = utils.fileSize(fileList.value[i][3].toNumber());
+    fileList.value[i][3] = tools.fileSize(fileList.value[i][3].toNumber());
     fileList.value[i].push(await web3nft.minted(fileList.value[i][2]));
   }
 
@@ -190,6 +189,9 @@ const getFileCount = async (filetype:string) => {
 
 //click to change active item and refresh page
 const handleClick = async () => {
+
+  connectState.activeName.value = activeName.value;
+  tools.setUrlParamter('activeName', activeName.value);
 
   try{
 
@@ -238,6 +240,25 @@ const handleClick = async () => {
 //clean search content and bind search callback function
 connectState.search = '';
 connectState.searchCallback = handleClick;
+
+//try get activeName from the url paramter
+try{
+  activeName.value = tools.getUrlParamter('activeName');
+
+  if(activeName.value != 'image' && 
+    activeName.value != 'audio' && 
+    activeName.value != 'video' && 
+    activeName.value != 'docs'){
+
+    activeName.value = 'image';
+  }
+}catch(e){
+  activeName.value = 'image';
+}
+
+//set activeIndex to connectState and location.href
+connectState.activeName.value = activeName.value;
+tools.setUrlParamter('activeName', activeName.value);
 
 //update page
 if (connected()){

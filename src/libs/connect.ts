@@ -1,5 +1,5 @@
 // example imports 
-import { providers, utils, Contract } from "ethers"
+import { providers, Contract } from "ethers"
 
 import * as constant from '../constant'
 
@@ -17,6 +17,7 @@ export const connectState = {
   web3Storage: '',
   bundlrProvider: Object(),
   activeIndex: ref(1),
+  activeName: ref(''),
   search: '',
   searchCallback: async () => {},
   transactions: ref(new Array()),

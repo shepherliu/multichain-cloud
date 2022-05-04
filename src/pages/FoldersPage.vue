@@ -8,8 +8,7 @@
       </el-header>
       <el-main
         style="height: 450px;" 
-        v-loading="loadStatus" 
-        v-loading.lock="loadStatus"
+        v-loading="loadStatus"
         element-loading-text="Loading..."
         :element-loading-spinner="svg"
         element-loading-svg-view-box="-10, -10, 50, 50"
@@ -69,7 +68,7 @@ export default {
 import { ref } from "vue"
 
 import * as filemanager from "../libs/filemanager"
-import * as utils from "../libs/utils"
+import * as tools from "../libs/tools"
 import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
 import * as constant from "../constant"
@@ -143,7 +142,7 @@ const getFileCount = async (filetype:string) => {
 
   fileList.value = newFileList;
   for(const i in fileList.value){
-    fileList.value[i][3] = utils.fileSize(fileList.value[i][3].toNumber());
+    fileList.value[i][3] = tools.fileSize(fileList.value[i][3].toNumber());
   }
 
   fileTotal.value = fileList.value.length;
@@ -151,6 +150,10 @@ const getFileCount = async (filetype:string) => {
 
 //click to change active item and refresh page
 const handleClick = async () => {
+  
+  connectState.activeName.value = activeName.value;
+  tools.setUrlParamter('activeName', activeName.value);
+
   try{
 
     loadStatus.value = true;
@@ -198,6 +201,22 @@ const handleClick = async () => {
 //clean search content and bind search callback function
 connectState.search = '';
 connectState.searchCallback = handleClick;
+
+//try get activeName from the url paramter
+try{
+  activeName.value = tools.getUrlParamter('activeName');
+
+  if(activeName.value != 'folder'){
+
+    activeName.value = 'folder';
+  }
+}catch(e){
+  activeName.value = 'folder';
+}
+
+//set activeIndex to connectState and location.href
+connectState.activeName.value = activeName.value;
+tools.setUrlParamter('activeName', activeName.value);
 
 //update page size
 if (connected()){

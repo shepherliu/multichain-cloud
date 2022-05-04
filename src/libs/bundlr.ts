@@ -10,7 +10,7 @@ import * as constant from "../constant"
 
 import * as connect from "./connect"
 
-import { fileType } from "./utils"
+import { fileType } from "./tools"
 
 //get bundlr node api by chain id
 const getBundlrNetwork = (chainId:number) => {

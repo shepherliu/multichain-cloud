@@ -11,6 +11,7 @@ import * as filemanager from "./filemanager"
 
 import * as constant from "../constant"
 
+//get real file url link based on the storage type
 const getFileLink = (filename:string, filetype:string, fileid:string) => {
   switch(connectState.storage){
     case 'bundlr':
@@ -63,6 +64,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     }
   }
 
+  //upload to the remote storage
   let fileid = '';
   switch (connectState.storage){
     case 'bundlr':
@@ -81,5 +83,6 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
   fileid = getFileLink(dirPath, filetype, fileid);
 
+  //upload to the smart contract
   return await filemanager.addFile(dirPath, filetype, fileid, size)
 }

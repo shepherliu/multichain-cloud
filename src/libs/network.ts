@@ -33,6 +33,7 @@ export const getChainInfo = (chainId: number) => {
   return null;
 }
 
+//get chain name
 export const getChainName = (chainId: number) => {
   for (const i in chainList){
     if(chainList[i].chainId === chainId){

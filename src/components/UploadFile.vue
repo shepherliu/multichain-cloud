@@ -76,6 +76,7 @@ import * as path from "path"
 import * as utils from '../libs/utils'
 import * as storage from '../libs/storage'
 import * as element from "../libs/element"
+import { connectState } from "../libs/connect"
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const upload = ref<UploadInstance>();
@@ -116,6 +117,7 @@ const scanFiles = async (e:any) => {
   }
 }
 
+//select all files from the given directory
 const getEntryDirectoryFiles = async (entry:any, name:string) => {
   const reader = entry.createReader();
 
@@ -153,6 +155,7 @@ const getEntryDirectoryFiles = async (entry:any, name:string) => {
   });
 }    
 
+//change upload file or folder
 const onChangeUploadType = async () => {
   if(isFolder.value){
     limits.value = 0;
@@ -170,6 +173,7 @@ const onChangeUploadType = async () => {
   (currentClass.querySelector(".el-upload__input") as any).multiple = isFolder.value;
 }
 
+//when upload file, only suport one signle file
 const handleExceed: UploadProps['onExceed'] = (files:any) => {
   upload.value!.clearFiles()
   const file = files[0] as UploadRawFile;
@@ -177,10 +181,12 @@ const handleExceed: UploadProps['onExceed'] = (files:any) => {
   upload.value!.handleStart(file);
 };
 
+//on click to select file, clear old files
 const onSelectFiles = async () => {
   upload.value!.clearFiles();
 }
 
+//when select files changed, refresh file descriptions
 const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   const files = toRaw(uploadFiles);
   fileList.value = files;
@@ -220,6 +226,7 @@ const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFi
   ];
 }
 
+//on click upload button to upload file
 const onUploadFile = async () => {
   try{
 
@@ -231,9 +238,13 @@ const onUploadFile = async () => {
     }
 
     if(!isFolder.value){
-      await storage.uploadFile(toRaw(fileList.value)[0]);
+      const tx = await storage.uploadFile(toRaw(fileList.value)[0]);
+      connectState.transactions.value.push(tx);
+      connectState.transactionCount.value++;
     } else {
-      await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
+      const tx = await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
+      connectState.transactions.value.push(tx);
+      connectState.transactionCount.value++;
     }    
 
     if(isFolder.value){
@@ -243,8 +254,8 @@ const onUploadFile = async () => {
     }
 
   }catch(e){
-    if(e.stack.length > 200){
-      e.stack = e.stack.slice(0, 200);
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
     }
     element.elMessage('error', e.stack);
   }finally{

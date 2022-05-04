@@ -37,6 +37,7 @@ export const fileType = (name: string) => {
 	return mimeType as string;
 }
 
+//get file size for human
 export const fileSize = (size: number) => {
 	if (size < 1024) {
 		return size.toFixed(2) + ' B';

@@ -42,9 +42,41 @@
     
     <!-- notify component -->
     <el-col :span="4">
-      <el-button circle color="#606266" size="large" style="margin-top: 10px;float: right;">
-        <el-icon :size="20"><bell /></el-icon>
-      </el-button>
+      <el-popover
+        placement="bottom-start"
+        title="Transactions"
+        :width="200"
+        trigger="click"
+      >
+        <template #reference>
+          <el-button 
+            circle 
+            color="#606266" 
+            size="large" 
+            style="margin-top: 10px;
+            float: right;"
+            @click="onClickNotify"
+          >
+            <el-badge 
+              :isDot="transactionCount>0" 
+              :max="99" 
+              class="item" 
+              style="margin-top: 15px;"
+              type="primary"
+            >
+              <el-icon :size="20"><bell /></el-icon>
+            </el-badge>
+          </el-button>
+        </template>
+        <el-row :gutter="20">
+          <template v-for="tx in transactions" :key="tx">
+            <el-col :span="20">
+              <el-link type="primary" :href="transactionExplorerUrl(tx)" target="_blank">{{utils.shortString(tx)}}</el-link>
+              <el-icon @click="onClickToCopy(tx)" style="margin-left: 10px;"><document-copy /></el-icon>
+            </el-col>
+          </template>
+        </el-row>
+      </el-popover> 
     </el-col>       
     
     <!-- user addr -->
@@ -57,7 +89,7 @@
         :content="userAddr"
       >
         <template #reference>
-          <a @click="onClickToCopy" style="margin-top: 17px;padding-right: 10px;float: right;">{{shortAddr}}</a>
+          <a @click="onClickToCopy(userAddr)" style="margin-top: 17px;padding-right: 10px;float: right;">{{shortAddr}}</a>
         </template>
       </el-popover>      
     </el-col>
@@ -191,6 +223,8 @@ const searchContent = ref("");
 const activeIndex = ref("1");
 const connectStatus = ref("Connect Wallet");
 const showSwitchNetwork = ref(false);
+const transactions = connect.connectState.transactions;
+const transactionCount = connect.connectState.transactionCount;
 const networkSelected = ref(connect.connectState.chainId);
 const storageSelected = ref(connect.connectState.storage);
 const tokenSelected = ref(connect.connectState.currency);
@@ -198,20 +232,16 @@ const apiTokenSelected = ref(connect.connectState.web3Storage==='' ? constant.we
 const networkOptions = constant.chainList;
 const tokenOptions = ref((constant.tokenList as any)[connect.connectState.chainId]);
 
-//on drawer open
-const onDrawerOpen = async () => {
-  networkSelected.value = connect.connectState.chainId;
-  storageSelected.value = connect.connectState.storage;
-  tokenSelected.value = connect.connectState.currency;
-  tokenOptions.value = (constant.tokenList as any)[connect.connectState.chainId];
-
-  //make sure token is avaiable in selected network
-  for(const i in tokenOptions.value){
-    if(tokenOptions.value[i] === tokenSelected.value){
-      return;
+//transaction explore url
+const transactionExplorerUrl = (transaction:string) => {
+  for(const i in constant.chainList){
+    if(connect.connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return blockExplorerUrls + '/tx/' + transaction;
     }
   }
-  tokenSelected.value = tokenOptions.value[0];      
+
+  return transaction;
 }
 
 //connect to metamask
@@ -224,6 +254,8 @@ const connectNetwork = async () => {
     connectStatus.value = "Cancel Connect";
 
     element.elMessage('success', 'You have connected to the wallet.');
+
+    connect.connectState.searchCallback();
 
   } else{
     userAddr.value = "";
@@ -273,27 +305,21 @@ const networkChanged = async () => {
 
 connect.networkChanged(networkChanged); 
 
-//on connect clicked
-const onConnect = async () => {
-  if(connectStatus.value === "Cancel Connect"){      
-    return await disConnectNetwork();
-  } else {
-    return await connectNetwork();
+//on drawer open to switch network
+const onDrawerOpen = async () => {
+  networkSelected.value = connect.connectState.chainId;
+  storageSelected.value = connect.connectState.storage;
+  tokenSelected.value = connect.connectState.currency;
+  tokenOptions.value = (constant.tokenList as any)[connect.connectState.chainId];
+
+  //make sure token is avaiable in selected network
+  for(const i in tokenOptions.value){
+    if(tokenOptions.value[i] === tokenSelected.value){
+      return;
+    }
   }
-};
-
-//on menus selected
-const handleSelect = (key: string, keyPath: string[]) => {
-  activeIndex.value = key;
-  connect.connectState.activeIndex.value = Number(activeIndex.value);
-};    
-
-//on click to copy address
-const onClickToCopy = async () => {
-  utils.clickToCopy(userAddr.value);
-  
-  element.elMessage('success', 'Copy address to clipboard success.');     
-};
+  tokenSelected.value = tokenOptions.value[0];      
+}
 
 //on select the network
 const onNetworkSelected = async () => {
@@ -336,6 +362,35 @@ const confirmSwitchNetwork = async () => {
   }
 }
 
+//on click to copy address
+const onClickToCopy = async (content:string) => {
+  utils.clickToCopy(content);
+  
+  element.elMessage('success', 'Copy ' + content + ' to clipboard success.');     
+};
+
+//on click notify
+const onClickNotify = async () => {
+  transactionCount.value = 0;
+}
+
+//on content search
+const onSearchContent = async () => {
+  connect.connectState.search = searchContent.value.trim();
+  await connect.connectState.searchCallback();
+  searchContent.value = '';
+  connect.connectState.search = '';
+}
+
+//on connect clicked
+const onConnect = async () => {
+  if(connectStatus.value === "Cancel Connect"){      
+    return await disConnectNetwork();
+  } else {
+    return await connectNetwork();
+  }
+};
+
 //on switch network clicked
 const onSwitchNetwork = async () => {
   showSwitchNetwork.value = true;
@@ -346,11 +401,11 @@ const onProfileSettings = async () => {
 
 }
 
-//on content search
-const onSearchContent = async () => {
-  connect.connectState.search = searchContent.value.trim();
-  await connect.connectState.searchCallback();
-  searchContent.value = '';
-  connect.connectState.search = '';
-}
+//on menus selected
+const handleSelect = (key: string, keyPath: string[]) => {
+  activeIndex.value = key;
+  connect.connectState.activeIndex.value = Number(activeIndex.value);
+};    
+
+connectNetwork();
 </script>

@@ -3,13 +3,14 @@ import { h } from "vue"
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 //trigger an el-message
-export const elMessage = async (msgtype:any, msginfo: any) => {
+export const elMessage = async (msgtype:any, msginfo: any, useHtml = false) => {
 	ElMessage({
           duration: 5000,
           showClose: true,
+          dangerouslyUseHTMLString: useHtml,
           offset: 45,
           type: msgtype,
-          message: h('i', { style: 'color: teal' }, msginfo),
+          message: useHtml ? msginfo : h('i', { style: 'color: teal' }, msginfo),
     });
 }
 

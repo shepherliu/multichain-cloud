@@ -11,6 +11,7 @@
       <el-main
         style="height: 450px;" 
         v-loading="loadStatus" 
+        v-loading.lock="loadStatus"
         element-loading-text="Loading..."
         :element-loading-spinner="svg"
         element-loading-svg-view-box="-10, -10, 50, 50"
@@ -71,7 +72,7 @@ import { ref } from "vue"
 import { utils } from "ethers"
 
 import * as web3nft from "../libs/web3nft"
-import { connectState } from "../libs/connect"
+import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
 import * as constant from "../constant"
 
@@ -95,25 +96,123 @@ const tokenExplorerUrl = (tokenId:number, tokenURI:string) => {
   return tokenURI;
 }
 
+//transaction explore url
+const transactionExplorerUrl = (transaction:string) => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return blockExplorerUrls + '/tx/' + transaction;
+    }
+  }
+
+  return transaction;
+}
+
 //click to like nft
 const onLikeNft = async (tokenId:number) => {
-  await web3nft.likeNft(tokenId);
 
-  handleClick();  
+  try{
+    const tx = await web3nft.likeNft(tokenId);
+    connectState.transactions.value.push(tx);
+    connectState.transactionCount.value++;
+
+    const msg = '<div><span>Like success! Transaction: </span><a href="' + 
+      transactionExplorerUrl(tx) + 
+      '" target="_blank">' + tx + '</a></div>';
+
+    element.elMessage('success', msg, true);
+
+    handleClick(); 
+
+  }catch(e){
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
+    }
+    element.elMessage('error', e.stack);
+  }
+ 
 }
 
 //click to hate nft
 const onHateNft = async (tokenId:number) => {
-  await web3nft.hateNft(tokenId);
 
-  handleClick();  
+  try{
+
+    const tx = await web3nft.hateNft(tokenId);
+    connectState.transactions.value.push(tx);
+    connectState.transactionCount.value++;
+
+    const msg = '<div><span>Hate success! Transaction: </span><a href="' + 
+      transactionExplorerUrl(tx) + 
+      '" target="_blank">' + tx + '</a></div>';
+
+    element.elMessage('success', msg, true);    
+
+    handleClick();      
+
+  }catch(e){
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
+    }
+    element.elMessage('error', e.stack);
+  }
+
 }
 
 //click to burn nft
 const onBurnNft = async (tokenId:number) => {
-  await web3nft.burn(tokenId);
+  try{
 
-  handleClick();
+    const tx = await web3nft.burn(tokenId);
+    connectState.transactions.value.push(tx);
+    connectState.transactionCount.value++;
+
+    const msg = '<div><span>Burn success! Transaction: </span><a href="' + 
+      transactionExplorerUrl(tx) + 
+      '" target="_blank">' + tx + '</a></div>';
+
+    element.elMessage('success', msg, true);    
+
+    handleClick();
+
+  }catch(e){
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
+    }
+    element.elMessage('error', e.stack);
+  }
+
+}
+
+//click to claim rewards
+const onClaimRewards = async () => {
+  try{
+
+    const rewards = await web3nft.getAddressRewards(connectState.userAddr);
+  
+    if(rewards > 0){
+      const tx = await web3nft.claim();
+      connectState.transactions.value.push(tx);
+      connectState.transactionCount.value++;   
+
+      const msg = '<div><span>Claim success! Transaction: </span><a href="' + 
+        transactionExplorerUrl(tx) + 
+        '" target="_blank">' + tx + '</a></div>';
+
+      element.elMessage('success', msg, true);         
+
+      handleClick();  
+    } else {
+      element.elMessage("warning", "You have no rewards to claim now!");
+    }
+
+  }catch(e){
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
+    }
+    element.elMessage('error', e.stack);
+  }
+
 }
 
 //click to reward nft
@@ -128,23 +227,27 @@ const onRewardNft = async (tokenId:number) => {
 
   element.elMessageBox('Please enter the amount to reward the NFT', 'Reward', opts, async (value:number) => {
 
-      await web3nft.rewardNft(tokenId, value);
+      try{
+        const tx = await web3nft.rewardNft(tokenId, value);
+        connectState.transactions.value.push(tx);
+        connectState.transactionCount.value++;
 
-      handleClick();
+        const msg = '<div><span>Reward success! Transaction: </span><a href="' + 
+          transactionExplorerUrl(tx) + 
+          '" target="_blank">' + tx + '</a></div>';
+
+        element.elMessage('success', msg, true);        
+
+        handleClick();
+
+      }catch(e){
+        if(e.stack.length > 300){
+          e.stack = e.stack.slice(0, 300);
+        }
+        element.elMessage('error', e.stack);
+      }
 
     });
-}
-
-//click to claim rewards
-const onClaimRewards = async () => {
-  const rewards = await web3nft.getAddressRewards(connectState.userAddr);
-  
-  if(rewards > 0){
-    await web3nft.claim();
-    handleClick();  
-  } else {
-    element.elMessage("warning", "You have no rewards to claim now!");
-  }
 }
 
 //get nft count and pull nft info
@@ -166,7 +269,7 @@ const getNftCount = async (nfttype:string) => {
         const likes = await web3nft.getLikes(tokenId);
         const rewards = await web3nft.getTokenRewards(tokenId);
 
-        newNftList.push([tokenId, tokenType, tokenUri, hates.toNumber(), likes.toNumber(), Number(utils.formatEther(rewards))]);
+        newNftList.push([tokenId, tokenType, tokenUri, likes.toNumber(), hates.toNumber(), Number(utils.formatEther(rewards))]);
       }
     }
   }else{
@@ -233,8 +336,8 @@ const handleClick = async () => {
     userRewards.value = Number(utils.formatEther(rewards)).toFixed(3);
 
   }catch(e){
-    if(e.stack.length > 200){
-      e.stack = e.stack.slice(0, 200);
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
     }    
     element.elMessage('error', e.stack);
   }finally{
@@ -248,5 +351,7 @@ connectState.search = '';
 connectState.searchCallback = handleClick;
 
 //update page size
-handleClick();
+if (connected()){
+  handleClick();
+}
 </script>

@@ -19,6 +19,8 @@ export const connectState = {
   activeIndex: ref(1),
   search: '',
   searchCallback: async () => {},
+  transactions: ref(new Array()),
+  transactionCount: ref(0),
 };
 
 //connect to metamask wallet

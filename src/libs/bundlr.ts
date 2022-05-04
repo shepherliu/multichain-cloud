@@ -241,6 +241,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
    throw new Error(`no files selected to upload!`); 
   }
 
+  //files list for the dir
   const manifest = {
     manifest: "arweave/paths",
     version: "0.1.0",
@@ -250,6 +251,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     },
   };  
 
+  //upload file one by one, that is fool!!!
   for (const i in files) {
     const tags = [{ name: "Content-Type", value: fileType(files[i].name)}];
 
@@ -274,6 +276,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     manifest.paths[relpath] = {id: res.data.id};
   }
 
+  //upload the manifest file, which contains the files info of the dir
   const tags = [{ name: "Type", value: "manifest" }, { name: "Content-Type", value: "application/x.arweave-manifest+json" }];
 
   const data = JSON.stringify(manifest);

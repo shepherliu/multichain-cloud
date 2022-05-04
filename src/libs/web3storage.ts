@@ -39,6 +39,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   });
 }
 
+//get files from the filcoin
 export const getFiles = async (cid:string) => {
 	const client = getClient();
 

@@ -9,6 +9,7 @@
       <el-main
         style="height: 450px;" 
         v-loading="loadStatus" 
+        v-loading.lock="loadStatus"
         element-loading-text="Loading..."
         :element-loading-spinner="svg"
         element-loading-svg-view-box="-10, -10, 50, 50"
@@ -67,10 +68,11 @@ export default {
 <script setup lang="ts">
 import { ref } from "vue"
 
-import { connectState } from "../libs/connect"
+import { connected, connectState } from "../libs/connect"
 import * as filemanager from "../libs/filemanager"
 import * as utils from "../libs/utils"
 import * as element from "../libs/element"
+import * as constant from "../constant"
 
 const activeName = ref("website");
 const loadStatus = ref(false);
@@ -79,11 +81,42 @@ const currentPage = ref(0);
 const fileTotal = ref(0);
 const fileList = ref(new Array());
 
+//transaction explore url
+const transactionExplorerUrl = (transaction:string) => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return blockExplorerUrls + '/tx/' + transaction;
+    }
+  }
+
+  return transaction;
+}
+
 //click to delete file
 const onDeleteFile = async (fileid:string) => {
-  await filemanager.delFile(fileid);
 
-  handleClick();
+  try{
+
+    const tx = await filemanager.delFile(fileid);
+    connectState.transactions.value.push(tx);
+    connectState.transactionCount.value++;
+
+    const msg = '<div><span>Delete success! Transaction: </span><a href="' + 
+      transactionExplorerUrl(tx) + 
+      '" target="_blank">' + tx + '</a></div>';
+
+    element.elMessage('success', msg, true);
+
+    handleClick();
+
+  }catch(e){
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
+    }
+    element.elMessage('error', e.stack);
+  }
+
 }
 
 //get total file count and pull files info
@@ -152,8 +185,8 @@ const handleClick = async () => {
     fileList.value = fileList.value.slice(start, end);    
 
   }catch(e){
-    if(e.stack.length > 200){
-      e.stack = e.stack.slice(0, 200);
+    if(e.stack.length > 300){
+      e.stack = e.stack.slice(0, 300);
     }    
     element.elMessage('error', e.stack);
   }finally{
@@ -167,5 +200,7 @@ connectState.search = '';
 connectState.searchCallback = handleClick;
 
 //update page size
-handleClick();
+if (connected()){
+  handleClick();
+}
 </script>

@@ -83,7 +83,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     throw new Error(`no files selected to upload!`); 
  }
 
-
+ //js tar the files
  for(const i in files){
     const type = fileType(files[i].name);
 
@@ -109,6 +109,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   metadata.name = dirPath;
  }
 
+ //add meta file
  tar.append(constant.META_FILE_NAME, JSON.stringify(metadata), {}, function(output:Uint8Array){});
 
  return await uploadDataToSwarm(tar.out);

@@ -1,5 +1,6 @@
 const recordSize = 512;
 
+//header format
 const headerFormat = [
 	{ field: 'fileName', length: 100 },
 	{ field: 'fileMode', length: 8 },
@@ -30,6 +31,7 @@ const lookup = [
 	'4', '5', '6', '7', '8', '9', '+', '/',
 ];
 
+//return a clean buffer
 const clean = (length: number) => {
 	const buffer = new Uint8Array(length);
 	for (let i = 0; i < length; i += 1) {
@@ -38,6 +40,7 @@ const clean = (length: number) => {
 	return buffer;
 }
 
+//extend a buffer
 const extend = (orig: ArrayLike<number>, length: number, addLength: number, multipleOf: number) => {
 	const newSize = length + addLength;
 
@@ -48,12 +51,14 @@ const extend = (orig: ArrayLike<number>, length: number, addLength: number, mult
 	return buffer;
 }
 
+//pad number to fixed length
 const pad = (num:number, bytes:number, base = 8) => {
 	const str = num.toString(base || 8);
 
 	return "000000000000".substr(str.length + 12 - bytes) + str;
 }	
 
+//string to uint8
 const stringToUint8 = (input: string, out: Uint8Array, offset = 0) => {
 	let i, length = 0;
 
@@ -68,6 +73,7 @@ const stringToUint8 = (input: string, out: Uint8Array, offset = 0) => {
 	return out;
 }
 
+//uint8 to base64
 const uint8ToBase64 = (uint8: Uint8Array) => {
 	const extraBytes = uint8.length % 3; // if we have 1 byte left, pad 2 bytes
 	let i, output = "", temp, length;
@@ -97,6 +103,7 @@ const uint8ToBase64 = (uint8: Uint8Array) => {
 	return output;
 }
 
+//base64 to uint8
 const base64ToUint8 = (input: string) => {
 	const extraBytes = (input.match(/(=*)$/) as any)[1].length;
 
@@ -132,6 +139,7 @@ const base64ToUint8 = (input: string) => {
 	return ret;
 }	
 
+//add file header to the tar
 const formatHeader = (data: any, cb:Function) => {
 	const buffer = clean(512);
 	let	offset = 0;

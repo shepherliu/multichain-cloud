@@ -20,6 +20,7 @@ export const getContract = async () => {
   return new Contract(constant.fileContractAddress, abi, connect.connectState.signer);	
 }
 
+//add a file to the smart contract
 export const addFile = async (filename:string, filetype:string, fileid:string, filesize:number) => {
 	filename = filename.trim();
 	if(filename===''){
@@ -45,6 +46,7 @@ export const addFile = async (filename:string, filetype:string, fileid:string, f
   return tx.hash;
 }
 
+//delete a file from the smart contract
 export const delFile = async (fileid:string) => {
 	fileid = fileid.trim();
 	if(fileid===''){
@@ -58,6 +60,7 @@ export const delFile = async (fileid:string) => {
   return tx.hash;	
 }
 
+//get file indexs by file type, like image/audio/video/folder/website
 export const getIndexsByFileType = async (filetype:string) => {
 	filetype = filetype.trim();
 	if(filetype!="image"&&filetype!="audio"&&filetype!="video"&&filetype!="docs"&&filetype!="folder"&&filetype!="website"){
@@ -69,6 +72,7 @@ export const getIndexsByFileType = async (filetype:string) => {
 	return await contract.getIndexsByFileType(filetype);
 }
 
+//get file info by index
 export const getFileInfoByIndex = async (index:number) => {
 	index = Math.floor(index);
 	if(index<0){

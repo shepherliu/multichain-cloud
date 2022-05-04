@@ -34,6 +34,7 @@ export const getContract = async () => {
   return new Contract(constant.nftContractAddress, abi, connect.connectState.signer);	
 }
 
+//mint a nft
 export const mint = async (tokenType:string, tokenURI:string) => {
 	tokenType = tokenType.trim();
 	if(tokenType!="image"&&tokenType!="audio"&&tokenType!="video"){
@@ -52,6 +53,7 @@ export const mint = async (tokenType:string, tokenURI:string) => {
   return tx.hash;	
 }
 
+//burn a nft
 export const burn = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -65,6 +67,7 @@ export const burn = async (tokenId:number) => {
   return tx.hash;		
 }
 
+//get nft token uri
 export const tokenURI = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -75,6 +78,7 @@ export const tokenURI = async (tokenId:number) => {
 	return await contract.tokenURI(tokenId);
 }
 
+//get token type like image/audio/video
 export const tokenType = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -85,6 +89,7 @@ export const tokenType = async (tokenId:number) => {
 	return await contract.tokenType(tokenId);	
 }
 
+//vote to hate a nft
 export const hateNft = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -98,6 +103,7 @@ export const hateNft = async (tokenId:number) => {
   return tx.hash;			
 }
 
+//vote to like a nft
 export const likeNft = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -111,6 +117,7 @@ export const likeNft = async (tokenId:number) => {
   return tx.hash;		
 }
 
+//reward the nft some tokens
 export const rewardNft = async(tokenId:number, reward:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -130,6 +137,7 @@ export const rewardNft = async(tokenId:number, reward:number) => {
   return tx.hash;		
 }
 
+//cliam the user address reward tokens
 export const claim = async () => {
 	const contract = await getContract();
 	const tx = await contract.claim();
@@ -138,6 +146,7 @@ export const claim = async () => {
 	return tx.hash;
 } 
 
+//get token hates
 export const getHates = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -149,6 +158,7 @@ export const getHates = async (tokenId:number) => {
 	return await contract.getHates(tokenId);
 }
 
+//get token likes
 export const getLikes = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -160,6 +170,7 @@ export const getLikes = async (tokenId:number) => {
 	return await contract.getLikes(tokenId);
 }
 
+//get token rewards
 export const getTokenRewards = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -171,6 +182,7 @@ export const getTokenRewards = async (tokenId:number) => {
 	return await contract.getTokenRewards(tokenId);
 }
 
+//get user address total rewards
 export const getAddressRewards = async (addr:string) => {
 	addr = addr.trim();
 	if(addr===''){
@@ -182,6 +194,7 @@ export const getAddressRewards = async (addr:string) => {
 	return await contract.getAddressRewards(addr);
 }
 
+//get the amount nfts of user
 export const balanceOf = async (addr:string) => {
 	addr = addr.trim();
 	if(addr===''){
@@ -193,6 +206,7 @@ export const balanceOf = async (addr:string) => {
 	return await contract.balanceOf(addr);
 }
 
+//get the owner of the nft
 export const ownerOf = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
@@ -204,6 +218,7 @@ export const ownerOf = async (tokenId:number) => {
 	return await contract.ownerOf(tokenId);
 }
 
+//get nft id by index
 export const tokenByIndex = async (index:number) => {
 	index = Math.floor(index);
 	if(index < 0){
@@ -215,6 +230,7 @@ export const tokenByIndex = async (index:number) => {
 	return await contract.tokenByIndex(index);
 }
 
+//get user nft id by index
 export const tokenOfOwnerByIndex = async (addr:string, index:number) => {
 	index = Math.floor(index);
 	if(index < 0){
@@ -230,12 +246,14 @@ export const tokenOfOwnerByIndex = async (addr:string, index:number) => {
 	return await contract.tokenOfOwnerByIndex(addr, index);
 }
 
+//get total nfts amount
 export const totalSupply = async () => {
 	const contract = await getContract();
 
 	return await contract.totalSupply();
 }
 
+//check if a nft is minted or not by the uri
 export const minted = async (tokenURI:string) => {
 	tokenURI = tokenURI.trim();
 	if(tokenURI===''){

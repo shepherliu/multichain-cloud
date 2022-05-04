@@ -6,8 +6,16 @@
           <el-tab-pane label="AllNfts" name="all"></el-tab-pane>
           <el-tab-pane label="MyNfts" name="mine"></el-tab-pane>
         </el-tabs>
+        <el-link type="primary" @click="onClaimRewards()" style="float: right;">Claim : {{userRewards}}</el-link>
       </el-header>
-      <el-main style="height: 450px;">
+      <el-main
+        style="height: 450px;" 
+        v-loading="loadStatus" 
+        element-loading-text="Loading..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        element-loading-background="#ffffff"
+      >
         <el-row :gutter="20">
           <template v-for="nft in nftList" :key="nft[2]">
               <el-col :span="8">
@@ -24,9 +32,9 @@
                   <audio v-if="nft[1]==='audio'" :src="nft[2]" controls preload style="width: 200px;height: 200px;" />
                   <video v-if="nft[1]==='video'" :src="nft[2]" controls preload style="width: 200px;height: 200px;" />
                   <div>
-                    <el-link type="primary" @click="onLikeNft(nft[0])">Like : {{nft[3]}}</el-link>
-                    <el-link type="warning" @click="onHateNft(nft[0])">Hate : {{nft[4]}}</el-link>
-                    <el-link type="success" @click="onRewardNft(nft[0])">Reward : {{nft[5]}}</el-link>
+                    <el-link type="primary" @click="onLikeNft(nft[0])">Likes : {{nft[3]}}</el-link>
+                    <el-link type="warning" @click="onHateNft(nft[0])">Hates : {{nft[4]}}</el-link>
+                    <el-link type="success" @click="onRewardNft(nft[0])">Rewards : {{nft[5].toFixed(3)}}</el-link>
                   </div>
                 </el-card>
               </el-col>
@@ -60,125 +68,22 @@ export default {
 
 <script setup lang="ts">
 import { ref } from "vue"
-
-import { useStore } from 'vuex'
+import { utils } from "ethers"
 
 import * as web3nft from "../libs/web3nft"
 import { connectState } from "../libs/connect"
-
+import * as element from "../libs/element"
 import * as constant from "../constant"
 
-const store = useStore();
-
 const activeName = ref("all");
-
+const loadStatus = ref(false);
+const userRewards = ref(0);
 const pageSize = ref(6);
 const currentPage = ref(0);
-
 const nftTotal = ref(0);
-
 const nftList = ref(new Array());  
 
-const getNftCount = async (nfttype:string) => {
-  const newNftList = new Array();
-
-  if(nfttype === 'all'){
-    const total = await web3nft.totalSupply();
-
-    for(let i = 0; i < total.toNumber(); i++){
-      const tokenId = await web3nft.tokenByIndex(i);
-      const tokenType = await web3nft.tokenType(tokenId);
-      if(store.state.search === '' ||
-        tokenType.indexOf(store.state.search) != -1 ||
-        tokenType.search(store.state.search) != -1) {
-
-        const tokenUri = await web3nft.tokenURI(tokenId);
-        const hates = await web3nft.getHates(tokenId);
-        const likes = await web3nft.getLikes(tokenId);
-        const rewards = await web3nft.getTokenRewards(tokenId);
-
-        newNftList.push([tokenId, tokenType, tokenUri, hates.toNumber(), likes.toNumber(), rewards.toNumber()]);
-      }
-    }
-  }else{
-    const total = await web3nft.balanceOf(connectState.userAddr);
-    
-    for(let i = 0; i < total.toNumber(); i++){
-      const tokenId = await web3nft.tokenOfOwnerByIndex(connectState.userAddr, i);
-      const tokenType = await web3nft.tokenType(tokenId);
-      if(store.state.search === '' ||
-        tokenType.indexOf(store.state.search) != -1 ||
-        tokenType.search(store.state.search) != -1) {
-
-        const tokenUri = await web3nft.tokenURI(tokenId);
-        const hates = await web3nft.getHates(tokenId);
-        const likes = await web3nft.getLikes(tokenId);
-        const rewards = await web3nft.getTokenRewards(tokenId);
-
-        newNftList.push([tokenId, tokenType, tokenUri, likes.toNumber(), hates.toNumber(), rewards.toNumber()]);
-      }
-    }    
-  }
-
-  console.log(newNftList);
-
-  nftTotal.value = newNftList.length;
-  nftList.value = newNftList;
-}
-
-const handleClick = async () => {
-  await getNftCount(activeName.value);
-
-  if(currentPage.value < 1){
-    currentPage.value = 1;
-  }
-
-  let totalPage = Math.floor(nftTotal.value/pageSize.value);
-
-  if((nftTotal.value%pageSize.value)!=0){
-    totalPage += 1;
-  }
-
-  if(currentPage.value > totalPage){
-    currentPage.value = totalPage;
-  }
-
-  let start = (currentPage.value-1) * pageSize.value;
-  let end = currentPage.value * pageSize.value;
-
-  if(start < 0){
-    start = 0;
-  }
-
-  if(end > nftTotal.value){
-    end = nftTotal.value;
-  }
-
-  nftList.value = nftList.value.slice(start, end);  
-}
-
-const onBurnNft = async (tokenId:number) => {
-  await web3nft.burn(tokenId);
-
-  handleClick();
-}
-
-const onLikeNft = async (tokenId:number) => {
-  await web3nft.likeNft(tokenId);
-
-  handleClick();  
-}
-
-const onHateNft = async (tokenId:number) => {
-  await web3nft.hateNft(tokenId);
-
-  handleClick();  
-}
-
-const onRewardNft = async(tokenId:number) => {
-
-}
-
+//nft token explore url
 const tokenExplorerUrl = (tokenId:number, tokenURI:string) => {
   for(const i in constant.chainList){
     if(connectState.chainId === constant.chainList[i].chainId){
@@ -190,5 +95,158 @@ const tokenExplorerUrl = (tokenId:number, tokenURI:string) => {
   return tokenURI;
 }
 
-handleClick(); 
+//click to like nft
+const onLikeNft = async (tokenId:number) => {
+  await web3nft.likeNft(tokenId);
+
+  handleClick();  
+}
+
+//click to hate nft
+const onHateNft = async (tokenId:number) => {
+  await web3nft.hateNft(tokenId);
+
+  handleClick();  
+}
+
+//click to burn nft
+const onBurnNft = async (tokenId:number) => {
+  await web3nft.burn(tokenId);
+
+  handleClick();
+}
+
+//click to reward nft
+const onRewardNft = async (tokenId:number) => {
+  const opts = {
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
+    inputType: 'number',
+    inputValue: '0.01',
+    inputErrorMessage: 'Invalid number',
+  };
+
+  element.elMessageBox('Please enter the amount to reward the NFT', 'Reward', opts, async (value:number) => {
+
+      await web3nft.rewardNft(tokenId, value);
+
+      handleClick();
+
+    });
+}
+
+//click to claim rewards
+const onClaimRewards = async () => {
+  const rewards = await web3nft.getAddressRewards(connectState.userAddr);
+  
+  if(rewards > 0){
+    await web3nft.claim();
+    handleClick();  
+  } else {
+    element.elMessage("warning", "You have no rewards to claim now!");
+  }
+}
+
+//get nft count and pull nft info
+const getNftCount = async (nfttype:string) => {
+  const newNftList = new Array();
+
+  if(nfttype === 'all'){
+    const total = await web3nft.totalSupply();
+
+    for(let i = 0; i < total.toNumber(); i++){
+      const tokenId = await web3nft.tokenByIndex(i);
+      const tokenType = await web3nft.tokenType(tokenId);
+      if(connectState.search === '' ||
+        tokenType.indexOf(connectState.search) != -1 ||
+        tokenType.search(connectState.search) != -1) {
+
+        const tokenUri = await web3nft.tokenURI(tokenId);
+        const hates = await web3nft.getHates(tokenId);
+        const likes = await web3nft.getLikes(tokenId);
+        const rewards = await web3nft.getTokenRewards(tokenId);
+
+        newNftList.push([tokenId, tokenType, tokenUri, hates.toNumber(), likes.toNumber(), Number(utils.formatEther(rewards))]);
+      }
+    }
+  }else{
+    const total = await web3nft.balanceOf(connectState.userAddr);
+    
+    for(let i = 0; i < total.toNumber(); i++){
+      const tokenId = await web3nft.tokenOfOwnerByIndex(connectState.userAddr, i);
+      const tokenType = await web3nft.tokenType(tokenId);
+      if(connectState.search === '' ||
+        tokenType.indexOf(connectState.search) != -1 ||
+        tokenType.search(connectState.search) != -1) {
+
+        const tokenUri = await web3nft.tokenURI(tokenId);
+        const hates = await web3nft.getHates(tokenId);
+        const likes = await web3nft.getLikes(tokenId);
+        const rewards = await web3nft.getTokenRewards(tokenId);
+
+        newNftList.push([tokenId, tokenType, tokenUri, likes.toNumber(), hates.toNumber(), Number(utils.formatEther(rewards))]);
+      }
+    }    
+  }
+
+  nftTotal.value = newNftList.length;
+  nftList.value = newNftList;
+}
+
+//click to change active item and refresh page
+const handleClick = async () => {
+  try{
+
+    loadStatus.value = true;
+
+    await getNftCount(activeName.value);
+
+    if(currentPage.value < 1){
+      currentPage.value = 1;
+    }
+
+    let totalPage = Math.floor(nftTotal.value/pageSize.value);
+
+    if((nftTotal.value%pageSize.value)!=0){
+      totalPage += 1;
+    }
+
+    if(currentPage.value > totalPage){
+      currentPage.value = totalPage;
+    }
+
+    let start = (currentPage.value-1) * pageSize.value;
+    let end = currentPage.value * pageSize.value;
+
+    if(start < 0){
+      start = 0;
+    }
+
+    if(end > nftTotal.value){
+      end = nftTotal.value;
+    }
+
+    nftList.value = nftList.value.slice(start, end);
+
+    const rewards = await web3nft.getAddressRewards(connectState.userAddr);
+
+    userRewards.value = Number(utils.formatEther(rewards)).toFixed(3);
+
+  }catch(e){
+    if(e.stack.length > 200){
+      e.stack = e.stack.slice(0, 200);
+    }    
+    element.elMessage('error', e.stack);
+  }finally{
+    loadStatus.value = false;
+  }
+
+}
+
+//clean search content and bind search callback function
+connectState.search = '';
+connectState.searchCallback = handleClick;
+
+//update page size
+handleClick();
 </script>

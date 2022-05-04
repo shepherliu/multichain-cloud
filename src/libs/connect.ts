@@ -3,6 +3,8 @@ import { providers, utils, Contract } from "ethers"
 
 import * as constant from '../constant'
 
+import { ref } from "vue"
+
 export const connectState = {
   provider: new providers.Web3Provider((window as any).ethereum),
   chainId: 288,
@@ -14,6 +16,9 @@ export const connectState = {
   storage: 'filcoin',
   web3Storage: '',
   bundlrProvider: Object(),
+  activeIndex: ref(1),
+  search: '',
+  searchCallback: async () => {},
 };
 
 //connect to metamask wallet

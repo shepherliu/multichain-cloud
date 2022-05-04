@@ -1,8 +1,8 @@
 <template>
-  <FilesPage v-if="store.state.activeIndex===1" />
-  <FoldersPage v-if="store.state.activeIndex===2"/>
-  <WebsitesPage v-if="store.state.activeIndex===3"/>
-  <NftsPage v-if="store.state.activeIndex===4"/>
+  <FilesPage v-if="activeIndex===1" />
+  <FoldersPage v-if="activeIndex===2"/>
+  <WebsitesPage v-if="activeIndex===3"/>
+  <NftsPage v-if="activeIndex===4"/>
 </template>
 
 <script lang="ts">
@@ -20,8 +20,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useStore } from 'vuex'
+import { connectState } from "../libs/connect"
 
-const store = useStore();
-
+const activeIndex = connectState.activeIndex;
 </script>

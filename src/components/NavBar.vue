@@ -174,7 +174,6 @@ export default {
 
 <script setup lang="ts">
 import { ref } from "vue"
-import { useStore } from 'vuex'
 
 import * as utils from "../libs/utils"
 import * as connect from "../libs/connect"
@@ -183,7 +182,6 @@ import * as element from "../libs/element"
 
 import * as constant from "../constant"
 
-const store = useStore();
 const logo = require('@/assets/logo.png');
 const metamask = require('@/assets/metamask.svg');
 const userAddr = ref("");
@@ -287,7 +285,7 @@ const onConnect = async () => {
 //on menus selected
 const handleSelect = (key: string, keyPath: string[]) => {
   activeIndex.value = key;
-  store.state.activeIndex = Number(activeIndex.value);
+  connect.connectState.activeIndex.value = Number(activeIndex.value);
 };    
 
 //on click to copy address
@@ -350,6 +348,9 @@ const onProfileSettings = async () => {
 
 //on content search
 const onSearchContent = async () => {
-  store.state.search = searchContent.value.trim();
+  connect.connectState.search = searchContent.value.trim();
+  await connect.connectState.searchCallback();
+  searchContent.value = '';
+  connect.connectState.search = '';
 }
 </script>

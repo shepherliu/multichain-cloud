@@ -24,6 +24,11 @@
       :show-file-list="false"
       :on-exceed="handleExceed"
       :auto-upload="false"
+      v-loading="loadStatus" 
+      element-loading-text="Uploading..."
+      :element-loading-spinner="svg"
+      element-loading-svg-view-box="-10, -10, 50, 50"
+      element-loading-background="#ffffff"      
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">
@@ -41,7 +46,12 @@
       @change="onChangeUploadType"
       active-text="Folder"
     />
-    <el-button @click="onUploadFile" type="primary" round style="margin-left: 15px;">
+    <el-button 
+      @click="onUploadFile" 
+      type="primary" 
+      round style="margin-left: 15px;"
+      :disabled="loadStatus"
+    >
       Upload<el-icon class="el-icon--right"><Upload /></el-icon>
     </el-button>      
   </el-card>
@@ -69,6 +79,7 @@ import * as element from "../libs/element"
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const upload = ref<UploadInstance>();
+const loadStatus = ref(false);
 const isFolder = ref(false);
 const limits = ref(1);
 const acceptType = ref('');
@@ -170,19 +181,6 @@ const onSelectFiles = async () => {
   upload.value!.clearFiles();
 }
 
-const onUploadFile = async () => {
-  if(toRaw(fileList.value).length === 0){
-    element.elMessage('warning', 'You have not select any file or folder to upload!');
-    return;
-  }
-
-  if(!isFolder.value){
-    await storage.uploadFile(toRaw(fileList.value)[0]);
-  } else {
-    await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
-  }
-}
-
 const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   const files = toRaw(uploadFiles);
   fileList.value = files;
@@ -220,5 +218,38 @@ const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFi
     { description: 'Size', value: utils.fileSize(fileSize),},
     { description: 'Cost', value: 0,},         
   ];
+}
+
+const onUploadFile = async () => {
+  try{
+
+    loadStatus.value = true;
+
+    if(toRaw(fileList.value).length === 0){
+      element.elMessage('warning', 'You have not select any file or folder to upload!');
+      return;
+    }
+
+    if(!isFolder.value){
+      await storage.uploadFile(toRaw(fileList.value)[0]);
+    } else {
+      await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
+    }    
+
+    if(isFolder.value){
+      element.elMessage('success', 'Upload folder success!');
+    }else{
+      element.elMessage('success', 'Upload file success!');
+    }
+
+  }catch(e){
+    if(e.stack.length > 200){
+      e.stack = e.stack.slice(0, 200);
+    }
+    element.elMessage('error', e.stack);
+  }finally{
+    loadStatus.value = false;
+  }
+
 }
 </script>

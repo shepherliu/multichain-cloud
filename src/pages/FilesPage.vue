@@ -9,7 +9,14 @@
           <el-tab-pane label="Docs" name="docs"></el-tab-pane>
         </el-tabs>
       </el-header>
-      <el-main style="height: 450px;">
+      <el-main
+        style="height: 450px;" 
+        v-loading="loadStatus" 
+        element-loading-text="Loading..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        element-loading-background="#ffffff"
+      >
         <el-row :gutter="20">
           <template v-for="file in fileList" :key="file[2]">
               <el-col :span="8">
@@ -74,23 +81,34 @@ export default {
 <script setup lang="ts">
 import { ref } from "vue"
 
-import { useStore } from 'vuex'
-
 import * as filemanager from "../libs/filemanager"
 import * as web3nft from "../libs/web3nft"
 import * as utils from "../libs/utils"
-
-const store = useStore();
+import { connectState } from "../libs/connect"
+import * as element from "../libs/element"
 
 const activeName = ref("image");
-
+const loadStatus = ref(false);
 const pageSize = ref(9);
 const currentPage = ref(0);
-
 const fileTotal = ref(0);
-
 const fileList = ref(new Array());
 
+//click to delete file
+const onDeleteFile = async (fileid:string) => {
+  await filemanager.delFile(fileid);
+
+  handleClick();
+}
+
+// click to mint nft
+const onMintNft = async (filetype:string, fileid:string) => {
+  await web3nft.mint(filetype, fileid);
+
+  handleClick();
+}
+
+//get total file count and pull files info
 const getFileCount = async (filetype:string) => {
   const res = await filemanager.getIndexsByFileType(filetype);
 
@@ -101,9 +119,9 @@ const getFileCount = async (filetype:string) => {
     const fileInfo = await filemanager.getFileInfoByIndex(index);
     const name = fileInfo[0];
     
-    if(store.state.search === '' ||
-      name.indexOf(store.state.search) != -1 ||
-      name.search(store.state.search) != -1) {
+    if(connectState.search === '' ||
+      name.indexOf(connectState.search) != -1 ||
+      name.search(connectState.search) != -1) {
 
       newFileList.push(fileInfo.slice(0,));
     }
@@ -118,48 +136,57 @@ const getFileCount = async (filetype:string) => {
   fileTotal.value = fileList.value.length;
 }
 
+//click to change active item and refresh page
 const handleClick = async () => {
-  await getFileCount(activeName.value);
 
-  if(currentPage.value < 1){
-    currentPage.value = 1;
+  try{
+
+    loadStatus.value = true;
+    
+    await getFileCount(activeName.value);
+
+    if(currentPage.value < 1){
+      currentPage.value = 1;
+    }
+
+    let totalPage = Math.floor(fileTotal.value/pageSize.value);
+
+    if((fileTotal.value%pageSize.value)!=0){
+      totalPage += 1;
+    }
+
+    if(currentPage.value > totalPage){
+      currentPage.value = totalPage;
+    }
+
+    let start = (currentPage.value-1) * pageSize.value;
+    let end = currentPage.value * pageSize.value;
+
+    if(start < 0){
+      start = 0;
+    }
+
+    if(end > fileTotal.value){
+      end = fileTotal.value;
+    }
+
+    fileList.value = fileList.value.slice(start, end);
+
+  }catch(e){
+    if(e.stack.length > 200){
+      e.stack = e.stack.slice(0, 200);
+    }    
+    element.elMessage('error', e.stack);
+  }finally{
+    loadStatus.value = false;
   }
 
-  let totalPage = Math.floor(fileTotal.value/pageSize.value);
-
-  if((fileTotal.value%pageSize.value)!=0){
-    totalPage += 1;
-  }
-
-  if(currentPage.value > totalPage){
-    currentPage.value = totalPage;
-  }
-
-  let start = (currentPage.value-1) * pageSize.value;
-  let end = currentPage.value * pageSize.value;
-
-  if(start < 0){
-    start = 0;
-  }
-
-  if(end > fileTotal.value){
-    end = fileTotal.value;
-  }
-
-  fileList.value = fileList.value.slice(start, end);
 }
 
-const onDeleteFile = async (fileid:string) => {
-  await filemanager.delFile(fileid);
+//clean search content and bind search callback function
+connectState.search = '';
+connectState.searchCallback = handleClick;
 
-  handleClick();
-}
-
-const onMintNft = async (filetype:string, fileid:string) => {
-  await web3nft.mint(filetype, fileid);
-
-  handleClick();
-}
-
+//update page
 handleClick();
 </script>

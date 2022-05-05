@@ -12,6 +12,32 @@ We use smart contract as the file manager to store the file indexs, and we build
 
 ***How it runs***:
 
+  *0. make sure you are using linux system installed with git, node, npm .etc.*
+
+  *1. clone this project*
+    
+    git clone https://github.com/shepherliu/cloud-vue3.git
+    
+  *2. cd this project*
+  
+    cd cloud-vue3
+    
+  *3. install dependencies*
+
+    npm install
+    
+  *4. run it on https://localhost:8080/*
+  
+    npm run serve
+    
+  *5. build it for production*
+  
+    npm run build
+    
+  *6. see our daemon website https://cloud-vue3.vercel.app*
+  
+  *7. see our daemon video*
+
 
 ***How it works***:
 

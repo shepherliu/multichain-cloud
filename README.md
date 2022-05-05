@@ -58,7 +58,7 @@ To keep the high quality of the NFTs, the total supply has a limit of max 15000,
    
    *2. Swarm Storage Full Support.*
    
-   *3. Arweave Storage Full Support(using bundlr network).*
+   *3. Arweave Storage Full Support.*
    
    *4. NFT Buy And Sell In App.*
    

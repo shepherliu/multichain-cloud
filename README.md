@@ -8,6 +8,7 @@ The dapp also has a builtin NFT marketpalce that you can mint your own nft with 
 
 We use smart contract as the file manager to store the file indexs, and we build an nft contract called Web3NFT, that is cool and representative to the future.
 
+To keep the high quality of the NFTs, the total supply has a limit of max 15000, and the max number of one user can mint is set to 10. And we will also disbale the mint and claim function for users who got more than 1000 unlikes about their NFTs. Thus people should burn their low quality NFTs and mint high quality NFTs instead.
 
 
 ***How it runs***:

@@ -1,9 +1,9 @@
 // example imports 
 import { providers, Contract } from "ethers"
 
-import * as constant from "../constant"
+import { fileContractAddress } from "../constant"
 
-import * as connect from "./connect"
+import {networkConnect, connectState} from "./connect"
 
 //contract abis
 const abi = [
@@ -15,9 +15,9 @@ const abi = [
 
 //get contract provider
 export const getContract = async () => {
-  await connect.networkConnect();
+  await networkConnect();
 
-  return new Contract(constant.fileContractAddress, abi, connect.connectState.signer);	
+  return new Contract((fileContractAddress as any)[connectState.chainId], abi, connectState.signer);	
 }
 
 //add a file to the smart contract

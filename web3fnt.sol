@@ -9,6 +9,12 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenId;
 
+    uint256 private _maxtotalSupply;
+
+    uint256 private _maxUserSupply;
+
+    uint256 private _maxUserHates;
+
     mapping(uint256 => string) private _tokenType;
 
     mapping(string => bool) private _tokenUri;
@@ -23,7 +29,11 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
 
     mapping(address => mapping(uint256 => bool)) private _addressLikes;
 
-    constructor() ERC721("Web3NFT", "WNFT") {}
+    constructor() ERC721("Web3NFT", "WNFT") {
+        _maxtotalSupply = 15000;
+        _maxUserSupply = 10;
+        _maxUserHates = 1000;
+    }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override (ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
@@ -70,6 +80,18 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
 
         if(_tokenUri[tokenURI]){
             revert("token uri has already used!");
+        }
+
+        if(super.totalSupply() >= _maxtotalSupply){
+            revert("mint failed for reaching the max total supply!");
+        }
+
+        if(super.balanceOf(msg.sender) >= _maxUserSupply){
+            revert("mint failed for reaching the max user supply!");
+        }
+
+        if(getAddressHates() >= _maxUserHates){
+            revert("mint failed for your NFTs got too much unlikes!");
         }
 
         _tokenId.increment();
@@ -164,6 +186,10 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
         uint256 balance = super.balanceOf(msg.sender);
         uint256 rewards = 0;
 
+        if(getAddressHates() >= _maxUserHates){
+            revert("claim failed for your NFTs got too much unlikes!");
+        }    
+
         for(uint256 i = 0; i < balance; i++){
             uint256 tokenId = super.tokenOfOwnerByIndex(msg.sender, i);
             rewards += _rewards[tokenId];
@@ -189,16 +215,30 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
         return _rewards[tokenId];
     }
 
-    function getAddressRewards(address addr) public view returns (uint256){
-        uint256 balance = super.balanceOf(addr);
+    function getAddressRewards() public view returns (uint256){
+        uint256 balance = super.balanceOf(msg.sender);
         uint256 rewards = 0;
 
         for(uint256 i = 0; i < balance; i++){
-            uint256 tokenId = super.tokenOfOwnerByIndex(addr, i);
+            uint256 tokenId = super.tokenOfOwnerByIndex(msg.sender, i);
             rewards += _rewards[tokenId];
         }        
 
         return rewards;
+    }
+
+    function getAddressHates() internal view returns (uint256){
+        uint256 balance = super.balanceOf(msg.sender);
+        uint256 hates = 0;
+
+        for(uint256 i = 0; i < balance; i++){
+            uint256 tokenId = super.tokenOfOwnerByIndex(msg.sender, i);
+            if(_hates[tokenId] > _likes[tokenId]){
+                hates += _hates[tokenId] - _likes[tokenId];
+            }
+        }        
+
+        return hates;
     }
 
     function minted(string memory tokenURI) public view returns (bool){

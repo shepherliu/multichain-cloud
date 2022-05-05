@@ -42,10 +42,20 @@ export const bundlrTestUrl = "https://devnet.bundlr.network";
 export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b8309";
 
 //file contract address
-export const fileContractAddress = "0xf59a1dB4593B748Fe1b94cb6646bA1b32a4b26DD";
+export const fileContractAddress = {
+  4: "0xf59a1dB4593B748Fe1b94cb6646bA1b32a4b26DD",
+  28: "0x65e6e482BF7cd0A1B454e6756Df9da24Fbe7d424",
+  588: "0xA5a275096AA2512E2FC32c003e87dd9fae7515C3",
+  80001: "0x5755579e4ed12d114ccdab4ae69c99eb00479476",
+};
 
 //nft contract address
-export const nftContractAddress = "0x36cD562DA3D6C33A591756Cc0E363896e921C153";
+export const nftContractAddress = {
+  4: "0xC28290C8C16b8C8a27733315ab7A86cc0A5F643E",
+  28: "0x6EEe74D7309cF800FA51454583c652f4910789DF",
+  588: "0xC8ee8f35568851e8b886569E40B6cd35dE944fe3",
+  80001: "0xB02a5deFc7c599cfa039a8cC21572DEff8822699",
+};
 
 //token List
 export const tokenList = {

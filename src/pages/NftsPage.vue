@@ -189,7 +189,7 @@ const onBurnNft = async (tokenId:number) => {
 const onClaimRewards = async () => {
   try{
 
-    const rewards = await web3nft.getAddressRewards(connectState.userAddr.value);
+    const rewards = await web3nft.getAddressRewards();
   
     if(rewards > 0){
       const tx = await web3nft.claim();
@@ -339,7 +339,7 @@ const handleClick = async () => {
 
     nftList.value = nftList.value.slice(start, end);
 
-    const rewards = await web3nft.getAddressRewards(connectState.userAddr.value);
+    const rewards = await web3nft.getAddressRewards();
 
     userRewards.value = Number(utils.formatEther(rewards)).toFixed(3);
 

@@ -8,11 +8,11 @@ import { shortString } from "./tools"
 import { ref } from "vue"
 
 export const connectState = {
-  chainId: 288,
+  chainId: 4,
   chainName: '',
   userAddr: ref(''),
   shortAddr: ref(''),
-  currency: 'BOBA',
+  currency: 'ETH',
   signed: false,
   provider: new providers.Web3Provider((window as any).ethereum),
   signer: Object(),

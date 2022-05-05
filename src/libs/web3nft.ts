@@ -1,9 +1,9 @@
 // example imports 
 import { providers, utils, Contract } from "ethers"
 
-import * as constant from "../constant"
+import {nftContractAddress} from "../constant"
 
-import * as connect from "./connect"
+import {networkConnect, connectState} from "./connect"
 
 //contract abis
 const abi = [
@@ -18,7 +18,7 @@ const abi = [
 	"function getHates(uint256 tokenId) public view returns (uint256)",
 	"function getLikes(uint256 tokenId) public view returns (uint256)",
 	"function getTokenRewards(uint256 tokenId) public view returns (uint256)",
-	"function getAddressRewards(address addr) public view returns (uint256)",
+	"function getAddressRewards() public view returns (uint256)",
 	"function balanceOf(address owner) public view returns (uint256)",
 	"function ownerOf(uint256 tokenId) public view returns (address)",
 	"function tokenByIndex(uint256 index) public view returns (uint256)",
@@ -29,9 +29,9 @@ const abi = [
 
 //get contract provider
 export const getContract = async () => {
-  await connect.networkConnect();
+  await networkConnect();
 
-  return new Contract(constant.nftContractAddress, abi, connect.connectState.signer);	
+  return new Contract((nftContractAddress as any)[connectState.chainId], abi, connectState.signer);	
 }
 
 //mint a nft
@@ -183,15 +183,11 @@ export const getTokenRewards = async (tokenId:number) => {
 }
 
 //get user address total rewards
-export const getAddressRewards = async (addr:string) => {
-	addr = addr.trim();
-	if(addr===''){
-		throw new Error("address is empty!");
-	}
+export const getAddressRewards = async () => {
 
 	const contract = await getContract();
 
-	return await contract.getAddressRewards(addr);
+	return await contract.getAddressRewards();
 }
 
 //get the amount nfts of user

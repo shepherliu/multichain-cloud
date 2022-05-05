@@ -41,6 +41,8 @@ We use smart contract as the file manager to store the file indexs, and we build
 
 ***How it works***:
 
+<img width="980" alt="截屏2022-05-05 16 05 58" src="https://user-images.githubusercontent.com/84829620/166884452-e25d098f-f9e9-421f-9c45-b919f64ca68f.png">
+
 ***Future Plans***:
 
    *1. Multi Chain Full Support.*

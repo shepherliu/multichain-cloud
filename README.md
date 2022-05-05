@@ -15,10 +15,23 @@ We use smart contract as the file manager to store the file indexs, and we build
 
 ***How it works***:
 
+***Future Plans***:
 
+   *1. Multi Chain Full Support.*
+   
+   *2. Swarm Storage Full Support.*
+   
+   *3. Arweave Storage Full Support(using bundlr network).*
+   
+   *4. NFT Buy And Sell In App.*
+   
+   *5. File/Folder Encrypt And Decrypt Support.*
+   
+   *6. AI NFT Create Support.*
+   
 ***Resources:***
 
-*1.Block Chain Resource Docs:*
+*1. Block Chain Resource Docs:*
 
    getting started with Ploygon Network: https://docs.polygon.technology/, https://faucet.polygon.technology/
    
@@ -26,7 +39,7 @@ We use smart contract as the file manager to store the file indexs, and we build
    
    getting started with Metis Network: https://docs.metis.io/
 
-*2.Distributed Storage Resource Docs:*
+*2. Distributed Storage Resource Docs:*
 
    getting started wit IPFS & Filecoin:  https://bitly.protocol.ai/IPFS_Filecoin_Get_Started
    
@@ -36,11 +49,11 @@ We use smart contract as the file manager to store the file indexs, and we build
    
    getting started with Bundlr Network: https://docs.bundlr.network/, https://github.com/Bundlr-Network
 
-*3.Transak Docs:*
+*3. Transak Docs:*
 
    getting started wit Transak: https://integrate.transak.com/
 
-*4.Smart contract Resource Docs:*
+*4. Smart contract Resource Docs:*
 
    online solidity compilier: https://remix.ethereum.org/
    
@@ -48,7 +61,7 @@ We use smart contract as the file manager to store the file indexs, and we build
    
    getting started with solidity: https://docs.soliditylang.org/en/latest/
    
-*5.Fronted Resource Docs:*
+*5. Fronted Resource Docs:*
 
    getting started with Vue3: https://vuejs.org/guide/introduction.html
    

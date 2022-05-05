@@ -27,10 +27,6 @@ module.exports = defineConfig({
         Buffer: ["buffer", "Buffer"],
         process: "process/browser",
       }),
-      // new HtmlWebpackPlugin({
-      //   template: "index.html",
-      // }),
-      // new MiniCssExtractPlugin(),
     ],    
   },
 })

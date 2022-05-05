@@ -43,7 +43,7 @@
                       size="small"
                       @click="onMintNft(file[1], file[2])"
                     >
-                      {{file[4] ? "Minted" : "Mint"}}<el-icon><share /></el-icon>
+                      {{file[4] ? "Minted" : "MintNFT"}}<el-icon><share /></el-icon>
                     </el-button>
                     <el-button type="danger" size="small" @click="onDeleteFile(file[2])">
                       Delete<el-icon><delete /></el-icon>

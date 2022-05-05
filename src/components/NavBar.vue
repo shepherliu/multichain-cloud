@@ -246,21 +246,24 @@ const transactionExplorerUrl = (transaction:string) => {
 
 //connect to metamask
 const connectNetwork = async () => {
-  const res = await connect.networkConnect();
-  if(res){
+  network.switchNetwork(Number(networkSelected.value)).then(async (res) => {
+    if(res){
+      res = await connect.networkConnect();
+      if(res){
+        element.elMessage('success', 'You have connected to the wallet.');
+        connect.connectState.searchCallback();
 
-    element.elMessage('success', 'You have connected to the wallet.');
+        return;
+      }
+    }
 
-    connect.connectState.searchCallback();
-
-  } else{
     userAddr.value = "";
     shortAddr.value = "";
     networkName.value = "";
     connectStatus.value = "Connect Wallet";
 
-    element.elMessage('error', 'Connect to the wallet failed.');              
-  }
+    element.elMessage('error', 'Connect to the wallet failed.');     
+  });
 }
 
 //set connect callback function
@@ -299,7 +302,7 @@ connect.accountsChanged(accountsChanged);
 //on wallet network changed
 const networkChanged = async () => {
   if(!connect.connected()){
-    return await disConnectNetwork();
+    return;
   }
 
   if(connectStatus.value === "Cancel Connect"){

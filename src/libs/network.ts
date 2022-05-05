@@ -66,7 +66,7 @@ export const switchNetwork = async (chainId: number) => {
     }
   }
 
-  await sleep(1000);
+  await sleep(1500);
 
   if(Number((window as any).ethereum.networkVersion)===chainId){
     return true;

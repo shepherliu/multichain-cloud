@@ -115,7 +115,7 @@ const onLikeNft = async (tokenId:number) => {
 
   try{
     const tx = await web3nft.likeNft(tokenId);
-    connectState.transactions.value.push(tx);
+    connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
     const msg = '<div><span>Like success! Transaction: </span><a href="' + 
@@ -141,7 +141,7 @@ const onHateNft = async (tokenId:number) => {
   try{
 
     const tx = await web3nft.hateNft(tokenId);
-    connectState.transactions.value.push(tx);
+    connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
     const msg = '<div><span>Hate success! Transaction: </span><a href="' + 
@@ -166,7 +166,7 @@ const onBurnNft = async (tokenId:number) => {
   try{
 
     const tx = await web3nft.burn(tokenId);
-    connectState.transactions.value.push(tx);
+    connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
     const msg = '<div><span>Burn success! Transaction: </span><a href="' + 
@@ -194,7 +194,7 @@ const onClaimRewards = async () => {
   
     if(rewards > 0){
       const tx = await web3nft.claim();
-      connectState.transactions.value.push(tx);
+      connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;   
 
       const msg = '<div><span>Claim success! Transaction: </span><a href="' + 
@@ -231,7 +231,7 @@ const onRewardNft = async (tokenId:number) => {
 
       try{
         const tx = await web3nft.rewardNft(tokenId, value);
-        connectState.transactions.value.push(tx);
+        connectState.transactions.value.unshift(tx);
         connectState.transactionCount.value++;
 
         const msg = '<div><span>Reward success! Transaction: </span><a href="' + 
@@ -324,9 +324,6 @@ const handleClick = async () => {
       totalPage += 1;
     }
 
-    console.log(totalPage);
-    console.log(currentPage.value);
-
     if(currentPage.value > totalPage){
       currentPage.value = totalPage;
     }
@@ -374,10 +371,6 @@ try{
 }catch(e){
   activeName.value = 'all';
 }
-
-//set activeIndex to connectState and location.href
-connectState.activeName.value = activeName.value;
-tools.setUrlParamter('activeName', activeName.value);
 
 //update page size
 if (connected()){

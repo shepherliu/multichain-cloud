@@ -239,11 +239,11 @@ const onUploadFile = async () => {
 
     if(!isFolder.value){
       const tx = await storage.uploadFile(toRaw(fileList.value)[0]);
-      connectState.transactions.value.push(tx);
+      connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
     } else {
       const tx = await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
-      connectState.transactions.value.push(tx);
+      connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
     }    
 

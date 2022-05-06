@@ -69,7 +69,7 @@
           </el-button>
         </template>
         <el-row :gutter="20">
-          <template v-for="tx in transactions.reverse()" :key="tx">
+          <template v-for="tx in transactions" :key="tx">
             <el-col :span="20">
               <el-link type="primary" :href="transactionExplorerUrl(tx)" target="_blank">{{tools.shortString(tx)}}</el-link>
               <el-icon @click="onClickToCopy(tx)" style="margin-left: 10px;"><document-copy /></el-icon>

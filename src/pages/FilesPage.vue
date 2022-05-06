@@ -115,7 +115,7 @@ const onDeleteFile = async (fileid:string) => {
   try{
 
     const tx = await filemanager.delFile(fileid);
-    connectState.transactions.value.push(tx);
+    connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
     const msg = '<div><span>Delete success! Transaction: </span><a href="' + 
@@ -141,7 +141,7 @@ const onMintNft = async (filetype:string, fileid:string) => {
   try{
 
     const tx = await web3nft.mint(filetype, fileid);
-    connectState.transactions.value.push(tx);
+    connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
     const msg = '<div><span>Mint success! Transaction: </span><a href="' + 
@@ -257,10 +257,6 @@ try{
 }catch(e){
   activeName.value = 'image';
 }
-
-//set activeIndex to connectState and location.href
-connectState.activeName.value = activeName.value;
-tools.setUrlParamter('activeName', activeName.value);
 
 //update page
 if (connected()){

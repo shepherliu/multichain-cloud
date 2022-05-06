@@ -260,36 +260,40 @@ const getNftCount = async (nfttype:string) => {
     const total = await web3nft.totalSupply();
 
     for(let i = 0; i < total.toNumber(); i++){
-      const tokenId = await web3nft.tokenByIndex(i);
+      const tokenId = (await web3nft.tokenByIndex(i)).toNumber();
       const tokenType = await web3nft.tokenType(tokenId);
       if(connectState.search === '' ||
         tokenType.indexOf(connectState.search) != -1 ||
-        tokenType.search(connectState.search) != -1) {
+        tokenType.search(connectState.search) != -1 ||
+        (String(tokenId)).indexOf(connectState.search) != -1 ||
+        (String(tokenId)).search(connectState.search) != -1){
 
         const tokenUri = await web3nft.tokenURI(tokenId);
-        const hates = await web3nft.getHates(tokenId);
-        const likes = await web3nft.getLikes(tokenId);
+        const hates = (await web3nft.getHates(tokenId)).toNumber();
+        const likes = (await web3nft.getLikes(tokenId)).toNumber();
         const rewards = await web3nft.getTokenRewards(tokenId);
 
-        newNftList.push([tokenId, tokenType, tokenUri, likes.toNumber(), hates.toNumber(), Number(utils.formatEther(rewards))]);
+        newNftList.push([tokenId, tokenType, tokenUri, likes, hates, Number(utils.formatEther(rewards))]);
       }
     }
   }else{
     const total = await web3nft.balanceOf(connectState.userAddr.value);
     
     for(let i = 0; i < total.toNumber(); i++){
-      const tokenId = await web3nft.tokenOfOwnerByIndex(connectState.userAddr.value, i);
+      const tokenId = (await web3nft.tokenOfOwnerByIndex(connectState.userAddr.value, i)).toNumber();
       const tokenType = await web3nft.tokenType(tokenId);
       if(connectState.search === '' ||
         tokenType.indexOf(connectState.search) != -1 ||
-        tokenType.search(connectState.search) != -1) {
+        tokenType.search(connectState.search) != -1 ||
+        (String(tokenId)).indexOf(connectState.search) != -1 ||
+        (String(tokenId)).search(connectState.search) != -1){
 
         const tokenUri = await web3nft.tokenURI(tokenId);
-        const hates = await web3nft.getHates(tokenId);
-        const likes = await web3nft.getLikes(tokenId);
+        const hates = (await web3nft.getHates(tokenId)).toNumber();
+        const likes = (await web3nft.getLikes(tokenId)).toNumber();
         const rewards = await web3nft.getTokenRewards(tokenId);
 
-        newNftList.push([tokenId, tokenType, tokenUri, likes.toNumber(), hates.toNumber(), Number(utils.formatEther(rewards))]);
+        newNftList.push([tokenId, tokenType, tokenUri, likes, hates, Number(utils.formatEther(rewards))]);
       }
     }    
   }

@@ -76,6 +76,8 @@ To keep the high quality of the NFTs, the total supply has a limit of max 15000,
    
    getting started with Metis Network: https://docs.metis.io/
 
+   getting started with Meter Network: https://docs.meter.io/developer-documentation/introduction
+
 *2. Distributed Storage Resource Docs:*
 
    getting started wit IPFS & Filecoin:  https://bitly.protocol.ai/IPFS_Filecoin_Get_Started

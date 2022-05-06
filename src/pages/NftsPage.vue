@@ -3,7 +3,9 @@
     <el-container>
       <el-header style="background-color: #ffffff;">
         <el-tabs v-model="activeName" class="file-tabs" @tab-click="handleClick">
-          <el-tab-pane label="AllNfts" name="all"></el-tab-pane>
+          <el-tab-pane label="Image" name="image"></el-tab-pane>
+          <el-tab-pane label="Audio" name="audio"></el-tab-pane>
+          <el-tab-pane label="Video" name="video"></el-tab-pane>
           <el-tab-pane label="MyNfts" name="mine"></el-tab-pane>
         </el-tabs>
         <el-link type="primary" @click="onClaimRewards()" style="float: right;">Claim : {{userRewards}}</el-link>
@@ -256,15 +258,18 @@ const onRewardNft = async (tokenId:number) => {
 const getNftCount = async (nfttype:string) => {
   const newNftList = new Array();
 
-  if(nfttype === 'all'){
+  if(nfttype === 'image' || nfttype === 'audio' || nfttype === 'video'){
     const total = await web3nft.totalSupply();
 
     for(let i = 0; i < total.toNumber(); i++){
       const tokenId = (await web3nft.tokenByIndex(i)).toNumber();
       const tokenType = await web3nft.tokenType(tokenId);
+      
+      if(tokenType != nfttype){
+        continue;
+      }
+      
       if(connectState.search === '' ||
-        tokenType.indexOf(connectState.search) != -1 ||
-        tokenType.search(connectState.search) != -1 ||
         (String(tokenId)).indexOf(connectState.search) != -1 ||
         (String(tokenId)).search(connectState.search) != -1){
 
@@ -282,9 +287,8 @@ const getNftCount = async (nfttype:string) => {
     for(let i = 0; i < total.toNumber(); i++){
       const tokenId = (await web3nft.tokenOfOwnerByIndex(connectState.userAddr.value, i)).toNumber();
       const tokenType = await web3nft.tokenType(tokenId);
+      
       if(connectState.search === '' ||
-        tokenType.indexOf(connectState.search) != -1 ||
-        tokenType.search(connectState.search) != -1 ||
         (String(tokenId)).indexOf(connectState.search) != -1 ||
         (String(tokenId)).search(connectState.search) != -1){
 
@@ -359,12 +363,15 @@ connectState.searchCallback = handleClick;
 try{
   activeName.value = tools.getUrlParamter('activeName');
 
-  if(activeName.value != 'all' && activeName.value != 'mine'){
+  if(activeName.value != 'image' && 
+    activeName.value != "audio" && 
+    activeName.value != 'video' && 
+    activeName.value != 'mine'){
 
-    activeName.value = 'all';
+    activeName.value = 'image';
   }
 }catch(e){
-  activeName.value = 'all';
+  activeName.value = 'image';
 }
 
 //update page size

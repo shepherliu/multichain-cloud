@@ -45,6 +45,7 @@ export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b83
 export const fileContractAddress = {
   4: "0xf59a1dB4593B748Fe1b94cb6646bA1b32a4b26DD",
   28: "0x65e6e482BF7cd0A1B454e6756Df9da24Fbe7d424",
+  83: "0xfB296908fDD00C655609B74C8BF418dB7cC5407b",
   588: "0xA5a275096AA2512E2FC32c003e87dd9fae7515C3",
   80001: "0x5755579e4ed12d114ccdab4ae69c99eb00479476",
 };
@@ -53,6 +54,7 @@ export const fileContractAddress = {
 export const nftContractAddress = {
   4: "0xC28290C8C16b8C8a27733315ab7A86cc0A5F643E",
   28: "0x6EEe74D7309cF800FA51454583c652f4910789DF",
+  83: "0x706e4dBbb8833d36FDdb1dc5a8C0C88342fA60f3",
   588: "0xC8ee8f35568851e8b886569E40B6cd35dE944fe3",
   80001: "0xB02a5deFc7c599cfa039a8cC21572DEff8822699",
 };
@@ -69,6 +71,8 @@ export const tokenList = {
   50: ['XDC'],  
   56: ['BNB'],
   66: ['OKT'],  
+  82: ['MTR'],
+  83: ['MTR'],
   100: ['xDAI'],
   128: ['HT'],
   137: ['MATIC'],  
@@ -149,11 +153,25 @@ export const chainList = [
   },
   {
     chainId: 66,
-    chainName: 'OKExChain Mainnet',
+    chainName: 'OKEx Chain Mainnet',
     nativeCurrency: 'OKT',
     rpcUrls: 'https://exchainrpc.okex.org',
     blockExplorerUrls: 'https://www.oklink.com/okexchain/',
   },  
+  {
+    chainId: 82,
+    chainName: 'Meter Chain Mainnet',
+    nativeCurrency: 'MTR',
+    rpcUrls: 'https://rpc.meter.io/',
+    blockExplorerUrls: 'https://scan.meter.io/',
+  },  
+  {
+    chainId: 83,
+    chainName: 'Meter Chain Testnet',
+    nativeCurrency: 'MTR',
+    rpcUrls: 'https://rpctest.meter.io/',
+    blockExplorerUrls: 'https://scan-warringstakes.meter.io/',
+  },      
   {
     chainId: 100,
     chainName: "Gnosis Chain Mainnet",

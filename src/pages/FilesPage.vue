@@ -228,11 +228,6 @@ const handleClick = async () => {
 
     fileList.value = fileList.value.slice(start, end);
 
-  }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }    
-    element.elMessage('error', e.stack);
   }finally{
     loadStatus.value = false;
   }

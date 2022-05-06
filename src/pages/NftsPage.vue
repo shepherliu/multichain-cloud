@@ -345,11 +345,6 @@ const handleClick = async () => {
 
     userRewards.value = Number(utils.formatEther(rewards)).toFixed(3);
 
-  }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }    
-    element.elMessage('error', e.stack);
   }finally{
     loadStatus.value = false;
   }

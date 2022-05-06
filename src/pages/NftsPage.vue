@@ -90,7 +90,8 @@ const tokenExplorerUrl = (tokenId:number, tokenURI:string) => {
   for(const i in constant.chainList){
     if(connectState.chainId === constant.chainList[i].chainId){
       const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
-      return blockExplorerUrls + '/token/' + constant.nftContractAddress + '?a=' + tokenId + '#inventory';
+      const nftContractAddress = (constant.nftContractAddress as any)[connectState.chainId]
+      return blockExplorerUrls + '/token/' + nftContractAddress + '?a=' + tokenId + '#inventory';
     }
   }
 

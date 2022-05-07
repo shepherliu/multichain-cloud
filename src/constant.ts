@@ -246,7 +246,7 @@ export const chainList = [
     chainId: 80001,
     chainName: 'Polygon Mumbai Testnet',
     nativeCurrency: 'MATIC',
-    rpcUrls: 'https://rpc-mumbai.maticvigil.com',
+    rpcUrls: 'https://matic-mumbai.chainstacklabs.com',
     blockExplorerUrls: 'https://mumbai.polygonscan.com',
   },  
 ];

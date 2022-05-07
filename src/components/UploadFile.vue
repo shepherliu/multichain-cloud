@@ -258,48 +258,72 @@ const onUploadFile = async () => {
       connectState.transactionCount.value++;
     }    
 
-    switch(fileDescription.value[2].value.split('/')[0]){
+    switch(fileDescription.value[1].value.split('/')[0]){
       case 'image':
         element.elMessage('success', 'Upload image success!');
         tools.setUrlParamter('activeIndex', '1');
         tools.setUrlParamter('activeName', 'image');
-        connectState.activeIndex.value = '1';
         connectState.activeName.value = 'image';
+        if(connectState.activeIndex.value === '1'){
+          connectState.searchCallback();
+        }else{
+          connectState.activeIndex.value = '1';
+        }
         break;
       case 'audio':
         element.elMessage('success', 'Upload audio success!');
         tools.setUrlParamter('activeIndex', '1');
-        tools.setUrlParamter('activeName', 'audio');        
-        connectState.activeIndex.value = '1';
-        connectState.activeName.value = 'audio';
+        tools.setUrlParamter('activeName', 'audio');
+        connectState.activeName.value = 'audio';        
+        if(connectState.activeIndex.value === '1'){
+          connectState.searchCallback();
+        }else{
+          connectState.activeIndex.value = '1';
+        }
         break;
       case 'video':
         element.elMessage('success', 'Upload video success!');
         tools.setUrlParamter('activeIndex', '1');
         tools.setUrlParamter('activeName', 'video');        
-        connectState.activeIndex.value = '1';
         connectState.activeName.value = 'video';
+        if(connectState.activeIndex.value === '1'){
+          connectState.searchCallback();
+        }else{
+          connectState.activeIndex.value = '1';
+        }
         break;
       case 'folder':
         element.elMessage('success', 'Upload folder success!');
         tools.setUrlParamter('activeIndex', '2');
         tools.setUrlParamter('activeName', 'folder');        
-        connectState.activeIndex.value = '2';
         connectState.activeName.value = 'folder';
+        if(connectState.activeIndex.value === '2'){
+          connectState.searchCallback();
+        }else{
+          connectState.activeIndex.value = '2';
+        }
         break;
       case 'website':
         element.elMessage('success', 'Upload website success!');
         tools.setUrlParamter('activeIndex', '3');
-        tools.setUrlParamter('activeName', 'website');        
-        connectState.activeIndex.value = '3';
-        connectState.activeName.value = 'website';
+        tools.setUrlParamter('activeName', 'website');      
+        connectState.activeName.value = 'website';  
+        if(connectState.activeIndex.value === '3'){
+          connectState.searchCallback();
+        }else{
+          connectState.activeIndex.value = '3';
+        }
         break;
       default:
         element.elMessage('success', 'Upload doc file success!');
         tools.setUrlParamter('activeIndex', '1');
-        tools.setUrlParamter('activeName', 'docs');        
-        connectState.activeIndex.value = '1';
-        connectState.activeName.value = 'docs';
+        tools.setUrlParamter('activeName', 'docs');
+        connectState.activeName.value = 'docs';        
+        if(connectState.activeIndex.value === '1'){
+          connectState.searchCallback();
+        }else{
+          connectState.activeIndex.value = '1';
+        }
         break;
     }
 

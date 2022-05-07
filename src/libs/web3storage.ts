@@ -23,7 +23,8 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   const client = getClient();
 
   const data = [];
-  if(files.length===1){
+
+  if(files.length === 1 && ((files[0].raw) as any).webkitRelativePath === ''){
     data.push(files[0].raw);
   }else{
     for(const i in files){

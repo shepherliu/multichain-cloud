@@ -90,7 +90,7 @@ import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
 import * as constant from "../constant"
 
-const activeName = ref("image");
+const activeName = connectState.activeName;
 const loadStatus = ref(false);
 const pageSize = ref(6);
 const currentPage = ref(0);
@@ -178,7 +178,7 @@ const getFileCount = async (filetype:string) => {
 
   const newFileList = new Array();
 
-  for(const i in res){
+  for(let i = res.length -1; i >= 0; i--){
     const index = res[i].toNumber();
     const fileInfo = await filemanager.getFileInfoByIndex(index);
     const name = fileInfo[0];

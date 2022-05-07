@@ -149,7 +149,7 @@ const getEntryDirectoryFiles = async (entry:any, name:string) => {
             name: file.name,
             size: file.size,
             type: file.type,
-            webkitRelativePath: name,
+            webkitRelativePath: name + path.sep + file.name,
             uid: genFileId(),
             text: file.text,
             stream: file.stream,
@@ -258,10 +258,49 @@ const onUploadFile = async () => {
       connectState.transactionCount.value++;
     }    
 
-    if(isFolder.value){
-      element.elMessage('success', 'Upload folder success!');
-    }else{
-      element.elMessage('success', 'Upload file success!');
+    switch(fileDescription.value[2].value.split('/')[0]){
+      case 'image':
+        element.elMessage('success', 'Upload image success!');
+        tools.setUrlParamter('activeIndex', '1');
+        tools.setUrlParamter('activeName', 'image');
+        connectState.activeIndex.value = '1';
+        connectState.activeName.value = 'image';
+        break;
+      case 'audio':
+        element.elMessage('success', 'Upload audio success!');
+        tools.setUrlParamter('activeIndex', '1');
+        tools.setUrlParamter('activeName', 'audio');        
+        connectState.activeIndex.value = '1';
+        connectState.activeName.value = 'audio';
+        break;
+      case 'video':
+        element.elMessage('success', 'Upload video success!');
+        tools.setUrlParamter('activeIndex', '1');
+        tools.setUrlParamter('activeName', 'video');        
+        connectState.activeIndex.value = '1';
+        connectState.activeName.value = 'video';
+        break;
+      case 'folder':
+        element.elMessage('success', 'Upload folder success!');
+        tools.setUrlParamter('activeIndex', '2');
+        tools.setUrlParamter('activeName', 'folder');        
+        connectState.activeIndex.value = '2';
+        connectState.activeName.value = 'folder';
+        break;
+      case 'website':
+        element.elMessage('success', 'Upload website success!');
+        tools.setUrlParamter('activeIndex', '3');
+        tools.setUrlParamter('activeName', 'website');        
+        connectState.activeIndex.value = '3';
+        connectState.activeName.value = 'website';
+        break;
+      default:
+        element.elMessage('success', 'Upload doc file success!');
+        tools.setUrlParamter('activeIndex', '1');
+        tools.setUrlParamter('activeName', 'docs');        
+        connectState.activeIndex.value = '1';
+        connectState.activeName.value = 'docs';
+        break;
     }
 
   }catch(e){

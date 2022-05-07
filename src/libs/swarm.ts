@@ -93,7 +93,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
     metadata.size += files[i].raw.size;
 
-    if(files.length === 1) {
+    if(files.length === 1 && ((files[0].raw) as any).webkitRelativePath === '') {
       metadata.name = files[i].name;
       metadata.type = type;
       tar.append(files[i].name, new Uint8Array(data), {}, function(output:Uint8Array){});

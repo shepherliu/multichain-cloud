@@ -79,7 +79,7 @@ import * as element from "../libs/element"
 import * as constant from "../constant"
 import * as tools from "../libs/tools"
 
-const activeName = ref("all");
+const activeName = connectState.activeName;
 const loadStatus = ref(false);
 const userRewards = ref(0);
 const pageSize = ref(3);
@@ -272,7 +272,7 @@ const getNftCount = async (nfttype:string) => {
   if(nfttype === 'image' || nfttype === 'audio' || nfttype === 'video'){
     const total = await web3nft.totalSupply();
 
-    for(let i = 0; i < total.toNumber(); i++){
+    for(let i = total.toNumber() - 1; i >= 0; i--){
       const tokenId = (await web3nft.tokenByIndex(i)).toNumber();
       const tokenType = await web3nft.tokenType(tokenId);
       
@@ -295,7 +295,7 @@ const getNftCount = async (nfttype:string) => {
   }else{
     const total = await web3nft.balanceOf(connectState.userAddr.value);
     
-    for(let i = 0; i < total.toNumber(); i++){
+    for(let i = total.toNumber() - 1; i >= 0; i--){
       const tokenId = (await web3nft.tokenOfOwnerByIndex(connectState.userAddr.value, i)).toNumber();
       const tokenType = await web3nft.tokenType(tokenId);
       

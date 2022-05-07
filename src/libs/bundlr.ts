@@ -270,7 +270,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
     const res = await tx.upload();
 
-    if(files.length==1){
+    if(files.length === 1 && ((files[0].raw) as any).webkitRelativePath === ''){
       return res.data.id;
     }
 

@@ -48,7 +48,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   }
 
   let filetype = '';
-  if(files.length===1){
+  if(files.length === 1 && ((files[0].raw) as any).webkitRelativePath === ''){
     filetype = tools.fileType(files[0].name).split('/')[0];
     if(filetype!='image'&&filetype!='audio'&&filetype!='video'){
       filetype = 'docs';

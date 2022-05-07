@@ -220,7 +220,7 @@ const userAddr = connect.connectState.userAddr;
 const shortAddr = connect.connectState.shortAddr;
 const networkName = ref("");
 const searchContent = ref("");
-const activeIndex = ref("1");
+const activeIndex = connect.connectState.activeIndex;
 const connectStatus = ref("Connect Wallet");
 const showSwitchNetwork = ref(false);
 const transactions = connect.connectState.transactions;
@@ -421,7 +421,6 @@ const onNetworkConfig = async () => {
 //on menus selected
 const handleSelect = (key: string, keyPath: string[]) => {
   activeIndex.value = key;
-  connect.connectState.activeIndex.value = activeIndex.value;
 
   tools.setUrlParamter('activeIndex', activeIndex.value);
 };    

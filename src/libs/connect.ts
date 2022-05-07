@@ -19,7 +19,7 @@ export const connectState = {
   storage: 'filcoin',
   web3Storage: '',
   bundlrProvider: Object(),
-  activeIndex: ref(1),
+  activeIndex: ref('1'),
   activeName: ref(''),
   search: '',
   searchCallback: async () => {},

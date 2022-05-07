@@ -421,19 +421,22 @@ const onNetworkConfig = async () => {
 //on menus selected
 const handleSelect = (key: string, keyPath: string[]) => {
   activeIndex.value = key;
-  connect.connectState.activeIndex.value = Number(activeIndex.value);
+  connect.connectState.activeIndex.value = activeIndex.value;
 
   tools.setUrlParamter('activeIndex', activeIndex.value);
 };    
 
 //try get activeIndex from the url paramter
 try{
-  activeIndex.value = parseInt(tools.getUrlParamter('activeIndex'));
-  if(isNaN(activeIndex.value) || activeIndex.value < 1 || activeIndex.value > 4){
-    activeIndex.value = 1;
+  activeIndex.value = String(tools.getUrlParamter('activeIndex'));
+  if(activeIndex.value != '1' && 
+    activeIndex.value != '2' && 
+    activeIndex.value != '3' &&
+    activeIndex.value != '4'){
+    activeIndex.value = '1';
   }
 }catch(e){
-  activeIndex.value = 1;
+  activeIndex.value = '1';
 }
 
 //set activeIndex to connectState and location.href

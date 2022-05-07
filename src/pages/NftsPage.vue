@@ -87,6 +87,17 @@ const currentPage = ref(0);
 const nftTotal = ref(0);
 const nftList = ref(new Array());  
 
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
+
 //nft token explore url
 const tokenExplorerUrl = (tokenId:number, tokenURI:string) => {
   for(const i in constant.chainList){

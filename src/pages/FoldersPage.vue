@@ -45,7 +45,7 @@
             background
             layout="total, prev, pager, next"
             v-model:currentPage="currentPage"
-            :total="nftTotal"
+            :total="fileTotal"
             :page-size="pageSize"
             style="float: right;"
              @current-change="handleClick"
@@ -80,6 +80,17 @@ const pageSize = ref(6);
 const currentPage = ref(0);
 const fileTotal = ref(0);
 const fileList = ref(new Array());
+
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
 
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {

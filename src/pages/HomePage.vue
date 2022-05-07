@@ -1,8 +1,8 @@
 <template>
-  <FilesPage v-if="activeIndex===1" />
-  <FoldersPage v-if="activeIndex===2"/>
-  <WebsitesPage v-if="activeIndex===3"/>
-  <NftsPage v-if="activeIndex===4"/>
+  <FilesPage v-if="activeIndex==='1'" />
+  <FoldersPage v-if="activeIndex==='2'"/>
+  <WebsitesPage v-if="activeIndex==='3'"/>
+  <NftsPage v-if="activeIndex==='4'"/>
 </template>
 
 <script lang="ts">

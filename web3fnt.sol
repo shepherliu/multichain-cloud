@@ -332,7 +332,7 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
                 voteContent: content, 
                 voteAggree: 0, 
                 voteDeadline: block.timestamp + deadline*24*3600, 
-                voteValue: 0, 
+                voteValue: value, 
                 voteSuccess: false
             });
 
@@ -344,7 +344,7 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
                 voteContent: content, 
                 voteAggree: 0, 
                 voteDeadline: block.timestamp + deadline*24*3600, 
-                voteValue: 0, 
+                voteValue: value, 
                 voteSuccess: false
             }));
         }

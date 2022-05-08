@@ -10,21 +10,26 @@ const abi = [
 	"function mint(string memory tokenType, string memory tokenURI) public returns (uint256)",
 	"function burn(uint256 tokenId) public payable returns (bool)",
 	"function tokenURI(uint256 tokenId) public view returns (string memory)",
-	"function tokenType(uint256 tokenId) public view returns (string memory)",
 	"function hateNft(uint256 tokenId) public returns (bool)",
 	"function likeNft(uint256 tokenId) public returns (bool)",
 	"function rewardNft(uint256 tokenId) public payable returns (bool)",
 	"function claim() public payable returns (bool)",
-	"function getHates(uint256 tokenId) public view returns (uint256)",
-	"function getLikes(uint256 tokenId) public view returns (uint256)",
-	"function getTokenRewards(uint256 tokenId) public view returns (uint256)",
-	"function getAddressRewards() public view returns (uint256)",
+	"function getNFTPrameters() public view returns (uint, uint, uint, uint, uint)",
+	"function getAddressPrameters() public view returns (uint256, uint256, uint, uint256, bool)",
 	"function balanceOf(address owner) public view returns (uint256)",
 	"function ownerOf(uint256 tokenId) public view returns (address)",
 	"function tokenByIndex(uint256 index) public view returns (uint256)",
 	"function tokenOfOwnerByIndex(address owner, uint256 index) public view returns (uint256)",
 	"function totalSupply() public view returns (uint256)",
 	"function minted(string memory tokenURI) public view returns (bool)",
+	"function addVote(string memory title, string memory content, uint value, uint deadline) public returns (bool)",
+	"function delVote(uint256 voteId) public returns (bool)",
+	"function vote(uint256 voteId, bool voteAggree) public returns (bool)",
+	"function getVoteTotal() public view returns (uint)",
+	"function getVoteInfoByIndex(uint index) public view returns (uint256, address, string memory, string memory, uint, uint, uint, bool)",
+	"function sellNFT(uint256 tokenId, uint256 tokenPrice) public returns (bool)",
+	"function buyNFT(uint256 tokenId) public payable returns (bool)",
+	"function getNftInfoByIndex(uint256 tokenId) public view returns (address, string memory, string memory, uint, uint, uint256, uint256)",
 ];
 
 //get contract provider
@@ -76,17 +81,6 @@ export const tokenURI = async (tokenId:number) => {
 
 	const contract = await getContract();
 	return await contract.tokenURI(tokenId);
-}
-
-//get token type like image/audio/video
-export const tokenType = async (tokenId:number) => {
-	tokenId = Math.floor(tokenId);
-	if(tokenId < 0){
-		throw new Error("invalid token id!");
-	}
-
-	const contract = await getContract();
-	return await contract.tokenType(tokenId);	
 }
 
 //vote to hate a nft
@@ -147,7 +141,7 @@ export const claim = async () => {
 } 
 
 //get token hates
-export const getHates = async (tokenId:number) => {
+export const getNftInfoByIndex = async (tokenId:number) => {
 	tokenId = Math.floor(tokenId);
 	if(tokenId < 0){
 		throw new Error("invalid token id!");
@@ -155,39 +149,23 @@ export const getHates = async (tokenId:number) => {
 
 	const contract = await getContract();
 
-	return await contract.getHates(tokenId);
+	return await contract.getNftInfoByIndex(tokenId);
 }
 
-//get token likes
-export const getLikes = async (tokenId:number) => {
-	tokenId = Math.floor(tokenId);
-	if(tokenId < 0){
-		throw new Error("invalid token id!");
-	}
+//get NFT base prameters
+export const getNFTPrameters = async () => {
 
 	const contract = await getContract();
 
-	return await contract.getLikes(tokenId);
+	return await contract.getNFTPrameters();
 }
 
-//get token rewards
-export const getTokenRewards = async (tokenId:number) => {
-	tokenId = Math.floor(tokenId);
-	if(tokenId < 0){
-		throw new Error("invalid token id!");
-	}
+//get user address base prameters
+export const getAddressPrameters = async () => {
 
 	const contract = await getContract();
 
-	return await contract.getTokenRewards(tokenId);
-}
-
-//get user address total rewards
-export const getAddressRewards = async () => {
-
-	const contract = await getContract();
-
-	return await contract.getAddressRewards();
+	return await contract.getAddressPrameters();
 }
 
 //get the amount nfts of user
@@ -260,3 +238,131 @@ export const minted = async (tokenURI:string) => {
 
 	return await contract.minted(tokenURI);
 }
+
+//add a dao vote
+export const addVote = async (title:string, content:string, value:number, deadline:number) => {
+	title = title.trim();
+	if(title === ''){
+		throw new Error('vote title is empty!');
+	}
+	content = content.trim();
+	if(content === ''){
+		throw new Error('vote content is empty!');
+	}
+	value = Math.floor(value);
+	deadline = Math.floor(deadline);
+	if(deadline < 1 || deadline > 30){
+		throw new Error("vote deadline must large than 1 day and less than 30 days!");
+	}
+
+	const contract = await getContract();
+	const tx = await contract.addVote(title, content, value, deadline);
+
+	tx.wait();
+
+	return tx.hash;		
+}
+
+//del a dao vote
+export const delVote = async (voteId:number) => {
+	voteId = Math.floor(voteId);
+	if(voteId < 0){
+		throw new Error("invalid vote id!");
+	}	
+
+	const contract = await getContract();
+	const tx = await contract.delVote(voteId);
+
+	tx.wait();
+
+	return tx.hash;	
+}
+
+//vote aggree or against
+export const vote = async (voteId:number, voteAggree:boolean) => {
+	voteId = Math.floor(voteId);
+	if(voteId < 0){
+		throw new Error("invalid vote id!");
+	}	
+
+	const contract = await getContract();
+	const tx = await contract.vote(voteId, voteAggree);
+
+	tx.wait();
+
+	return tx.hash;
+}
+
+//get vote indexs by type like lining/finished
+export const getVoteTotal = async () => {
+	const contract = await getContract();
+
+	return await contract.getVoteTotal();
+}
+
+//get vote info by index
+export const getVoteInfoByIndex = async (index:number) => {
+	index = Math.floor(index);
+	if(index < 0){
+		throw new Error("invalid token index!");
+	}
+
+	const contract = await getContract();
+
+	return await contract.getVoteInfoByIndex(index);
+}
+
+//sell a NFT
+export const sellNFT = async (tokenId:number, tokenPrice:number) => {
+	tokenId = Math.floor(tokenId);
+	if(tokenId < 0){
+		throw new Error("invalid token id!");
+	}
+
+	if(tokenPrice <= 0){
+		tokenPrice = 0;
+	}
+
+	const sellPrice = utils.parseEther(String(tokenPrice));
+
+	const contract = await getContract();
+	const tx = await contract.sellNFT(tokenId, sellPrice);
+
+	await tx.wait();
+
+	return tx.hash;	
+}
+
+//buy a NFT
+export const buyNFT = async (tokenId:number, tokenPrice:number) => {
+	tokenId = Math.floor(tokenId);
+	if(tokenId < 0){
+		throw new Error("invalid token id!");
+	}
+
+	const options = {value: utils.parseEther(String(tokenPrice))};	
+
+	const contract = await getContract();
+	const tx = await contract.buyNFT(tokenId, options);
+
+	await tx.wait();
+
+	return tx.hash;	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

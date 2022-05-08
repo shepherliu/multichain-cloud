@@ -18,34 +18,34 @@
         element-loading-background="#ffffff"
       >
         <el-row :gutter="20">
-          <template v-for="file in fileList" :key="file[2]">
+          <template v-for="file in fileList" :key="file.fileId">
               <el-col :span="8">
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <el-popover placement="bottom-start" :width="600" :title="file[0]">
+                      <el-popover placement="bottom-start" :width="600" :title="file.fileName">
                         <template #reference>
-                          <span><a target="_blank" :href="file[2]">{{file[0]}}</a></span>
+                          <span><a target="_blank" :href="file.fileId">{{file.fileName}}</a></span>
                         </template>
-                        <img v-if="file[1]==='image'" :src="file[2]" style="width: 400px;" />
-                        <audio v-if="file[1]==='audio'" :src="file[2]" controls preload style="width: 400px;" />
-                        <video v-if="file[1]==='video'" :src="file[2]" controls preload style="width: 600px;" />
-                        <embed v-if="file[1]==='docs'" type="text/html" :src="file[2]" style="height:600px;width: 600px;" />
+                        <img v-if="file.fileType==='image'" :src="file.fileId" style="width: 400px;" />
+                        <audio v-if="file.fileType==='audio'" :src="file.fileId" controls preload style="width: 400px;" />
+                        <video v-if="file.fileType==='video'" :src="file.fileId" controls preload style="width: 600px;" />
+                        <embed v-if="file.fileType==='docs'" type="text/html" :src="file.fileId" style="height:600px;width: 600px;" />
                       </el-popover>
-                      <span>{{file[3]}}</span>
+                      <span>{{file.fileSize}}</span>
                     </div>
                   </template>
                   <el-button-group>
                     <el-button 
                       type="primary"
-                      v-if="file[1]==='image'||file[1]=='audio'||file[1]=='video'"
-                      :disabled="file[4]"
+                      v-if="file.fileType==='image'||file.fileType=='audio'||file.fileType=='video'"
+                      :disabled="file.nftMinted"
                       size="small"
-                      @click="onMintNft(file[1], file[2])"
+                      @click="onMintNft(file.fileType, file.fileId)"
                     >
-                      {{file[4] ? "Minted" : "MintNFT"}}<el-icon><share /></el-icon>
+                      {{file.nftMinted ? "Minted" : "MintNFT"}}<el-icon><share /></el-icon>
                     </el-button>
-                    <el-button type="danger" size="small" @click="onDeleteFile(file[2])">
+                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileId)">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>
@@ -187,14 +187,20 @@ const getFileCount = async (filetype:string) => {
       name.indexOf(connectState.search) != -1 ||
       name.search(connectState.search) != -1) {
 
-      newFileList.push(fileInfo.slice(0,));
+      newFileList.push({
+        fileName: fileInfo[0],
+        fileType: fileInfo[1],
+        fileId: fileInfo[2],
+        fileSize: fileInfo[3],
+        nftMinted: false,
+      });
     }
   }
 
   fileList.value = newFileList;
   for(const i in fileList.value){
-    fileList.value[i][3] = tools.fileSize(fileList.value[i][3].toNumber());
-    fileList.value[i].push(await web3nft.minted(fileList.value[i][2]));
+    fileList.value[i].fileSize = tools.fileSize(fileList.value[i].fileSize.toNumber());
+    fileList.value[i].nftMinted = (await web3nft.minted(fileList.value[i].fileId));
   }
 
   fileTotal.value = fileList.value.length;

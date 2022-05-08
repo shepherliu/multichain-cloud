@@ -15,22 +15,22 @@
         element-loading-background="#ffffff"
       >
         <el-row :gutter="20">
-          <template v-for="file in fileList" :key="file[2]">
+          <template v-for="file in fileList" :key="file.fileId">
               <el-col :span="8">
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <el-popover placement="bottom-start" :width="600" :title="file[0]">
+                      <el-popover placement="bottom-start" :width="600" :title="file.fileName">
                         <template #reference>
-                          <span><a target="_blank" :href="file[2]">{{file[0]}}</a></span>
+                          <span><a target="_blank" :href="file.fileId">{{file.fileName}}</a></span>
                         </template>
-                        <embed v-if="file[1]==='website'" type="text/html" :src="file[2]" style="height:600px;width: 600px;" />
+                        <embed v-if="file.fileType==='website'" type="text/html" :src="file.fileId" style="height:600px;width: 600px;" />
                       </el-popover>
-                      <span>{{file[3]}}</span>
+                      <span>{{file.fileSize}}</span>
                     </div>
                   </template>
                   <el-button-group>
-                    <el-button type="danger" size="small" @click="onDeleteFile(file[2])">
+                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileId)">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>
@@ -140,21 +140,23 @@ const getFileCount = async (filetype:string) => {
     const index = res[i].toNumber();
     const fileInfo = await filemanager.getFileInfoByIndex(index);
     
-    if(connectState.search === ''){
-      newFileList.push(fileInfo.slice(0,));
-      continue;
-    }
-
     const name = fileInfo[0];
-    if(name.indexOf(connectState.search)!=-1 || name.search(connectState.search)!=-1){
-      newFileList.push(fileInfo.slice(0,));
-      continue
+    if(connectState.search === '' ||
+      name.indexOf(connectState.search) != -1 || 
+      name.search(connectState.search) != -1){
+
+      newFileList.push({
+        fileName: fileInfo[0],
+        fileType: fileInfo[1],
+        fileId: fileInfo[2],
+        fileSize: fileInfo[3],
+      });
     }
   }
 
   fileList.value = newFileList;
   for(const i in fileList.value){
-    fileList.value[i][3] = tools.fileSize(fileList.value[i][3].toNumber());
+    fileList.value[i].fileSize = tools.fileSize(fileList.value[i].fileSize.toNumber());
   }
 
   fileTotal.value = fileList.value.length;

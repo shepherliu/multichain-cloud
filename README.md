@@ -4,7 +4,7 @@
 
 Cloud-vue3 is is a web3 cloud dapp which you can easily manage your files and folders and even websites by using the distributed storage.
 
-The dapp also has a builtin NFT marketpalce that you can mint your own nft with your uploaded images, audios and videos. And people can vote to like or dislike the nfts, and also can pay to reward the NFTs so that the creators can earn through the NFTs.
+The dapp also has a builtin NFT marketpalce that you can mint your own nft with your uploaded images, audios and videos. And people can vote to like or dislike the nfts, and also can reward, sell and buy the NFTs so that the creators can earn through the NFTs.
 
 We use smart contract as the file manager to store the file indexs, and we build an nft contract called Web3NFT, that is cool and representative to the future.
 
@@ -59,8 +59,6 @@ To keep the high quality of the NFTs, the total supply has a limit of max 15000,
    *2. Swarm Storage Full Support.*
    
    *3. Arweave Storage Full Support.*
-   
-   *4. NFT Buy And Sell In App.*
    
    *5. File/Folder Encrypt And Decrypt Support.*
    

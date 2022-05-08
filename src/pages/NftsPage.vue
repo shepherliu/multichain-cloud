@@ -8,12 +8,73 @@
           <el-tab-pane label="Video" name="video"></el-tab-pane>
           <el-tab-pane label="MyNfts" name="mine"></el-tab-pane>
         </el-tabs>
-        <el-link type="primary" @click="javascript:void(0);" style="margin-left: 10px;">Max NFTs: {{baseInfo.maxtotalSupply}}</el-link>
-        <el-link type="success" @click="javascript:void(0);" style="margin-left: 10px;">Minted NFTs: {{baseInfo.currentTotalSupply}}</el-link>
-        <el-link type="warning" @click="javascript:void(0);" style="margin-left: 10px;">My Limits: {{baseInfo.maxUserSupply}}</el-link>
-        <el-link type="info" @click="javascript:void(0);" style="margin-left: 10px;">My Mints: {{baseInfo.currentUserBalance}}</el-link> 
-        <el-link type="error" @click="javascript:void(0);" style="margin-left: 10px;">User Banned: {{baseInfo.currentUserBanned}}</el-link>        
-        <el-link type="primary" @click="onClaimRewards()" style="float: right;">Claim : {{baseInfo.currentUserRewards}}</el-link>
+        <el-popover
+          placement="bottom-start"
+          title="Introduction"
+          :width="400"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-link type="primary" @click="javascript:void(0);" style="margin-left: 10px;">Max NFTs: {{baseInfo.maxtotalSupply}}</el-link>
+          </template>
+          <h4>The max number that this NFT project can be minted.</h4>
+        </el-popover>
+        <el-popover
+          placement="bottom-start"
+          title="Introduction"
+          :width="400"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-link type="success" @click="javascript:void(0);" style="margin-left: 10px;">Minted NFTs: {{baseInfo.currentTotalSupply}}</el-link>
+          </template>
+          <h4>The current number that this NFT project has already be minted.</h4>
+        </el-popover>
+        <el-popover
+          placement="bottom-start"
+          title="Introduction"
+          :width="400"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-link type="warning" @click="javascript:void(0);" style="margin-left: 10px;">My Limits: {{baseInfo.maxUserSupply}}</el-link>
+          </template>
+          <h4>The max number that this NFT project can be minted for every single user.</h4>
+        </el-popover>
+        <el-popover
+          placement="bottom-start"
+          title="Introduction"
+          :width="400"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-link type="info" @click="javascript:void(0);" style="margin-left: 10px;">My Mints: {{baseInfo.currentUserBalance}}</el-link> 
+          </template>
+          <h4>The current number that this NFT project has already be minted for the current user.</h4>
+        </el-popover>
+        <el-popover
+          placement="bottom-start"
+          title="Introduction"
+          :width="400"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-link type="danger" @click="javascript:void(0);" style="margin-left: 10px;">User Banned: {{baseInfo.currentUserBanned}}</el-link>   
+          </template>
+          <h4>The current user has be banned or not. For users who get more than {{baseInfo.maxUserHates}} unlikes will be banned from this NFT project until they burn their low quility NFTs.</h4>
+        </el-popover>
+        <el-popover
+          placement="bottom-start"
+          title="Introduction"
+          :width="400"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-link type="primary" @click="onClaimRewards()" style="float: right;">Claim : {{baseInfo.currentUserRewards}}</el-link>
+          </template>
+          <h4>Claim the rewards that the current user earned from the NFTs.</h4>
+        </el-popover>        
+  
       </el-header>
       <el-main
         style="height: 450px;" 
@@ -29,7 +90,7 @@
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <span>NFT ID: <a target="_blank" :href="tokenExplorerUrl(nft.tokenId, nft.tokenUri)">{{nft.tokenId}}</a></span>
+                      <span>NFT ID: <el-link type="success" target="_blank" :href="tokenExplorerUrl(nft.tokenId, nft.tokenUri)">{{nft.tokenId}}</el-link></span>
                       <el-button-group>
                         <el-button v-if="activeName==='mine' && nft.tokenPrices === 0" size="small" type="warning" @click="onSellNft(nft.tokenId)">
                           Sell<el-icon><sell /></el-icon>

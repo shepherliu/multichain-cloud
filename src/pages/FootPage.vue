@@ -1,12 +1,12 @@
 <template>
-	<h4>Buy Cryptos @<el-image :src="transak" style="height: 25px;" @click="onClickTransak"/></h4>
+	<el-link type="success" @click="onClickTransak">Buy Cryptos @<el-image :src="transak" style="height: 25px;"/></el-link>
 	<el-drawer v-model="buyCrypto" direction="rtl" destroy-on-close @open="onTransakOpen">
       <template #default>
         <embed type="text/html" :src="transakUrl" style="height:100%;width: 100%;" />		
       </template>  
 	</el-drawer>
 	<div class="copyright mt-1" style="padding-bottom: 10px">
-    <a target="_blank" href="https://gitcoin.co/hackathon">Gitcoin Hackathon Build For Learning</a>
+    <el-link type="success" target="_blank" href="https://gitcoin.co/hackathon">Gitcoin Hackathon Build For Learning</el-link>
   </div>	
 </template>
 

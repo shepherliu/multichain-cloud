@@ -22,7 +22,7 @@
                     <div class="card-header">
                       <el-popover placement="bottom-start" :width="600" :title="file.fileName">
                         <template #reference>
-                          <span><a target="_blank" :href="file.fileId">{{file.fileName}}</a></span>
+                          <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
                         </template>
                         <embed v-if="file.fileType==='website'" type="text/html" :src="file.fileId" style="height:600px;width: 600px;" />
                       </el-popover>

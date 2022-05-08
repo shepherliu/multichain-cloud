@@ -25,6 +25,7 @@
         <el-menu-item index="2">Folders</el-menu-item>
         <el-menu-item index="3">Websites</el-menu-item>
         <el-menu-item index="4">Nfts</el-menu-item>
+        <el-menu-item index="5">Votes</el-menu-item>
       </el-menu>
     </el-col>
 
@@ -431,7 +432,8 @@ try{
   if(activeIndex.value != '1' && 
     activeIndex.value != '2' && 
     activeIndex.value != '3' &&
-    activeIndex.value != '4'){
+    activeIndex.value != '4' &&
+    activeIndex.value != '5'){
     activeIndex.value = '1';
   }
 }catch(e){

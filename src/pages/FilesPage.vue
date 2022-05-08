@@ -25,7 +25,7 @@
                     <div class="card-header">
                       <el-popover placement="bottom-start" :width="600" :title="file.fileName">
                         <template #reference>
-                          <span><a target="_blank" :href="file.fileId">{{file.fileName}}</a></span>
+                          <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
                         </template>
                         <img v-if="file.fileType==='image'" :src="file.fileId" style="width: 400px;" />
                         <audio v-if="file.fileType==='audio'" :src="file.fileId" controls preload style="width: 400px;" />

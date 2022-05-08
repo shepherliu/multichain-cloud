@@ -53,7 +53,7 @@ export const mint = async (tokenType:string, tokenURI:string) => {
 
 	const contract = await getContract();
 	const tx = await contract.mint(tokenType, tokenURI);
-  await tx.wait()
+  await tx.wait();
 
   return tx.hash;	
 }
@@ -67,7 +67,7 @@ export const burn = async (tokenId:number) => {
 
 	const contract = await getContract();
 	const tx = await contract.burn(tokenId);
-  await tx.wait()
+  await tx.wait();
 
   return tx.hash;		
 }
@@ -92,7 +92,7 @@ export const hateNft = async (tokenId:number) => {
 
 	const contract = await getContract();
 	const tx = await contract.hateNft(tokenId);
-  await tx.wait()
+  await tx.wait();
 
   return tx.hash;			
 }
@@ -106,7 +106,7 @@ export const likeNft = async (tokenId:number) => {
 
 	const contract = await getContract();
 	const tx = await contract.likeNft(tokenId);
-  await tx.wait()
+  await tx.wait();
 
   return tx.hash;		
 }
@@ -126,7 +126,7 @@ export const rewardNft = async(tokenId:number, reward:number) => {
 
 	const contract = await getContract();
 	const tx = await contract.rewardNft(tokenId, options);
-  await tx.wait()
+  await tx.wait();
 
   return tx.hash;		
 }
@@ -135,7 +135,7 @@ export const rewardNft = async(tokenId:number, reward:number) => {
 export const claim = async () => {
 	const contract = await getContract();
 	const tx = await contract.claim();
-	await tx.wait()
+	await tx.wait();
 
 	return tx.hash;
 } 
@@ -258,9 +258,9 @@ export const addVote = async (title:string, content:string, value:number, deadli
 	const contract = await getContract();
 	const tx = await contract.addVote(title, content, value, deadline);
 
-	tx.wait();
+  await tx.wait();
 
-	return tx.hash;		
+  return tx.hash;		
 }
 
 //del a dao vote
@@ -273,9 +273,9 @@ export const delVote = async (voteId:number) => {
 	const contract = await getContract();
 	const tx = await contract.delVote(voteId);
 
-	tx.wait();
+  await tx.wait();
 
-	return tx.hash;	
+  return tx.hash;		
 }
 
 //vote aggree or against
@@ -288,9 +288,9 @@ export const vote = async (voteId:number, voteAggree:boolean) => {
 	const contract = await getContract();
 	const tx = await contract.vote(voteId, voteAggree);
 
-	tx.wait();
+  await tx.wait();
 
-	return tx.hash;
+  return tx.hash;		
 }
 
 //get vote indexs by type like lining/finished

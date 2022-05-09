@@ -138,10 +138,7 @@ const onDeleteFile = async (fileid:string) => {
     handleClick();
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }
 
 }
@@ -164,10 +161,7 @@ const onMintNft = async (filetype:string, fileid:string) => {
     handleClick();
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }
 
 }

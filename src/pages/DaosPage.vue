@@ -341,10 +341,7 @@ const onAddVote = async () => {
     handleClick(); 
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }  
 }
 
@@ -363,10 +360,7 @@ const onDelVote = async (voteId:number) => {
     handleClick(); 
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }  
 }
 
@@ -385,10 +379,7 @@ const onVote = async (voteId:number, voteAggrees:boolean) => {
     handleClick(); 
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }  
 }
 

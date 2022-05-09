@@ -226,10 +226,7 @@ const onLikeNft = async (tokenId:number) => {
     handleClick(); 
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }
  
 }
@@ -252,10 +249,7 @@ const onHateNft = async (tokenId:number) => {
     handleClick();      
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }
 
 }
@@ -277,10 +271,7 @@ const onBurnNft = async (tokenId:number) => {
     handleClick();
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }
 
 }
@@ -308,10 +299,7 @@ const onClaimRewards = async () => {
     }
 
   }catch(e){
-    if(e.stack.length > 300){
-      e.stack = e.stack.slice(0, 300);
-    }
-    element.elMessage('error', e.stack);
+    element.alertMessage(e);
   }
 
 }
@@ -342,10 +330,7 @@ const onRewardNft = async (tokenId:number) => {
         handleClick();
 
       }catch(e){
-        if(e.stack.length > 300){
-          e.stack = e.stack.slice(0, 300);
-        }
-        element.elMessage('error', e.stack);
+        element.alertMessage(e);
       }
 
     });
@@ -378,10 +363,7 @@ const onBuyNft = async (tokenId:number, tokenPrices:number) => {
         handleClick();
 
       }catch(e){
-        if(e.stack.length > 300){
-          e.stack = e.stack.slice(0, 300);
-        }
-        element.elMessage('error', e.stack);
+        element.alertMessage(e);
       }
 
     });  
@@ -414,10 +396,7 @@ const onSellNft = async (tokenId:number, tokenPrices = 0.01) => {
         handleClick();
 
       }catch(e){
-        if(e.stack.length > 300){
-          e.stack = e.stack.slice(0, 300);
-        }
-        element.elMessage('error', e.stack);
+        element.alertMessage(e);
       }
 
     });

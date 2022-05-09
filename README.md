@@ -35,7 +35,7 @@ To keep the high quality of the NFTs, the total supply has a limit of max 15000,
   
     npm run build
     
-  *6. see our daemon website https://cloud-vue3.vercel.app*
+  *6. see our daemon website https://multichain-cloud.vercel.app*
   
   *7. see our daemon video*
 

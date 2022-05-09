@@ -418,7 +418,7 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
     }
 
     function getVoteTotal() public view returns (uint){
-        return _voteInfos.length;
+        return _voteCount;
     }
 
     function getVoteInfoByIndex(uint index) public view returns (uint256, address, string memory, string memory, uint, uint, uint, bool){

@@ -392,6 +392,10 @@ const getNftCount = async (votetype:string) => {
   for(let i = total.toNumber() - 1; i >= 0; i--){
     const voteInfo = await web3nft.getVoteInfoByIndex(i);
 
+    if(voteInfo[2] === ''){
+      continue;
+    }
+
     if(votetype === 'living'){
       const now = (new Date()).valueOf()/1000;
       const deadline = voteInfo[6].toNumber();

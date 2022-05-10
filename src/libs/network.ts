@@ -70,10 +70,13 @@ export const switchNetwork = async (chainId: number) => {
     }
   }
 
-  await sleep(2000);
+  //wait for at most 10s to network refresh
+  for(let i = 0; i < 20; i++){
+    if(Number((window as any).ethereum.networkVersion)===chainId){
+      return true;
+    }    
 
-  if(Number((window as any).ethereum.networkVersion)===chainId){
-    return true;
+    await sleep(500);
   }
 
   return false;

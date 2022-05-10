@@ -1,10 +1,10 @@
-# cloud-vue3
+# multichain-cloud
 
 ***Introduction:***
 
-Cloud-vue3 is is a web3 cloud dapp which you can easily manage your files and folders and even websites by using the distributed storage.
+multichain-cloud is is a web3 cloud dapp which you can easily manage your files and folders and even websites by using the distributed storage.
 
-This is a web3 cloud dapp which you can easily upload your files and folders and even websites to the distributed storage such as Filcoin Network. And we use a smart contract as the file manager to search the file indexs. 
+This is a web3 cloud dapp which you can easily upload your files and folders and even websites to the distributed storage such as Filcoin Network, Swarm Network and Arweave Network. And we use the smart contract as the file manager to search the file indexs, it is designed to be multi chains supported. 
 
 The dapp also has a builtin NFT marketpalce called Web3NFT, so that you can mint your own nft with your uploaded images, audios and videos. And people can vote to like or dislike the nfts, and also can reward, sell and buy the NFTs so that the creators can earn through the NFTs. That is cool and representative to the future.
 

@@ -4,11 +4,13 @@
 
 Cloud-vue3 is is a web3 cloud dapp which you can easily manage your files and folders and even websites by using the distributed storage.
 
-The dapp also has a builtin NFT marketpalce that you can mint your own nft with your uploaded images, audios and videos. And people can vote to like or dislike the nfts, and also can reward, sell and buy the NFTs so that the creators can earn through the NFTs.
+This is a web3 cloud dapp which you can easily upload your files and folders and even websites to the distributed storage such as Filcoin Network. And we use a smart contract as the file manager to search the file indexs. 
 
-We use smart contract as the file manager to store the file indexs, and we build an nft contract called Web3NFT, that is cool and representative to the future.
+The dapp also has a builtin NFT marketpalce called Web3NFT, so that you can mint your own nft with your uploaded images, audios and videos. And people can vote to like or dislike the nfts, and also can reward, sell and buy the NFTs so that the creators can earn through the NFTs. That is cool and representative to the future.
 
-To keep the high quality of the NFTs, the total supply has a limit of max 15000, and the max number of one user can mint is set to 10. And we will also disbale the mint and claim function for users who got more than 1000 unlikes about their NFTs. Thus people should burn their low quality NFTs and mint high quality NFTs instead.
+To keep the high quality of the NFTs, the total supply has a limit of max 15000, and the max number of one user can mint is set to 5. We make some simple dao functions for the NFT owners that they can create vote events such as to change the Max Supply or to change the Max Number that user can mint and so on. 
+
+Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so that they will be disabled to mint and claim and even vote any more. Thus people should burn their low quality NFTs and mint high quality NFTs instead.
 
 
 ***How it runs***:

@@ -48,6 +48,16 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
 
   First you need select a file, a folder or a wehsite (also a folder which contains an index.html in the dir root path), then click the upload button.
   
+    1. src/components/UploadFile.vue is the fronted page to handle the upload events.
+
+    2. src/libs/storage.ts is the virtual interface to upload files and folders.
+
+    3. src/libs/web3storage.ts is the functions to upload files and folders to Filcoin Network through the web3storage.
+
+    4. src/libs/swarm.ts is the functions to upload files and folders to Swarm Network through the swarmgateway(it will be opened in the future).
+
+    5. src/libs/bundlr.ts is the functions to upload files and folders to Arweave Network through the bundlrnetwork(it will be opened in the future).
+  
   Then the file, folder or website you selected will be uploaded to the Decentralized Storage. Now we fully surpport the Filcoin Network through Web3storage package, and in the future we will also surport the Arweave Network and Swarm Network.
   
   After success uploaded to the Decentralized Storage, it will return the file id to the dapp, and we will upload the file name and file id to the filemanager smart contract.

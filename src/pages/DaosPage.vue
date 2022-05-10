@@ -383,8 +383,8 @@ const onVote = async (voteId:number, voteAggrees:boolean) => {
   }  
 }
 
-//get nft count and pull nft info
-const getNftCount = async (votetype:string) => {
+//get vote count and pull vote info
+const getVoteCount = async (votetype:string) => {
   const newVoteList = new Array();
 
   const total = await web3nft.getVoteTotal();
@@ -448,7 +448,7 @@ const handleClick = async () => {
 
     loadStatus.value = true;
 
-    await getNftCount(activeName.value);
+    await getVoteCount(activeName.value);
 
     if(currentPage.value < 1){
       currentPage.value = 1;

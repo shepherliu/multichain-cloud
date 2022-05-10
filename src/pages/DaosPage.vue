@@ -114,7 +114,7 @@
             </tr>
           </table>
           <div style="text-align: right; margin: 0">
-            <el-button size="small" type="text" @click="addVoteVisiable = false"
+            <el-button size="small" type="warning" @click="addVoteVisiable = false"
               >cancel</el-button
             >
             <el-button size="small" type="primary" @click="addVoteVisiable = false; onAddVote();"
@@ -493,6 +493,8 @@ const handleClick = async () => {
       currentUserBanned: userPrameters[4],
     };
 
+  }catch(e){
+     voteList.value = new Array();
   }finally{
     loadStatus.value = false;
   }

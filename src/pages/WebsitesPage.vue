@@ -198,6 +198,8 @@ const handleClick = async () => {
 
     fileList.value = fileList.value.slice(start, end);    
 
+  }catch(e){
+     fileList.value = new Array();
   }finally{
     loadStatus.value = false;
   }

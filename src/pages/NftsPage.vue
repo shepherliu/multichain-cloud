@@ -519,6 +519,8 @@ const handleClick = async () => {
       currentUserBanned: userPrameters[4],
     };
 
+  }catch(e){
+     nftList.value = new Array();
   }finally{
     loadStatus.value = false;
   }

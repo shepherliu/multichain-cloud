@@ -99,8 +99,8 @@ export const detectNetwork = async () => {
 //disconnect to metamask wallet
 export const cancelConnect = async () => {
   connectState.userAddr.value = "";
-  connectState.chainId = 1;
-  connectState.chainName = "";
+  // connectState.chainId = 1;
+  // connectState.chainName = "";
   connectState.signer = null;
   connectState.bundlrProvider = null;
 }
@@ -125,7 +125,10 @@ export const networkChanged = async (networkChanged:Function) => {
 
 //check if wallet is connected or not
 export const connected = () => {
-    if((window as any).ethereum.selectedAddress === null || (window as any).ethereum.selectedAddress === undefined){
+    if((window as any).ethereum.selectedAddress === null || 
+      (window as any).ethereum.selectedAddress === undefined ||
+      (window as any).ethereum.selectedAddress === ''){
+      
       return false;
     }  else {
       return true;

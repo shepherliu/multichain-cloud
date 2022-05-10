@@ -46,11 +46,15 @@ export const getChainName = (chainId: number) => {
 
 //switch network
 export const switchNetwork = async (chainId: number) => {
+  if(Number((window as any).ethereum.networkVersion) === chainId){
+    return true;
+  }
+
   const chainInfo = getChainInfo(chainId);
 
   if (chainInfo === null || chainInfo === undefined){
     return false;
-  }
+  }  
 
   try {
     await connectState.provider.send(
@@ -66,7 +70,7 @@ export const switchNetwork = async (chainId: number) => {
     }
   }
 
-  await sleep(1500);
+  await sleep(2000);
 
   if(Number((window as any).ethereum.networkVersion)===chainId){
     return true;

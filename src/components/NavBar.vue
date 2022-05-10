@@ -307,7 +307,8 @@ const networkChanged = async () => {
   }
 
   if(connectStatus.value === "Cancel Connect"){
-    return await connectNetwork();
+    await connect.connectState.connectCallback();
+    connect.connectState.searchCallback();
   } 
 }
 

@@ -44,7 +44,7 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
 
 ***How it works***:
 
-<img width="982" alt="2022-05-05 18 55 59" src="https://user-images.githubusercontent.com/84829620/166909760-81fff92c-d292-4987-85f5-4fe12550e5fa.png">
+<img width="981" alt="2022-05-10 11 49 34" src="https://user-images.githubusercontent.com/84829620/167539118-8c52b2b3-3f09-48f1-974c-ce8d571fb813.png">
 
   First you need select a file, a folder or a wehsite (also a folder which contains an index.html in the dir root path), then click the upload button.
   

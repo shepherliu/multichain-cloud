@@ -19,11 +19,11 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
 
   *1. clone this project*
     
-    git clone https://github.com/shepherliu/cloud-vue3.git
+    git clone https://github.com/shepherliu/multichain-cloud.git
     
   *2. cd this project*
   
-    cd cloud-vue3
+    cd multichain-cloud
     
   *3. install dependencies*
 

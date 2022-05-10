@@ -21,14 +21,14 @@ export const elMessageBox = async(desc:string, title:string, options: Object, ca
     });
 }
 
-//trigger an error message
+//trigger an error message from metamask
 export const alertMessage = async(error: any) => {
     if( error.data != undefined && 
         error.data != null && 
         error.data.message != undefined && 
         error.data.message != null){
 
-        elMessage('error', error.data.message); 
+        elMessage('error', truncateString(error.data.message, 300)); 
         return;
     }
 
@@ -39,7 +39,7 @@ export const alertMessage = async(error: any) => {
         error.data.error.message != undefined && 
         error.data.error.message != null){
 
-        elMessage('error', error.data.error.message); 
+        elMessage('error', truncateString(error.data.error.message, 300)); 
         return;
     }    
 
@@ -48,7 +48,7 @@ export const alertMessage = async(error: any) => {
         error.data.error != undefined && 
         error.data.error != null){
 
-        elMessage('error', error.data.error); 
+        elMessage('error', truncateString(error.data.error, 300)); 
         return;
     } 
 
@@ -57,14 +57,14 @@ export const alertMessage = async(error: any) => {
         error.error.message != undefined &&
         error.error.message != null){
 
-        elMessage('error', error.error.message); 
+        elMessage('error', truncateString(error.error.message, 300)); 
         return;
     }      
 
     if( error.error != undefined &&
         error.error != null) {
 
-        elMessage('error', error.error);
+        elMessage('error', truncateString(error.error, 300));
         return;   
     }
 
@@ -72,20 +72,25 @@ export const alertMessage = async(error: any) => {
         error.message != null){
         
         try{
-            elMessage('error', error.message);    
+            elMessage('error', truncateString(error.message, 300));    
         }catch(e){
             if( error.reason != undefined && 
                 error.reason != null){
                 
                 try{
-                    elMessage('error', error.reason);    
+                    elMessage('error', truncateString(error.reason, 300));    
                 }catch(e){
-                    if(error.stack.length > 300){
-                        error.stack = error.stack.slice(0, 300);
-                    }
-                    elMessage('error', error.stack);
+                    elMessage('error', truncateString(error.stack, 300));
                 }
             }
         }
     }
 } 
+
+const truncateString = (src:string, len:number) => {
+    if(src.length < len){
+        return src;
+    }
+
+    return src.slice(0, len);
+}

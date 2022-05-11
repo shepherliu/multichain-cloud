@@ -46,7 +46,6 @@ export const getChainName = (chainId: number) => {
 
 //switch network
 export const switchNetwork = async (chainId: number) => {
-  console.log(chainId);
 
   const res = await connectState.provider.detectNetwork();
   if(res.chainId == null || res.chainId == undefined){

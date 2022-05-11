@@ -248,6 +248,14 @@ const transactionExplorerUrl = (transaction:string) => {
   return transaction;
 }
 
+// const resolveAddress = async (userAddr:string, currency = "ETH") => {
+//   try{
+//     return await resolution.addr(userAddr, currency);
+//   }catch(e){
+//     return userAddr;
+//   }
+// }
+
 //connect to metamask
 const connectNetwork = async () => {
   await connect.networkConnect().then(async (res) => {
@@ -265,14 +273,6 @@ const connectNetwork = async () => {
          
   });
 }
-
-// const resolveAddress = async (userAddr:string, currency = "ETH") => {
-//   try{
-//     return await resolution.addr(userAddr, currency);
-//   }catch(e){
-//     return userAddr;
-//   }
-// }
 
 //set connect callback function
 connect.connectState.connectCallback = async () => {
@@ -454,6 +454,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 const login = async () => {
   await connectNetwork();
   await confirmSwitchNetwork();
+  connect.connectState.searchCallback();
 };
 
 //try get activeIndex from the url paramter

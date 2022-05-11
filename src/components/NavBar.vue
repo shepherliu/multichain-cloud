@@ -208,6 +208,8 @@ export default {
 <script setup lang="ts">
 import { ref } from "vue"
 
+// import { Resolution } from '@unstoppabledomains/resolution';
+
 import * as tools from "../libs/tools"
 import * as connect from "../libs/connect"
 import * as network from "../libs/network"
@@ -217,6 +219,7 @@ import * as constant from "../constant"
 
 const logo = require('@/assets/logo.png');
 const metamask = require('@/assets/metamask.svg');
+// const resolution = new Resolution();
 const userAddr = connect.connectState.userAddr;
 const shortAddr = connect.connectState.shortAddr;
 const networkName = ref("");
@@ -247,25 +250,29 @@ const transactionExplorerUrl = (transaction:string) => {
 
 //connect to metamask
 const connectNetwork = async () => {
-  network.switchNetwork(Number(networkSelected.value)).then(async (res) => {
+  await connect.networkConnect().then(async (res) => {
     if(res){
-      res = await connect.networkConnect();
-      if(res){
-        element.elMessage('success', 'You have connected to the wallet.');
-        connect.connectState.searchCallback();
+      element.elMessage('success', 'You have connected to the wallet.');
+    }else{
+      await connect.cancelConnect();
+      userAddr.value = "";
+      shortAddr.value = "";
+      networkName.value = "";
+      connectStatus.value = "Connect Wallet";
 
-        return;
-      }
+      element.elMessage('error', 'Connect to the wallet failed.');  
     }
-
-    userAddr.value = "";
-    shortAddr.value = "";
-    networkName.value = "";
-    connectStatus.value = "Connect Wallet";
-
-    element.elMessage('error', 'Connect to the wallet failed.');     
+         
   });
 }
+
+// const resolveAddress = async (userAddr:string, currency = "ETH") => {
+//   try{
+//     return await resolution.addr(userAddr, currency);
+//   }catch(e){
+//     return userAddr;
+//   }
+// }
 
 //set connect callback function
 connect.connectState.connectCallback = async () => {
@@ -288,21 +295,28 @@ const disConnectNetwork = async () => {
 }
 
 //on wallet address changed
-const accountsChanged = async () => {
-  if(!connect.connected()){
+const accountsChanged = async (accounts: string[]) => {
+  if(accounts.length === 0){
     return await disConnectNetwork();
   }
 
   if(connectStatus.value === "Cancel Connect"){
-    return await connectNetwork();
+    await connectNetwork();
+    connect.connectState.searchCallback();
   }
 }
 
-connect.accountsChanged(accountsChanged);
+connect.connectState.accountsChanged = accountsChanged;
+
+// connect.accountsChanged(accountsChanged);
 
 //on wallet network changed
-const networkChanged = async () => {
-  if(!connect.connected()){
+const chainChanged = async () => {
+  //clear transactions when network changed
+  connect.connectState.transactions.value = new Array();
+  connect.connectState.transactionCount.value = 0;
+
+  if(!(await connect.connected())){
     return;
   }
 
@@ -312,7 +326,9 @@ const networkChanged = async () => {
   } 
 }
 
-connect.networkChanged(networkChanged); 
+connect.connectState.chainChanged = chainChanged;
+
+// connect.chainChanged(chainChanged); 
 
 //on drawer open to switch network
 const onDrawerOpen = async () => {
@@ -352,12 +368,22 @@ const confirmSwitchNetwork = async () => {
   try{
 
     showSwitchNetwork.value = false;
-    if(Number(networkSelected.value) > 0){
-      const res = await network.switchNetwork(Number(networkSelected.value));
-      if(res && !connect.connected()){
-        await connectNetwork();
-      }
+
+    if(Number(networkSelected.value) <= 0){
+      element.elMessage('warning', 'Invalid network selected!');
+      return;
     }
+
+    const res = await network.switchNetwork(Number(networkSelected.value));
+    if(!res){
+      element.elMessage('warning', 'Switch network chain failed!');
+      return;      
+    }
+
+    if(!(await connect.connected())){
+      await connectNetwork();
+    }
+
     connect.connectState.storage = storageSelected.value;
 
     if (storageSelected.value === 'bundlr'){
@@ -424,6 +450,12 @@ const handleSelect = (key: string, keyPath: string[]) => {
   tools.setUrlParamter('activeIndex', activeIndex.value);
 };    
 
+//login to wallet and switch to the target chain.
+const login = async () => {
+  await connectNetwork();
+  await confirmSwitchNetwork();
+};
+
 //try get activeIndex from the url paramter
 try{
   activeIndex.value = String(tools.getUrlParamter('activeIndex'));
@@ -443,5 +475,5 @@ connect.connectState.activeIndex.value = activeIndex.value;
 tools.setUrlParamter('activeIndex', activeIndex.value);
 
 //try connect to metamask
-connectNetwork();
+login();
 </script>

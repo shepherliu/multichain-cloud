@@ -46,7 +46,14 @@ export const getChainName = (chainId: number) => {
 
 //switch network
 export const switchNetwork = async (chainId: number) => {
-  if(Number((window as any).ethereum.networkVersion) === chainId){
+  console.log(chainId);
+
+  const res = await connectState.provider.detectNetwork();
+  if(res.chainId == null || res.chainId == undefined){
+    return false;
+  }
+  
+  if(res.chainId === chainId){
     return true;
   }
 
@@ -54,7 +61,7 @@ export const switchNetwork = async (chainId: number) => {
 
   if (chainInfo === null || chainInfo === undefined){
     return false;
-  }  
+  }
 
   try {
     await connectState.provider.send(
@@ -62,6 +69,7 @@ export const switchNetwork = async (chainId: number) => {
       [{ chainId: utils.hexValue(chainId) },],
     );
   } catch (err: any) {
+
     if (err.code === 4902 || err.code === -32603) {
       await connectState.provider.send(
         "wallet_addEthereumChain", 
@@ -70,9 +78,14 @@ export const switchNetwork = async (chainId: number) => {
     }
   }
 
-  //wait for at most 10s to network refresh
-  for(let i = 0; i < 20; i++){
-    if(Number((window as any).ethereum.networkVersion)===chainId){
+  //wait for at most 5s to network refresh
+  for(let i = 0; i < 10; i++){
+    const res = await connectState.provider.detectNetwork();
+    if(res.chainId == null || res.chainId == undefined){
+      continue;
+    }
+    
+    if(res.chainId === chainId){
       return true;
     }    
 

@@ -448,6 +448,11 @@ const handleClick = async () => {
 
     loadStatus.value = true;
 
+    if (!(await connected())){
+      voteList.value = new Array();
+      return;
+    }
+
     await getVoteCount(activeName.value);
 
     if(currentPage.value < 1){
@@ -520,7 +525,5 @@ try{
 }
 
 //update page size
-if (connected()){
-  handleClick();
-}
+handleClick();
 </script>

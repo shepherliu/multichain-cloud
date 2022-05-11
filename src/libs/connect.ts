@@ -1,5 +1,7 @@
 // example imports 
-import { providers, Contract } from "ethers"
+import { providers, utils } from "ethers"
+
+import web3modal from './web3modal'
 
 import * as constant from '../constant'
 
@@ -14,7 +16,9 @@ export const connectState = {
   shortAddr: ref(''),
   currency: 'ETH',
   signed: false,
-  provider: new providers.Web3Provider((window as any).ethereum),
+  provider: Object(),
+  connected: false,
+  inited:false,
   signer: Object(),
   storage: 'filcoin',
   web3Storage: '',
@@ -24,30 +28,11 @@ export const connectState = {
   search: '',
   searchCallback: async () => {},
   connectCallback: async () => {},
+  accountsChanged: async (accounts: string[]) => {},
+  chainChanged: async () => {},
   transactions: ref(new Array()),
   transactionCount: ref(0),
 };
-
-//connect to metamask wallet
-export const networkConnect = async () => {
-
-  const res = await connectState.provider.send("eth_requestAccounts", []);
-
-  if(res.length > 0){
-    //user address changed
-    if(connectState.userAddr.value !== res[0]){
-      connectState.bundlrProvider = null;
-    }
-
-    //user address
-    connectState.userAddr.value = res[0];
-
-    return await detectNetwork();
-
-  }else{
-    return false;
-  }
-}
 
 //detect currency
 export const detectCurrency = async (chainId: number) => {
@@ -61,6 +46,49 @@ export const detectCurrency = async (chainId: number) => {
     connectState.currency = tokenList[0];
 }
 
+//connect to metamask wallet
+export const networkConnect = async () => {
+
+  if(!connectState.connected){
+
+    try{
+      const provider = await web3modal.connect();
+
+      connectState.provider = new providers.Web3Provider(provider);  
+
+      //only first time to bind the events
+      if(!connectState.inited){
+        connectState.inited = true;
+        // Subscribe to accounts change
+        provider.on("accountsChanged", (accounts: string[]) => {
+          connectState.accountsChanged(accounts);
+        });
+
+        // Subscribe to chainId change
+        provider.on("chainChanged", (chainId: number) => {
+          connectState.chainChanged();
+        });  
+      } 
+
+    }catch(e){
+      cancelConnect();
+      return false;
+    }
+  }
+
+  try{
+    if(await detectNetwork()){
+      return true;
+    }
+  }catch(e){
+    cancelConnect();
+    return false;
+  }
+
+  cancelConnect();
+  return false;
+}
+
 //deteck network
 export const detectNetwork = async () => {
   //detect block chain
@@ -70,14 +98,32 @@ export const detectNetwork = async () => {
     return false;
   }
 
-  (connectState.provider.network as any).chainId = (res as any).chainId;
-  (connectState.provider.network as any).chainName = (res as any).chainName;
+  const accounts = await connectState.provider.send("eth_accounts", []);
+  if(accounts.length === 0){
+    return false;
+  }
+
+  const selectedAddress = accounts[0];
+
+  if(selectedAddress === undefined || selectedAddress === null || selectedAddress === ''){
+    return false;
+  }
+
+  if(connectState.userAddr.value != selectedAddress){
+    connectState.bundlrProvider = null;
+
+    //user address
+    connectState.userAddr.value = selectedAddress;
+  }  
+
+  connectState.provider = new providers.Web3Provider(connectState.provider.provider);
 
   //signer
   connectState.signer = connectState.provider.getSigner();
 
   //chain id changed
   if(connectState.chainId !== res.chainId){
+
     connectState.bundlrProvider = null;
   }
 
@@ -90,6 +136,9 @@ export const detectNetwork = async () => {
   //chain token
   detectCurrency(res.chainId);
 
+  //set connected status
+  connectState.connected = true;
+
   //connect call back
   connectState.connectCallback();  
 
@@ -99,38 +148,35 @@ export const detectNetwork = async () => {
 //disconnect to metamask wallet
 export const cancelConnect = async () => {
   connectState.userAddr.value = "";
-  // connectState.chainId = 1;
-  // connectState.chainName = "";
+  connectState.connected = false;
+
+  try{
+    connectState.provider.provider.close();
+  }catch(e){
+    console.log('');
+  }
+  
+  web3modal.clearCachedProvider();
   connectState.signer = null;
   connectState.bundlrProvider = null;
 }
 
-//on wallet account change
-export const accountsChanged = async (accountsChanged:Function) => {
-  (window as any).ethereum.on('accountsChanged', async () => {
-    await accountsChanged();
-  });
-}
-
-//on wallet netwokr change
-export const networkChanged = async (networkChanged:Function) => {
-  (window as any).ethereum.on('chainChanged', async () => {
-    await networkChanged();
-
-    //clear transactions when network changed
-    connectState.transactions.value = new Array();
-    connectState.transactionCount.value = 0;
-  });    
-}
-
 //check if wallet is connected or not
-export const connected = () => {
-    if((window as any).ethereum.selectedAddress === null || 
-      (window as any).ethereum.selectedAddress === undefined ||
-      (window as any).ethereum.selectedAddress === ''){
-      
-      return false;
-    }  else {
+export const connected = async () => {
+  if(!connectState.connected){
+    return false;
+  }
+
+  try{
+    const res = await connectState.provider.send("eth_accounts", []);
+
+    if(res.length > 0){
       return true;
-    }
+    }    
+  }catch(e){
+    console.log('');
+  }
+
+  connectState.connected = false;
+  return false;  
 }

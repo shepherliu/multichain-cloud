@@ -169,6 +169,11 @@ const handleClick = async () => {
 
     loadStatus.value = true;
 
+    if (!(await connected())){
+      fileList.value = new Array();
+      return;
+    }        
+
     await getFileCount(activeName.value);
 
     if(currentPage.value < 1){
@@ -223,7 +228,5 @@ try{
 }
 
 //update page size
-if (connected()){
-  handleClick();
-}
+handleClick();
 </script>

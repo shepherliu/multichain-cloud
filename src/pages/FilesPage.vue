@@ -209,6 +209,11 @@ const handleClick = async () => {
   try{
 
     loadStatus.value = true;
+
+    if (!(await connected())){
+      fileList.value = new Array();
+      return;
+    }    
     
     await getFileCount(activeName.value);
 
@@ -267,7 +272,5 @@ try{
 }
 
 //update page
-if (connected()){
-  handleClick();
-}
+handleClick();
 </script>

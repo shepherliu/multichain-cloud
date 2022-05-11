@@ -474,6 +474,11 @@ const handleClick = async () => {
 
     loadStatus.value = true;
 
+    if (!(await connected())){
+      nftList.value = new Array();
+      return;
+    }        
+
     await getNftCount(activeName.value);
 
     if(currentPage.value < 1){
@@ -547,7 +552,5 @@ try{
 }
 
 //update page size
-if (connected()){
-  handleClick();
-}
+handleClick();
 </script>

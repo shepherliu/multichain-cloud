@@ -101,8 +101,20 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
 *3. Transak Docs:*
 
    getting started wit Transak: https://integrate.transak.com/
+   
+*4. Unstoppable Domains:*
 
-*4. Smart contract Resource Docs:*
+  unstoppable Domains Resolution API: https://docs.alchemy.com/alchemy/enhanced-apis/unstoppable-domains-apis
+
+  NFT domains registry architecture: https://docs.unstoppabledomains.com/domain-registry-essentials/uns-vs-cns-comparison
+
+  domain resolution SDKs: https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/resolution-libraries 
+
+  how to resolve domains using direct blockchain call (without SDK): https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/direct-blockchain-calls 
+
+  crypto payments integration guide: https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/crypto-payments
+
+*5. Smart contract Resource Docs:*
 
    online solidity compilier: https://remix.ethereum.org/
    
@@ -110,8 +122,14 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
    
    getting started with solidity: https://docs.soliditylang.org/en/latest/
    
-*5. Fronted Resource Docs:*
+*6. Fronted Resource Docs:*
 
    getting started with Vue3: https://vuejs.org/guide/introduction.html
    
    getting started with Element Ui: https://element-plus.org/en-US/component/menu.html
+   
+***Development contract:***
+  
+   email: shepher.liu@gmail.com
+   
+   discord: swarmlover#4063

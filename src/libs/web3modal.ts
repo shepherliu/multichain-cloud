@@ -6,13 +6,6 @@ import Web3Modal from 'web3modal'
 
 import * as constant from '../constant'
 
-export const uauthOptions: UAuthWeb3Modal.IUAuthOptions = {
-  clientID: 'client_id',
-  redirectUri: (window as any).location.host,
-
-  scope: 'openid wallet',
-}
-
 const getChainRpcInfos = () => {
   const rpcList = {} as any;
 
@@ -21,6 +14,13 @@ const getChainRpcInfos = () => {
   }
 
   return rpcList;
+}
+
+export const uauthOptions: UAuthWeb3Modal.IUAuthOptions = {
+  clientID: 'ZrIVOhdhBIXNDpq5znOsBHYy5fpra14x',
+  clientSecret: '4zAvs6k7l7BsjhDK4qwm5LtFzaZTdCcf',
+  redirectUri: (window as any).location.host,
+  scope: 'openid wallet',
 }
 
 const providerOptions = {
@@ -37,7 +37,6 @@ const providerOptions = {
     // The SPA libary options
     options: uauthOptions,
   },
-
   walletconnect: {
     package: WalletConnectProvider,
     options: {
@@ -45,7 +44,6 @@ const providerOptions = {
       rpc: getChainRpcInfos(),
     },
   },
-
 }
 
 const web3modal = new Web3Modal({cacheProvider: true, providerOptions})

@@ -17,24 +17,16 @@ const getChainRpcInfos = () => {
 }
 
 export const uauthOptions: UAuthWeb3Modal.IUAuthOptions = {
-  clientID: 'ZrIVOhdhBIXNDpq5znOsBHYy5fpra14x',
-  clientSecret: '4zAvs6k7l7BsjhDK4qwm5LtFzaZTdCcf',
-  redirectUri: (window as any).location.host,
+  clientID: '948b22ce-98d1-4226-9769-4745b5a17315',
+  redirectUri: (window as any).location.origin,
   scope: 'openid wallet',
 }
 
 const providerOptions = {
   'custom-uauth': {
-    // The UI Assets
     display: UAuthWeb3Modal.display,
-
-    // The Connector
     connector: UAuthWeb3Modal.connector,
-
-    // The SPA libary
     package: UAuthSPA,
-
-    // The SPA libary options
     options: uauthOptions,
   },
   walletconnect: {
@@ -49,6 +41,6 @@ const providerOptions = {
 const web3modal = new Web3Modal({cacheProvider: true, providerOptions})
 
 // Register the web3modal so the connector has access to it.
-UAuthWeb3Modal.registerWeb3Modal(web3modal)
+UAuthWeb3Modal.registerWeb3Modal(web3modal);
 
 export default web3modal

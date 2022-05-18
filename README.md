@@ -128,8 +128,10 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
    
    getting started with Element Ui: https://element-plus.org/en-US/component/menu.html
    
-***Development contract:***
+***Contract Me:***
   
-   email: shepher.liu@gmail.com
+   Email: shepher.liu@gmail.com
+
+   Unstoppable Domain Register Email: shepher.liu@gmail.com
    
-   discord: swarmlover#4063
+   Discord: swarmlover#4063

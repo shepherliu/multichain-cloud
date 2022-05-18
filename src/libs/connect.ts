@@ -12,6 +12,8 @@ import { ref } from "vue"
 export const connectState = {
   chainId: 4,
   chainName: '',
+  userName: ref(''),
+  shortName: ref(''),
   userAddr: ref(''),
   shortAddr: ref(''),
   currency: 'ETH',
@@ -78,6 +80,10 @@ export const networkConnect = async () => {
 
   try{
     if(await detectNetwork()){
+      const userName = (window as any).localStorage.getItem('uauth-default-username');
+      if(userName != undefined && userName != null && userName != ""){
+        connectState.userName.value = userName;
+      }
       return true;
     }
   }catch(e){

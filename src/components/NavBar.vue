@@ -88,11 +88,17 @@
         :title="networkName"
         :width="200"
         trigger="hover"
-        :content="userAddr"
       >
         <template #reference>
-          <a @click="onClickToCopy(userAddr)" style="margin-top: 17px;padding-right: 10px;float: right;">{{shortAddr}}</a>
+          <a v-if="userName != ''" @click="onClickToCopy(userName)" style="margin-top: 17px;padding-right: 10px;float: right;">{{shortName}}</a>
+          <a v-if="userName === ''" @click="onClickToCopy(userAddr)" style="margin-top: 17px;padding-right: 10px;float: right;">{{shortAddr}}</a>
         </template>
+        <el-row :gutter="20" v-if="userName != ''">
+          <a @click="onClickToCopy(userName)" style="margin-top: 17px">{{userName}}</a><br/>
+        </el-row>
+        <el-row :gutter="20">
+          <a @click="onClickToCopy(userAddr)" style="margin-top: 17px">{{userAddr}}</a>
+        </el-row>
       </el-popover>      
     </el-col>
 
@@ -220,6 +226,8 @@ import * as constant from "../constant"
 const logo = require('@/assets/logo.png');
 const metamask = require('@/assets/metamask.svg');
 // const resolution = new Resolution();
+const userName = connect.connectState.userName;
+const shortName = connect.connectState.shortName;
 const userAddr = connect.connectState.userAddr;
 const shortAddr = connect.connectState.shortAddr;
 const networkName = ref("");
@@ -264,6 +272,7 @@ const connectNetwork = async () => {
     }else{
       await connect.cancelConnect();
       userAddr.value = "";
+      shortName.value = "";
       shortAddr.value = "";
       networkName.value = "";
       connectStatus.value = "Connect Wallet";
@@ -276,9 +285,12 @@ const connectNetwork = async () => {
 
 //set connect callback function
 connect.connectState.connectCallback = async () => {
+    userName.value = connect.connectState.userName.value;
+    shortName.value = tools.shortString(userName.value);
     userAddr.value = connect.connectState.userAddr.value;
-    networkName.value = network.getChainName(connect.connectState.chainId);
     shortAddr.value = tools.shortString(userAddr.value);
+
+    networkName.value = network.getChainName(connect.connectState.chainId);
     connectStatus.value = "Cancel Connect";  
 };
 
@@ -287,6 +299,8 @@ const disConnectNetwork = async () => {
     await connect.cancelConnect();
 
     connectStatus.value = "Connect Wallet";
+    userName.value = "";
+    shortName.value = "";
     userAddr.value = "";
     shortAddr.value = "";
     networkName.value = "";

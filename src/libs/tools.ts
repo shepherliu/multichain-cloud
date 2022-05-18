@@ -22,13 +22,13 @@ export const clickToCopy = (content:string) => {
 
 //short content string
 export const shortString = (content:string) => {
-  if(content.length <= 15){
+  if(content.length <= 19){
     return content;
   }
 
   const length = content.length;
 
-  return content.substr(0,7)+"..."+content.substr(length-5,length);
+  return content.substr(0,9)+"..."+content.substr(length-7,length);
 }
 
 export const fileType = (name: string) => {

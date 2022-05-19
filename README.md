@@ -39,7 +39,7 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
     
   *6. see our daemon website: https://multichain-cloud.vercel.app*
   
-  *7. see daemon video send nft using unstoppable domains api: https://youtu.be/Wza1ESuXDtQ*
+  *7. see daemon video sending nft with unstoppable domains api: https://youtu.be/Wza1ESuXDtQ*
 
 
 ***How it works***:

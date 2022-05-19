@@ -97,9 +97,9 @@
                         </el-button>
                         <el-button v-if="activeName!='mine' && nft.tokenPrices > 0 && !nft.tokenOwner" size="small" type="warning" @click="onBuyNft(nft.tokenId, nft.tokenPrices)">
                           Buy Price: {{nft.tokenPrices.toFixed(3)}}<el-icon><sell /></el-icon>
-                        </el-button>                                           
-                        <el-button v-if="activeName==='mine'" size="small" type="danger" @click="onBurnNft(nft.tokenId)">
-                          Burn<el-icon><delete /></el-icon>
+                        </el-button>                                                         
+                        <el-button v-if="activeName==='mine'" size="small" type="danger" @click="onSendNft(nft.tokenId)">
+                          Send<el-icon><Position /></el-icon>
                         </el-button>
                       </el-button-group>
                     </div>
@@ -145,8 +145,10 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { h,ref } from "vue"
 import { utils } from "ethers"
+
+import Resolution from "@unstoppabledomains/resolution";
 
 import * as web3nft from "../libs/web3nft"
 import { connected, connectState } from "../libs/connect"
@@ -154,6 +156,7 @@ import * as element from "../libs/element"
 import * as constant from "../constant"
 import * as tools from "../libs/tools"
 
+const resolution = new Resolution();
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
 const pageSize = ref(3);
@@ -247,28 +250,6 @@ const onHateNft = async (tokenId:number) => {
     element.elMessage('success', msg, true);    
 
     handleClick();      
-
-  }catch(e){
-    element.alertMessage(e);
-  }
-
-}
-
-//click to burn nft
-const onBurnNft = async (tokenId:number) => {
-  try{
-
-    const tx = await web3nft.burn(tokenId);
-    connectState.transactions.value.unshift(tx);
-    connectState.transactionCount.value++;
-
-    const msg = '<div><span>Burn success! Transaction: </span><a href="' + 
-      transactionExplorerUrl(tx) + 
-      '" target="_blank">' + tx + '</a></div>';
-
-    element.elMessage('success', msg, true);    
-
-    handleClick();
 
   }catch(e){
     element.alertMessage(e);
@@ -381,25 +362,143 @@ const onSellNft = async (tokenId:number, tokenPrices = 0.01) => {
 
   element.elMessageBox('Please enter the price to Sell the NFT', 'Sell Price', opts, async (value:number) => {
 
+    try{
+      const tx = await web3nft.sellNFT(tokenId, value);
+      
+      connectState.transactions.value.unshift(tx);
+      connectState.transactionCount.value++;
+
+      const msg = '<div><span>Sell NFT success! Transaction: </span><a href="' + 
+        transactionExplorerUrl(tx) + 
+        '" target="_blank">' + tx + '</a></div>';
+
+      element.elMessage('success', msg, true);        
+
+      handleClick();
+
+    }catch(e){
+      element.alertMessage(e);
+    }
+
+  });
+}
+
+//click to send or burn nft
+const onSendNft = async (tokenId:number) => {
+
+  const opts = {
+    confirmButtonText: 'Send',
+    cancelButtonText: 'Cancel',
+    inputType: 'text',
+    inputValue: '',
+    inputPlaceholder: '0x0000000000000000000000000000000000000000',
+    inputErrorMessage: 'Invalid address',
+  };
+
+  element.elMessageBox('Please enter address to send the NFT:', 'Send NFT', opts, async (value:string) => {
+
+    value = value.trim().toLowerCase();
+
+    let address = value;
+
+    if(address === undefined ||
+      address === null ||
+      address === '' ||
+      address === '0' ||
+      address === '0x' ||
+      address.match('0x0{1,}$') != null || 
+      address === '0x000000000000000000000000000000000000dead'){
+      
+      return burnNFT(tokenId);
+    }    
+
+    try{
+      address = await resolution.addr(value, "ETH");
+    }catch(e){
+
       try{
-        const tx = await web3nft.sellNFT(tokenId, value);
-        
-        connectState.transactions.value.unshift(tx);
-        connectState.transactionCount.value++;
-
-        const msg = '<div><span>Sell NFT success! Transaction: </span><a href="' + 
-          transactionExplorerUrl(tx) + 
-          '" target="_blank">' + tx + '</a></div>';
-
-        element.elMessage('success', msg, true);        
-
-        handleClick();
-
+        address = await connectState.provider.resolveName(value);
       }catch(e){
-        element.alertMessage(e);
+        address = null;
       }
+    }
 
-    });
+    if(address === undefined || address === null || address === ''){
+      element.elMessage('error', 'Invalid address input!');
+      return;
+    } else {
+      address = address.trim().toLowerCase();
+    }
+    
+    return sendNFT(value, address, tokenId);
+
+  });
+
+}
+
+const burnNFT = async (tokenId:number) => {
+  const opts = {
+    confirmButtonText: 'Burn',
+    cancelButtonText: 'Cancel',
+  };
+
+  element.elMessageConfirm('Are you sure to Burn the NFT of ID ' + tokenId + '?', 'Burn NFT', opts, async () => {
+    try{
+      const tx = await web3nft.burn(tokenId);
+      connectState.transactions.value.unshift(tx);
+      connectState.transactionCount.value++;
+
+      const msg = '<div><span>Burn success! Transaction: </span><a href="' + 
+        transactionExplorerUrl(tx) + 
+        '" target="_blank">' + tx + '</a></div>';
+
+      element.elMessage('success', msg, true);    
+
+      handleClick();      
+    }catch(e){
+      element.alertMessage(e);
+    }
+  });  
+}
+
+const sendNFT = async (name:string, address:string, tokenId:number) => {
+  const opts = {
+    message: '',
+    confirmButtonText: 'Send',
+    cancelButtonText: 'Cancel',
+  };
+
+  if(name === address){
+    opts.message =  h('p', null, [
+      h('p', null, 'Are you sure to send the NFT of ID ' + tokenId + '?'),
+      h('p', { style: 'color: teal' }, 'send user: '),
+      h('p', { style: 'color: teal' }, address),
+    ]);
+  }else{
+    opts.message =  h('p', null, [
+      h('p', null, 'Are you sure to send the NFT of ID ' + tokenId + '?'),
+      h('p', { style: 'color: teal' }, 'send user:  ' + name),
+      h('p', { style: 'color: teal' }, address),
+    ]);
+  }
+
+  element.elMessageConfirm('Are you sure to send the NFT of ID ' + tokenId + '?', 'Send NFT', opts, async () => {
+    try{
+      const tx = await web3nft.safeTransferFrom(connectState.userAddr.value, address, tokenId);
+      connectState.transactions.value.unshift(tx);
+      connectState.transactionCount.value++;
+
+      const msg = '<div><span>Send success! Transaction: </span><a href="' + 
+        transactionExplorerUrl(tx) + 
+        '" target="_blank">' + tx + '</a></div>';
+
+      element.elMessage('success', msg, true);    
+
+      handleClick();      
+    }catch(e){
+      element.alertMessage(e);
+    }
+  });  
 }
 
 //get nft count and pull nft info

@@ -21,6 +21,12 @@ export const elMessageBox = async(desc:string, title:string, options: Object, ca
     });
 }
 
+export const elMessageConfirm = async(desc:string, title:string, options: Object, callback:Function) => {
+    ElMessageBox.confirm(desc, title, options).then(() => {
+        callback();
+    });
+}
+
 //trigger an error message from metamask
 export const alertMessage = async(error: any) => {
     if( error.data != undefined && 

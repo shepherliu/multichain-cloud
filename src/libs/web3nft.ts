@@ -7,6 +7,7 @@ import {networkConnect, connectState} from "./connect"
 
 //contract abis
 const abi = [
+	"function safeTransferFrom(address from, address to, uint256 tokenId)",
 	"function mint(string memory tokenType, string memory tokenURI) public returns (uint256)",
 	"function burn(uint256 tokenId) public payable returns (bool)",
 	"function tokenURI(uint256 tokenId) public view returns (string memory)",
@@ -37,6 +38,31 @@ export const getContract = async () => {
   await networkConnect();
 
   return new Contract((nftContractAddress as any)[connectState.chainId], abi, connectState.signer);	
+}
+
+//safetransfer from
+export const safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+	from = from.trim();
+	if(from === ''){
+		throw new Error("from address is empty!");
+	}
+	to = to.trim();
+	if(to === ''){
+		throw new Error("to address is empty!");
+	}
+	if(from === to){
+		throw new Error("from address can not be the same as to address!");
+	}
+	tokenId = Math.floor(tokenId);
+	if(tokenId < 0){
+		throw new Error("invalid token id!");
+	}	
+
+	const contract = await getContract();
+	const tx = await contract.safeTransferFrom(from, to, tokenId);
+  await tx.wait();
+
+  return tx.hash;		
 }
 
 //mint a nft

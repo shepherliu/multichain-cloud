@@ -37,9 +37,9 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
   
     npm run build
     
-  *6. see our daemon website https://multichain-cloud.vercel.app*
+  *6. see our daemon website: https://multichain-cloud.vercel.app*
   
-  *7. see our daemon video*
+  *7. see daemon video send nft using unstoppable domains api: https://youtu.be/Wza1ESuXDtQ*
 
 
 ***How it works***:

@@ -41,6 +41,15 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
   
   *7. see daemon video sending nft with unstoppable domains api: https://youtu.be/Wza1ESuXDtQ*
 
+  *8. smart contracts*
+
+      rinkeby testnet contracts:
+
+          compiled with chainIDE https://chainide.com/s/ethereum/5eace4704dac4a59ae1b135127c27ab9 
+
+          filemanager: https://rinkeby.etherscan.io/address/0x1FCCEc0056F29DB240D12Aca627E5AEa171bE1e0
+
+          web3nft: https://rinkeby.etherscan.io/address/0x21efFF2e6B35a84B12DDa9103b14c5658a291C39
 
 ***How it works***:
 
@@ -116,7 +125,7 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
 
 *5. Smart contract Resource Docs:*
 
-   online solidity compilier: https://remix.ethereum.org/
+   online solidity compilier: https://chainide.com/, https://remix.ethereum.org/
    
    getting started with ethers.js: https://docs.ethers.io/v5/
    

@@ -79,11 +79,11 @@ export const networkConnect = async () => {
   }
 
   try{
+    const userName = (window as any).localStorage.getItem('uauth-default-username');
+    if(userName != undefined && userName != null && userName != ""){
+      connectState.userName.value = userName;
+    }    
     if(await detectNetwork()){
-      const userName = (window as any).localStorage.getItem('uauth-default-username');
-      if(userName != undefined && userName != null && userName != ""){
-        connectState.userName.value = userName;
-      }
       return true;
     }
   }catch(e){

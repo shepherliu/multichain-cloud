@@ -43,7 +43,9 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
   
   *8. see daemon video sending nft with unstoppable domains api: https://youtu.be/Wza1ESuXDtQ*
 
-  *9. smart contracts*
+  *9. see daemon video login in with unstoppable domains: https://youtu.be/0hidXL9Pc78*
+
+  *10. smart contracts*
 
       rinkeby testnet contracts:
 

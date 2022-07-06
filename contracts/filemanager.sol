@@ -32,7 +32,7 @@ contract FileManager {
         if(bytes(src).length != bytes(dst).length){
             return false;
         }else{
-            return keccak256(src) == keccak256(dst);
+            return keccak256(abi.encodePacked(src)) == keccak256(abi.encodePacked(dst));
         }
     }
 

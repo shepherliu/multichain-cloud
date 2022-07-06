@@ -29,24 +29,11 @@ contract FileManager {
 
     //compare two string is equal or not
     function isStringEqual(string memory src, string memory dst) internal pure returns(bool){
-        bytes memory a = bytes(src);
-        bytes memory b = bytes(dst);
-
-        if(a.length != b.length){
+        if(bytes(src).length != bytes(dst).length){
             return false;
+        }else{
+            return keccak256(src) == keccak256(dst);
         }
-
-        if(a.length == 0){
-            return true;
-        }
-
-        for(uint i=0; i<a.length; i++){
-            if(a[i] != b[i]){
-                return false;
-            }
-        }
-
-        return true;
     }
 
     //add a file

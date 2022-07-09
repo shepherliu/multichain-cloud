@@ -9,7 +9,7 @@ import * as constant from "../constant"
 const getClient = () => {
   const apiToken = connectState.web3Storage === '' ? constant.web3StorageAppKey : connectState.web3Storage;
   // Construct with token and endpoint
-  const client = new Web3Storage({ token: apiToken, endpoint: new URL((window as any).location.origin) });
+  const client = new Web3Storage({ token: apiToken, endpoint: new URL(constant.web3StorageHost) });
 
   return client;
 }

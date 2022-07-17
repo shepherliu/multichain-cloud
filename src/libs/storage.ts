@@ -13,6 +13,10 @@ import * as constant from "../constant"
 
 //get real file url link based on the storage type
 const getFileLink = (filename:string, filetype:string, fileid:string) => {
+  if(fileid === undefined || fileid === null || fileid === ''){
+    return '';
+  }
+    
   switch(connectState.storage){
     case 'bundlr':
       return constant.arweaveUrl + fileid;
@@ -20,11 +24,14 @@ const getFileLink = (filename:string, filetype:string, fileid:string) => {
       return constant.swarmGateway + fileid;
     case 'filcoin':
       if(filetype==='folder'){
-        return constant.web3Gateway + fileid;
+        return `https://${fileid}.ipfs.dweb.link`;
+        // return constant.web3Gateway + fileid;
       } else if (filetype==='website'){
-        return constant.web3Gateway + fileid + '/index.html';
+        return `https://${fileid}.ipfs.dweb.link/index.html`;
+        // return constant.web3Gateway + fileid + '/index.html';
       } else {
-        return constant.web3Gateway + fileid + '/' + filename;
+        return `https://${fileid}.ipfs.dweb.link/${filename}`;
+        // return constant.web3Gateway + fileid + '/' + filename;
       }
   }
 

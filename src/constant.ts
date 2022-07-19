@@ -83,6 +83,7 @@ export const tokenList = {
   288: ['BOBA', 'ETH'],
   588: ['METIS', 'ETH'],
   1088: ['METIS', 'ETH'],
+  2828: ['LYXT'],
   4689: ['IOTX'],
   42161: ['ETH'],
   43114: ['AVAX'],
@@ -224,6 +225,13 @@ export const chainList = [
     rpcUrls: 'https://andromeda.metis.io/?owner=1088',
     blockExplorerUrls: 'https://andromeda-explorer.metis.io',
   },    
+  {
+    chainId: 2828,
+    chainName: 'KUKSO Test network',
+    nativeCurrency: 'LYXT',
+    rpcUrls: 'https://rpc.l16.lukso.network',
+    blockExplorerUrls: 'https://explorer.execution.l16.lukso.network',
+  },  
   {
     chainId: 4689,
     chainName: 'IoTex Chain Mainnet',

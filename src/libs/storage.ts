@@ -3,6 +3,7 @@ import * as path from "path"
 import * as swarm from './swarm'
 import * as bundlr from './bundlr'
 import * as web3storage from './web3storage'
+import * as crypto from './crypto'
 
 
 import { connectState } from './connect'
@@ -39,12 +40,12 @@ const getFileLink = (filename:string, filetype:string, fileid:string) => {
 }
 
 //upload file
-export const uploadFile = async (file: any) => {
-  return await uploadFolder(file.name, [file]);
+export const uploadFile = async (file: any, isEncrypt:boolean = false) => {
+  return await uploadFolder(file.name, [file], isEncrypt);
 }
 
 //upload folder
-export const uploadFolder = async (dirPath: string, files: any[]) => {
+export const uploadFolder = async (dirPath: string, files: any[], isEncrypt:boolean = false) => {
   if(files.length===0){
     throw new Error("no files selected to upload!");
   }
@@ -68,6 +69,25 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
         filetype = 'website';
         break;
       }
+    }
+  }
+
+  if(isEncrypt && filetype != 'website'){
+    const password = crypto.generateRandom256Bits();
+    const sign_data = await crypto.encryptPasswordWithWallet(password);
+
+    for (const i in files){
+
+      const encrypt_data = await crypto.encryptDataWithCryptoJs(await files[i].raw?.text(), password);
+
+      const file_data = {
+        ...sign_data,
+        encrypt_data: encrypt_data,
+      };
+
+      const webkitRelativePath = files[i].raw?.webkitRelativePath;
+
+      files[i] = tools.makeFileObject(files[i].name, JSON.stringify(file_data), files[i].type, webkitRelativePath);
     }
   }
 

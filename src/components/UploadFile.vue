@@ -46,6 +46,13 @@
       @change="onChangeUploadType"
       active-text="Folder"
     />
+    <el-switch
+      v-model="isEncrypt"
+      size="small"
+      @change="onChangeUploadEncrypt"
+      active-text="Encrypt"
+      style="margin-left: 10px;"
+    />    
     <el-button 
       @click="onUploadFile" 
       type="primary" 
@@ -82,6 +89,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const upload = ref<UploadInstance>();
 const loadStatus = ref(false);
 const isFolder = ref(false);
+const isEncrypt = ref(false);
 const limits = ref(1);
 const acceptType = ref('');
 const selectedFile = ref('');
@@ -166,6 +174,13 @@ const getEntryDirectoryFiles = async (entry:any, name:string) => {
   });
 }    
 
+//change upload file encrypt or not
+const onChangeUploadEncrypt = async () => {
+  if(fileDescription.value?.[1]?.value === 'website'){
+    isEncrypt.value = false;
+  }
+}
+
 //change upload file or folder
 const onChangeUploadType = async () => {
   if(isFolder.value){
@@ -229,6 +244,10 @@ const onChangeSelectFiles = async (uploadFile: UploadFile, uploadFiles: UploadFi
     }
   }
 
+  if(fileType === 'website'){
+    isEncrypt.value = false;
+  }  
+
   fileDescription.value = [
     { description: 'Name', value: selectedFile.value,},
     { description: 'Type', value: fileType,},
@@ -249,11 +268,11 @@ const onUploadFile = async () => {
     }
 
     if(!isFolder.value){
-      const tx = await storage.uploadFile(toRaw(fileList.value)[0]);
+      const tx = await storage.uploadFile(toRaw(fileList.value)[0], isEncrypt.value);
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
     } else {
-      const tx = await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value));
+      const tx = await storage.uploadFolder(fileDescription.value[0].value, toRaw(fileList.value), isEncrypt.value);
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
     }    

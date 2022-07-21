@@ -90,6 +90,8 @@ import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
 import * as constant from "../constant"
 
+// import * as crypto from "../libs/crypto"
+
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
 const pageSize = ref(6);
@@ -252,6 +254,12 @@ const handleClick = async () => {
     loadStatus.value = false;
   }
 
+  //test crypto
+  // const message = "test a message!";
+  // const enctyptData = await crypto.encryptData(message);
+  // console.log(enctyptData);
+  // const decryptData = await crypto.decryptData(enctyptData);
+  // console.log(decryptData);
 }
 
 //clean search content and bind search callback function

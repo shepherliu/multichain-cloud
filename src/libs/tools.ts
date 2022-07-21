@@ -92,3 +92,23 @@ export const setUrlParamter = (name:string, value:string) => {
 
   (window as any).history.pushState(null, null, newUrl);
 }
+
+class UploadFile extends Blob {
+  name:string = '';
+  webkitRelativePath:string='';
+}
+
+//make file object
+export const makeFileObject = (filename:string, content:string, fileType:string = 'text/plain', webkitRelativePath:string = '') => {
+  
+  const file = new UploadFile([content], { type: fileType });
+  file.name = filename;
+  file.webkitRelativePath = webkitRelativePath;
+
+  const rawFile = {
+    ...file,
+    raw:file,
+  };
+
+  return rawFile;
+}

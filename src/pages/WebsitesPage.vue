@@ -15,22 +15,18 @@
         element-loading-background="#ffffff"
       >
         <el-row :gutter="20">
-          <template v-for="file in fileList" :key="file.fileId">
+          <template v-for="file in fileList" :key="file.fileIndex">
               <el-col :span="8">
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <el-popover placement="bottom-start" :width="600" :title="file.fileName">
-                        <template #reference>
-                          <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
-                        </template>
-                        <embed v-if="file.fileType==='website'" type="text/html" :src="file.fileId" style="height:600px;width: 600px;" />
-                      </el-popover>
+                      <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
                       <span>{{file.fileSize}}</span>
                     </div>
                   </template>
+                  <iframe v-if="file.fileType===5" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileId" style="height:150px;width: 200px;" />
                   <el-button-group>
-                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileId)">
+                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileIndex)">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>
@@ -105,7 +101,7 @@ const transactionExplorerUrl = (transaction:string) => {
 }
 
 //click to delete file
-const onDeleteFile = async (fileid:string) => {
+const onDeleteFile = async (fileid:number) => {
 
   try{
 
@@ -143,10 +139,17 @@ const getFileCount = async (filetype:string) => {
       name.search(connectState.search) != -1){
 
       newFileList.push({
+        fileIndex: index,
         fileName: fileInfo[0],
-        fileType: fileInfo[1],
-        fileId: fileInfo[2],
+        fileId: fileInfo[1],
+        fileDecrypt: fileInfo[1],
+        fileType: fileInfo[2],
         fileSize: fileInfo[3],
+        isEncrypt: fileInfo[4],
+        isDecrypt: false,
+        nftMinted: false,
+        encryptStatus: false,
+        downloadStatus: false,
       });
     }
   }

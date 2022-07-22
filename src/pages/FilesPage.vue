@@ -233,7 +233,7 @@ const onDecriptFile = async (file:any) => {
 }
 
 //click to delete file
-const onDeleteFile = async (fileIndex:string) => {
+const onDeleteFile = async (fileIndex:number) => {
 
   try{
 

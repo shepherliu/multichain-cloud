@@ -25,7 +25,14 @@
                     <div class="card-header">
                       <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
                       <span>{{file.fileSize}}</span>
-                      <span style="float: right;">
+                      <span 
+                        style="float: right;"
+                        v-loading="file.downloadStatus"
+                        element-loading-text="Loading..."
+                        :element-loading-spinner="svg"
+                        element-loading-svg-view-box="-10, -10, 50, 50"
+                        element-loading-background="#ffffff"
+                      >
                         <el-button type="success" size="small" @click="onDownloadFile(file)">
                           <el-icon><Download /></el-icon>
                         </el-button>
@@ -37,7 +44,17 @@
                   <video v-if="file.fileType===2" :src="file.fileDecrypt" controls preload style="height:150px;width: 200px;" />
                   <iframe v-if="file.fileType===3" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileDecrypt" style="height:150px;width: 200px;" />
                   <el-button-group>
-                    <el-button v-if="file.isEncrypt===true&&file.isDecrypt===false" type="success" size="small" @click="onDecriptFile(file)">
+                    <el-button 
+                      v-if="file.isEncrypt===true&&file.isDecrypt===false"
+                      type="success" 
+                      size="small"
+                      v-loading="file.encryptStatus"
+                      element-loading-text="Loading..."
+                      :element-loading-spinner="svg"
+                      element-loading-svg-view-box="-10, -10, 50, 50"
+                      element-loading-background="#ffffff"
+                      @click="onDecriptFile(file)"
+                    >
                       Decrypt<el-icon><View /></el-icon>
                     </el-button>
                     <el-button 
@@ -130,25 +147,42 @@ const transactionExplorerUrl = (transaction:string) => {
 
 //click to download file
 const onDownloadFile = async (file:any) => {
+
   const a = document.createElement("a");
 
-  if(file.isEncrypt && !file.isDecrypt){
-    await onDecriptFile(file);
+  try{
+    file.downloadStatus = true;
 
-    a.href = file.fileDecrypt;
-  }else{
-    const res = await fetch(file.fileId, {
-      "referrer": (window as any).location.href,
-      "referrerPolicy": "no-referrer-when-downgrade",
-      "method": "GET",
-      "credentials": "omit",
-      "redirect": "follow",
-    });    
+    if(file.isEncrypt && !file.isDecrypt){
+      await onDecriptFile(file);
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+      if(file.fileDecrypt === file.fileId){
+        element.alertMessage("decrypt file failed!");
+        file.downloadStatus = false;
+        return;
+      }
 
-    a.href = url;
+      a.href = file.fileDecrypt;
+    }else{
+      const res = await fetch(file.fileId, {
+        "referrer": (window as any).location.href,
+        "referrerPolicy": "no-referrer-when-downgrade",
+        "method": "GET",
+        "credentials": "omit",
+        "redirect": "follow",
+      });    
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      a.href = url;
+    }
+  }catch(e){
+    element.alertMessage("download file failed!");
+    file.downloadStatus = false;
+    return;
+  }finally{
+    file.downloadStatus = false;
   }
 
   a.style.display = "none";
@@ -165,15 +199,18 @@ const onDownloadFile = async (file:any) => {
 
 //click to decrypt file
 const onDecriptFile = async (file:any) => {
-  let res = await fetch(file.fileId, {
-    "referrer": (window as any).location.href,
-    "referrerPolicy": "no-referrer-when-downgrade",
-    "method": "GET",
-    "credentials": "omit",
-    "redirect": "follow",
-  });
 
   try{
+    file.encryptStatus = true;
+
+    let res = await fetch(file.fileId, {
+      "referrer": (window as any).location.href,
+      "referrerPolicy": "no-referrer-when-downgrade",
+      "method": "GET",
+      "credentials": "omit",
+      "redirect": "follow",
+    });  
+
     if (res.status >= 200 && res.status <= 299){
       res = await res.json();
 
@@ -181,19 +218,16 @@ const onDecriptFile = async (file:any) => {
       const content = await crypto.decryptDataWithCryptoJs(res?.encrypt_data, passward);
       const decrypt_file = tools.makeFileObject(file.fileName, content);
 
-      for(const i in fileList.value){
-        if(fileList.value[i].fileIndex === file.fileIndex){
-          fileList.value[i].fileDecrypt = URL.createObjectURL(decrypt_file.raw);
-          fileList.value[i].isDecrypt = true;
-          break;
-        }
-      }
+      file.fileDecrypt = URL.createObjectURL(decrypt_file.raw);
+      file.isDecrypt = true;
 
     }else{
       element.alertMessage("fetch file content failed!");
     }
   }catch(e){
-    element.alertMessage(e);
+    element.alertMessage("fetch file content failed!");
+  }finally{
+    file.encryptStatus = false;
   }
 
 }
@@ -269,6 +303,8 @@ const getFileCount = async (filetype:string) => {
         isEncrypt: fileInfo[4],
         isDecrypt: false,
         nftMinted: false,
+        encryptStatus: false,
+        downloadStatus: false,
       });
     }
   }

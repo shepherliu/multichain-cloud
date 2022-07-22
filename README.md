@@ -85,7 +85,9 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
    
    *3. Arweave Storage Full Support.*
    
-   *5. File/Folder Encrypt And Decrypt Support.*
+   *4. File/Folder Encrypt And Decrypt Support.*
+   
+   *5. User friendly design*
    
 ***Resources:***
 

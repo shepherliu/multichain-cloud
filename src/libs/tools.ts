@@ -99,7 +99,7 @@ class UploadFile extends Blob {
 }
 
 //make file object
-export const makeFileObject = (filename:string, content:string, fileType:string = 'text/plain', webkitRelativePath:string = '') => {
+export const makeFileObject = (filename:string, content:any, fileType:string = 'text/plain', webkitRelativePath:string = '') => {
   
   const file = new UploadFile([content], { type: fileType });
   file.name = filename;

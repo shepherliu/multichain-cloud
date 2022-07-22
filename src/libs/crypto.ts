@@ -132,10 +132,35 @@ export const decryptPasswordWithWallet = async (encrypt_password:any, account:st
 	}
 }
 
+const convertWordArrayToUint8Array = (wordArray: any) => {
+  const arrayOfWords = wordArray.words ? wordArray.words : [];
+
+  const length = wordArray.sigBytes ? wordArray.sigBytes : arrayOfWords.length * 4;
+
+  const uInt8Array = new Uint8Array(length);
+
+  let index = 0;
+
+  for (let i = 0; i < length; i++) {
+    const word = arrayOfWords[i];
+    uInt8Array[index++] = word >> 24;
+    uInt8Array[index++] = (word >> 16) & 0xff;
+    uInt8Array[index++] = (word >> 8) & 0xff;
+    uInt8Array[index++] = word & 0xff;
+  }
+
+  return uInt8Array;
+}
+
 export const encryptDataWithCryptoJs = async (data:any, password:string = '') => {
+	data = CryptoJS.lib.WordArray.create(data);
+
 	return CryptoJS.AES.encrypt(data, password).toString();
 }
 
 export const decryptDataWithCryptoJs = async (encrypt_data:any, password:string) => {
-	return CryptoJS.AES.decrypt(encrypt_data, password).toString(CryptoJS.enc.Utf8);
+
+	const res = CryptoJS.AES.decrypt(encrypt_data, password);
+
+	return convertWordArrayToUint8Array(res);
 }

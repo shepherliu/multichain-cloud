@@ -50,6 +50,10 @@ export const uploadFolder = async (dirPath: string, files: any[], isEncrypt:bool
     throw new Error("no files selected to upload!");
   }
 
+  if(await filemanager.checkFile(dirPath)){
+    throw new Error("file/folder already exists!");
+  }
+
   let size = 0;
   for(const i in files){
     size += (files[i].raw as any).size;
@@ -77,15 +81,14 @@ export const uploadFolder = async (dirPath: string, files: any[], isEncrypt:bool
     const sign_data = await crypto.encryptPasswordWithWallet(password);
 
     for (const i in files){
+      const webkitRelativePath = files[i].raw?.webkitRelativePath;
 
-      const encrypt_data = await crypto.encryptDataWithCryptoJs(await files[i].raw?.text(), password);
+      const encrypt_data = await crypto.encryptDataWithCryptoJs(await files[i].raw?.arrayBuffer(), password);
 
       const file_data = {
         ...sign_data,
         encrypt_data: encrypt_data,
       };
-
-      const webkitRelativePath = files[i].raw?.webkitRelativePath;
 
       files[i] = tools.makeFileObject(files[i].name, JSON.stringify(file_data), files[i].type, webkitRelativePath);
     }
@@ -111,5 +114,5 @@ export const uploadFolder = async (dirPath: string, files: any[], isEncrypt:bool
   fileid = getFileLink(dirPath, filetype, fileid);
 
   //upload to the smart contract
-  return await filemanager.addFile(dirPath, filetype, fileid, size)
+  return await filemanager.addFile(dirPath, fileid, filetype, size, isEncrypt);
 }

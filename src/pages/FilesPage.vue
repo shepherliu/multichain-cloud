@@ -18,34 +18,34 @@
         element-loading-background="#ffffff"
       >
         <el-row :gutter="20">
-          <template v-for="file in fileList" :key="file.fileId">
+          <template v-for="file in fileList" :key="file.fileIndex">
               <el-col :span="8">
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <el-popover placement="bottom-start" :width="600" :title="file.fileName">
-                        <template #reference>
-                          <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
-                        </template>
-                        <img v-if="file.fileType==='image'" :src="file.fileId" style="width: 400px;" />
-                        <audio v-if="file.fileType==='audio'" :src="file.fileId" controls preload style="width: 400px;" />
-                        <video v-if="file.fileType==='video'" :src="file.fileId" controls preload style="width: 600px;" />
-                        <embed v-if="file.fileType==='docs'" type="text/html" :src="file.fileId" style="height:600px;width: 600px;" />
-                      </el-popover>
+                      <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
                       <span>{{file.fileSize}}</span>
                     </div>
                   </template>
+                  <img v-if="file.fileType===0&&(file.isEncrypt===false||file.isDecrypt===true)" :src="file.fileDecrypt" style="width: 200px;" />
+                  <audio v-if="file.fileType===1&&(file.isEncrypt===false||file.isDecrypt===true)" :src="file.fileDecrypt" controls preload style="width: 200px;" />
+                  <video v-if="file.fileType===2&&(file.isEncrypt===false||file.isDecrypt===true)" :src="file.fileDecrypt" controls preload style="width: 200px;" />
+                  <iframe v-if="file.fileType===3||(file.isEncrypt===true&&file.isDecrypt===false)" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileDecrypt" style="height:200px;width: 200px;" />
                   <el-button-group>
+                    <el-button v-if="file.isEncrypt===true&&file.isDecrypt===false" type="primary" size="small" @click="onDecriptFile(file)">
+                      Decrypt<el-icon><View /></el-icon>
+                    </el-button>
                     <el-button 
                       type="primary"
-                      v-if="file.fileType==='image'||file.fileType=='audio'||file.fileType=='video'"
+                      v-if="file.fileType===0||file.fileType==1||file.fileType==2"
                       :disabled="file.nftMinted"
                       size="small"
+                      style="margin-left: 5px;margin-right: 5px;"
                       @click="onMintNft(file.fileType, file.fileId)"
                     >
                       {{file.nftMinted ? "Minted" : "MintNFT"}}<el-icon><share /></el-icon>
                     </el-button>
-                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileId)">
+                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileIndex)">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>
@@ -89,8 +89,7 @@ import * as tools from "../libs/tools"
 import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
 import * as constant from "../constant"
-
-// import * as crypto from "../libs/crypto"
+import * as crypto from "../libs/crypto"
 
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
@@ -122,12 +121,47 @@ const transactionExplorerUrl = (transaction:string) => {
   return transaction;
 }
 
+//click to decrypt file
+const onDecriptFile = async (file:any) => {
+  let res = await fetch(file.fileId, {
+    "referrer": (window as any).location.href,
+    "referrerPolicy": "no-referrer-when-downgrade",
+    "method": "GET",
+    "credentials": "omit",
+    "redirect": "follow",
+  });
+
+  try{
+    if (res.status >= 200 && res.status <= 299){
+      res = await res.json();
+
+      const passward = await crypto.decryptPasswordWithWallet(res);
+      const content = await crypto.decryptDataWithCryptoJs(res?.encrypt_data, passward);
+      const decrypt_file = tools.makeFileObject(file.fileName, content);
+
+      for(const i in fileList.value){
+        if(fileList.value[i].fileIndex === file.fileIndex){
+          fileList.value[i].fileDecrypt = URL.createObjectURL(decrypt_file.raw);
+          fileList.value[i].isDecrypt = true;
+          break;
+        }
+      }
+
+    }else{
+      element.alertMessage("fetch file content failed!");
+    }
+  }catch(e){
+    element.alertMessage(e);
+  }
+
+}
+
 //click to delete file
-const onDeleteFile = async (fileid:string) => {
+const onDeleteFile = async (fileIndex:string) => {
 
   try{
 
-    const tx = await filemanager.delFile(fileid);
+    const tx = await filemanager.delFile(fileIndex);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
@@ -184,10 +218,14 @@ const getFileCount = async (filetype:string) => {
       name.search(connectState.search) != -1) {
 
       newFileList.push({
+        fileIndex: index,
         fileName: fileInfo[0],
-        fileType: fileInfo[1],
-        fileId: fileInfo[2],
+        fileId: fileInfo[1],
+        fileDecrypt: fileInfo[1],
+        fileType: fileInfo[2],
         fileSize: fileInfo[3],
+        isEncrypt: fileInfo[4],
+        isDecrypt: false,
         nftMinted: false,
       });
     }
@@ -254,12 +292,6 @@ const handleClick = async () => {
     loadStatus.value = false;
   }
 
-  //test crypto
-  // const message = "test a message!";
-  // const enctyptData = await crypto.encryptData(message);
-  // console.log(enctyptData);
-  // const decryptData = await crypto.decryptData(enctyptData);
-  // console.log(decryptData);
 }
 
 //clean search content and bind search callback function

@@ -25,14 +25,19 @@
                     <div class="card-header">
                       <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
                       <span>{{file.fileSize}}</span>
+                      <span style="float: right;">
+                        <el-button type="success" size="small" @click="onDownloadFile(file)">
+                          <el-icon><Download /></el-icon>
+                        </el-button>
+                      </span>
                     </div>
                   </template>
-                  <img v-if="file.fileType===0&&(file.isEncrypt===false||file.isDecrypt===true)" :src="file.fileDecrypt" style="width: 200px;" />
-                  <audio v-if="file.fileType===1&&(file.isEncrypt===false||file.isDecrypt===true)" :src="file.fileDecrypt" controls preload style="width: 200px;" />
-                  <video v-if="file.fileType===2&&(file.isEncrypt===false||file.isDecrypt===true)" :src="file.fileDecrypt" controls preload style="width: 200px;" />
-                  <iframe v-if="file.fileType===3||(file.isEncrypt===true&&file.isDecrypt===false)" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileDecrypt" style="height:200px;width: 200px;" />
+                  <img v-if="file.fileType===0" :src="(file.isDecrypt||!file.isEncrypt)?file.fileDecrypt:empty" style="height:150px;width: 200px;" />
+                  <audio v-if="file.fileType===1" :src="file.fileDecrypt" controls preload style="height:50px;width: 200px;" />
+                  <video v-if="file.fileType===2" :src="file.fileDecrypt" controls preload style="height:150px;width: 200px;" />
+                  <iframe v-if="file.fileType===3" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileDecrypt" style="height:150px;width: 200px;" />
                   <el-button-group>
-                    <el-button v-if="file.isEncrypt===true&&file.isDecrypt===false" type="primary" size="small" @click="onDecriptFile(file)">
+                    <el-button v-if="file.isEncrypt===true&&file.isDecrypt===false" type="success" size="small" @click="onDecriptFile(file)">
                       Decrypt<el-icon><View /></el-icon>
                     </el-button>
                     <el-button 
@@ -91,6 +96,8 @@ import * as element from "../libs/element"
 import * as constant from "../constant"
 import * as crypto from "../libs/crypto"
 
+const empty = require('@/assets/empty.png');
+
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
 const pageSize = ref(6);
@@ -119,6 +126,41 @@ const transactionExplorerUrl = (transaction:string) => {
   }
 
   return transaction;
+}
+
+//click to download file
+const onDownloadFile = async (file:any) => {
+  const a = document.createElement("a");
+
+  if(file.isEncrypt && !file.isDecrypt){
+    await onDecriptFile(file);
+
+    a.href = file.fileDecrypt;
+  }else{
+    const res = await fetch(file.fileId, {
+      "referrer": (window as any).location.href,
+      "referrerPolicy": "no-referrer-when-downgrade",
+      "method": "GET",
+      "credentials": "omit",
+      "redirect": "follow",
+    });    
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    a.href = url;
+  }
+
+  a.style.display = "none";
+  a.download = file.fileName;
+
+  document.body.appendChild(a);
+
+  const event = document.createEvent("MouseEvents");
+  event.initEvent("click", true, true);
+  a.dispatchEvent(event);
+
+  document.body.removeChild(a);
 }
 
 //click to decrypt file

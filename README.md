@@ -87,8 +87,6 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
    
    *5. File/Folder Encrypt And Decrypt Support.*
    
-   *6. AI NFT Create Support.*
-   
 ***Resources:***
 
 *1. Block Chain Resource Docs:*

@@ -77,7 +77,7 @@
   
       </el-header>
       <el-main
-        style="height: 450px;" 
+        style="height: 450px;margin-top: 15px;" 
         v-loading="loadStatus" 
         element-loading-text="Loading..."
         :element-loading-spinner="svg"
@@ -104,9 +104,9 @@
                       </el-button-group>
                     </div>
                   </template>
-                  <img v-if="nft.tokenType==='image'" :src="nft.tokenUri" style="width: 200px;height: 200px;" />
-                  <audio v-if="nft.tokenType==='audio'" :src="nft.tokenUri" controls preload style="width: 200px;height: 200px;" />
-                  <video v-if="nft.tokenType==='video'" :src="nft.tokenUri" controls preload style="width: 200px;height: 200px;" />
+                  <img v-if="nft.tokenType===0" :src="nft.tokenUri" style="width: 200px;height: 200px;" />
+                  <audio v-if="nft.tokenType===1" :src="nft.tokenUri" controls preload style="width: 200px;height: 200px;" />
+                  <video v-if="nft.tokenType===2" :src="nft.tokenUri" controls preload style="width: 200px;height: 200px;" />
                   <div>
                     <el-link type="primary" @click="onLikeNft(nft.tokenId)">Likes : {{nft.tokenLikes}}</el-link>
                     <el-link type="warning" @click="onHateNft(nft.tokenId)">Hates : {{nft.tokenHates}}</el-link>
@@ -167,11 +167,8 @@ const baseInfo = ref({
   maxtotalSupply: 15000, 
   maxUserSupply: 10,
   maxUserHates: 0, 
-  maxUserVotes: 0, 
-  minVoteAggrees: 5000,
   currentTotalSupply: 0,
   currentUserBalance: 0,
-  currentUserVoteCreated: 0,
   currentUserRewards: 0,
   currentUserBanned: false,
 } as any);  
@@ -261,7 +258,7 @@ const onHateNft = async (tokenId:number) => {
 const onClaimRewards = async () => {
   try{
 
-    const rewards = (await web3nft.getAddressPrameters())[3];
+    const rewards = (await web3nft.getAddressPrameters())[2];
   
     if(Number(utils.formatEther(rewards)) > 0){
       const tx = await web3nft.claim();
@@ -511,8 +508,17 @@ const getNftCount = async (nfttype:string) => {
     for(let i = total.toNumber() - 1; i >= 0; i--){
       const tokenId = (await web3nft.tokenByIndex(i)).toNumber();
       const tokenInfo = await web3nft.getNftInfoByIndex(tokenId);
-      
-      if(tokenInfo[2] != nfttype){
+      const tokenOwner = await web3nft.ownerOf(tokenId);
+
+      if(nfttype==='image' && tokenInfo[0]!=0){
+        continue;
+      }
+
+      if(nfttype==='audio' && tokenInfo[0]!=1){
+        continue;
+      }
+
+      if(nfttype==='video' && tokenInfo[0]!=2){
         continue;
       }
       
@@ -522,13 +528,14 @@ const getNftCount = async (nfttype:string) => {
 
         newNftList.push({
           tokenId: tokenId,
-          tokenOwner: tokenInfo[0].toLowerCase() === connectState.userAddr.value,
-          tokenUri: tokenInfo[1],
-          tokenType: tokenInfo[2],
-          tokenLikes: tokenInfo[3].toNumber(),
-          tokenHates: tokenInfo[4].toNumber(),
-          tokenRewards: Number(utils.formatEther(tokenInfo[5])),
-          tokenPrices: Number(utils.formatEther(tokenInfo[6])),
+          tokenOwner: tokenOwner.toLowerCase() === connectState.userAddr.value,
+          tokenType: tokenInfo[0],
+          tokenLikes: tokenInfo[1].toNumber(),
+          tokenHates: tokenInfo[2].toNumber(),
+          tokenRewards: Number(utils.formatEther(tokenInfo[3])),
+          tokenPrices: Number(utils.formatEther(tokenInfo[4])),
+          tokenUri: tokenInfo[5],
+          tokenSecret: tokenInfo[6],
         });
 
       }
@@ -539,20 +546,22 @@ const getNftCount = async (nfttype:string) => {
     for(let i = total.toNumber() - 1; i >= 0; i--){
       const tokenId = (await web3nft.tokenOfOwnerByIndex(connectState.userAddr.value, i)).toNumber();
       const tokenInfo = await web3nft.getNftInfoByIndex(tokenId);
+      const tokenOwner = await web3nft.ownerOf(tokenId);
       
       if(connectState.search === '' ||
         (String(tokenId)).indexOf(connectState.search) != -1 ||
         (String(tokenId)).search(connectState.search) != -1){
 
-        newNftList.push({
+       newNftList.push({
           tokenId: tokenId,
-          tokenOwner: tokenInfo[0].toLowerCase() === connectState.userAddr.value,
-          tokenUri: tokenInfo[1],
-          tokenType: tokenInfo[2],
-          tokenLikes: tokenInfo[3].toNumber(),
-          tokenHates: tokenInfo[4].toNumber(),
-          tokenRewards: Number(utils.formatEther(tokenInfo[5])),
-          tokenPrices: Number(utils.formatEther(tokenInfo[6])),
+          tokenOwner: tokenOwner.toLowerCase() === connectState.userAddr.value,
+          tokenType: tokenInfo[0],
+          tokenLikes: tokenInfo[1].toNumber(),
+          tokenHates: tokenInfo[2].toNumber(),
+          tokenRewards: Number(utils.formatEther(tokenInfo[3])),
+          tokenPrices: Number(utils.formatEther(tokenInfo[4])),
+          tokenUri: tokenInfo[5],
+          tokenSecret: tokenInfo[6],
         });
 
       }
@@ -616,13 +625,10 @@ const handleClick = async () => {
       maxtotalSupply: nftPrameters[0].toNumber(), 
       maxUserSupply: nftPrameters[1].toNumber(), 
       maxUserHates: nftPrameters[2].toNumber(), 
-      maxUserVotes: nftPrameters[3].toNumber(), 
-      minVoteAggrees: nftPrameters[4].toNumber(), 
       currentTotalSupply: userPrameters[0].toNumber(), 
       currentUserBalance: userPrameters[1].toNumber(), 
-      currentUserVoteCreated: userPrameters[2].toNumber(), 
-      currentUserRewards: Number(utils.formatEther(userPrameters[3])).toFixed(3),
-      currentUserBanned: userPrameters[4],
+      currentUserRewards: Number(utils.formatEther(userPrameters[2])).toFixed(3),
+      currentUserBanned: userPrameters[3],
     };
 
   }catch(e){

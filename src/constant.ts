@@ -55,12 +55,21 @@ export const fileContractAddress = {
 
 //nft contract address
 export const nftContractAddress = {
-  4: "0x21efFF2e6B35a84B12DDa9103b14c5658a291C39",
+  4: "0xCf31e212A2613C8D60219F50615be0C93Bc6DC06",
   28: "0xA2E46600506155b0E28E122CBE90a51a536fDBf0",
   83: "0xCaa7d107e0bA48E09c208e0Df3Ac747536C394Fe",
   588: "0x2cEaB43754E3d27cF6B965d75167656a988fB59C",
   80001: "0xf2A3c567eA217115aa9aC52C1C7104b40c6031BB",
 };
+
+//vote contract address
+export const voteContractAddress = {
+  4: "0x19cedC15EdFda507940231Acbed3A60497a33922",
+  28: "",
+  83: "",
+  588: "",
+  80001: "",
+}
 
 //token List
 export const tokenList = {

@@ -8,29 +8,24 @@ import {networkConnect, connectState} from "./connect"
 //contract abis
 const abi = [
 	"function safeTransferFrom(address from, address to, uint256 tokenId)",
-	"function mint(string memory tokenType, string memory tokenURI) public returns (uint256)",
+	"function mint(uint8 tokenType, string tokenURI, string tokenSecret) public returns (uint256)",
 	"function burn(uint256 tokenId) public payable returns (bool)",
-	"function tokenURI(uint256 tokenId) public view returns (string memory)",
+	"function tokenURI(uint256 tokenId) public view returns (string)",
 	"function hateNft(uint256 tokenId) public returns (bool)",
 	"function likeNft(uint256 tokenId) public returns (bool)",
 	"function rewardNft(uint256 tokenId) public payable returns (bool)",
 	"function claim() public payable returns (bool)",
-	"function getNFTPrameters() public view returns (uint, uint, uint, uint, uint)",
-	"function getAddressPrameters() public view returns (uint256, uint256, uint, uint256, bool)",
+	"function getNFTPrameters() public view returns (uint, uint, uint)",
+	"function getAddressPrameters() public view returns (uint256, uint256, uint256, bool)",
 	"function balanceOf(address owner) public view returns (uint256)",
 	"function ownerOf(uint256 tokenId) public view returns (address)",
 	"function tokenByIndex(uint256 index) public view returns (uint256)",
 	"function tokenOfOwnerByIndex(address owner, uint256 index) public view returns (uint256)",
 	"function totalSupply() public view returns (uint256)",
-	"function minted(string memory tokenURI) public view returns (bool)",
-	"function addVote(string memory title, string memory content, uint value, uint deadline) public returns (bool)",
-	"function delVote(uint256 voteId) public returns (bool)",
-	"function vote(uint256 voteId, bool voteAggree) public returns (bool)",
-	"function getVoteTotal() public view returns (uint)",
-	"function getVoteInfoByIndex(uint index) public view returns (uint256, address, string memory, string memory, uint, uint, uint, bool)",
+	"function minted(string tokenURI) public view returns (bool)",
 	"function sellNFT(uint256 tokenId, uint256 tokenPrice) public returns (bool)",
 	"function buyNFT(uint256 tokenId) public payable returns (bool)",
-	"function getNftInfoByIndex(uint256 tokenId) public view returns (address, string memory, string memory, uint, uint, uint256, uint256)",
+	"function getNftInfoByIndex(uint256 tokenId) public view returns (tuple(uint8, uint, uint, uint256, uint256, string, string))",
 ];
 
 //get contract provider
@@ -66,9 +61,9 @@ export const safeTransferFrom = async (from:string, to:string, tokenId:number) =
 }
 
 //mint a nft
-export const mint = async (tokenType:string, tokenURI:string) => {
-	tokenType = tokenType.trim();
-	if(tokenType!="image"&&tokenType!="audio"&&tokenType!="video"){
+export const mint = async (tokenType:number, tokenURI:string, tokenSecret:string = '') => {
+
+	if(tokenType < 0 || tokenType > 3){
 		throw new Error("unknow token type!");
 	}
 
@@ -78,7 +73,7 @@ export const mint = async (tokenType:string, tokenURI:string) => {
 	}
 
 	const contract = await getContract();
-	const tx = await contract.mint(tokenType, tokenURI);
+	const tx = await contract.mint(tokenType, tokenURI, tokenSecret);
   await tx.wait();
 
   return tx.hash;	
@@ -263,79 +258,6 @@ export const minted = async (tokenURI:string) => {
 	const contract = await getContract();
 
 	return await contract.minted(tokenURI);
-}
-
-//add a dao vote
-export const addVote = async (title:string, content:string, value:number, deadline:number) => {
-	title = title.trim();
-	if(title === ''){
-		throw new Error('vote title is empty!');
-	}
-	content = content.trim();
-	if(content === ''){
-		throw new Error('vote content is empty!');
-	}
-	value = Math.floor(value);
-	deadline = Math.floor(deadline);
-	if(deadline < 1 || deadline > 30){
-		throw new Error("vote deadline must large than 1 day and less than 30 days!");
-	}
-
-	const contract = await getContract();
-	const tx = await contract.addVote(title, content, value, deadline);
-
-  await tx.wait();
-
-  return tx.hash;		
-}
-
-//del a dao vote
-export const delVote = async (voteId:number) => {
-	voteId = Math.floor(voteId);
-	if(voteId < 0){
-		throw new Error("invalid vote id!");
-	}	
-
-	const contract = await getContract();
-	const tx = await contract.delVote(voteId);
-
-  await tx.wait();
-
-  return tx.hash;		
-}
-
-//vote aggree or against
-export const vote = async (voteId:number, voteAggree:boolean) => {
-	voteId = Math.floor(voteId);
-	if(voteId < 0){
-		throw new Error("invalid vote id!");
-	}	
-
-	const contract = await getContract();
-	const tx = await contract.vote(voteId, voteAggree);
-
-  await tx.wait();
-
-  return tx.hash;		
-}
-
-//get vote indexs by type like lining/finished
-export const getVoteTotal = async () => {
-	const contract = await getContract();
-
-	return await contract.getVoteTotal();
-}
-
-//get vote info by index
-export const getVoteInfoByIndex = async (index:number) => {
-	index = Math.floor(index);
-	if(index < 0){
-		throw new Error("invalid token index!");
-	}
-
-	const contract = await getContract();
-
-	return await contract.getVoteInfoByIndex(index);
 }
 
 //sell a NFT

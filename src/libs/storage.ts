@@ -116,3 +116,25 @@ export const uploadFolder = async (dirPath: string, files: any[], isEncrypt:bool
   //upload to the smart contract
   return await filemanager.addFile(dirPath, fileid, filetype, size, isEncrypt);
 }
+
+//list dir
+export const listDirs = async(cid:string, dir:string = '') => {
+  let res = new Array();
+
+  switch (connectState.storage){
+    case 'bundlr':
+      break;
+    case 'swarm':
+      break;
+    case 'filcoin':
+      cid = cid.replace("https://", "").split(".")[0];
+      res = await web3storage.listDirs(cid, dir);
+      break;
+    default:
+      cid = cid.replace("https://", "").split(".")[0];
+      res = await web3storage.listDirs(cid, dir);
+      break;
+  }
+
+  return res;
+}

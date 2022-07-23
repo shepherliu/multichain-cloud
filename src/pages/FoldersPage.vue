@@ -5,9 +5,10 @@
         <el-tabs v-model="activeName" class="file-tabs" @tab-click="handleClick">
           <el-tab-pane label="Folder" name="folder"></el-tab-pane>
         </el-tabs>
+        <el-page-header :content="currentDir.join('/')" @click="onGoBackLastDir"/>
       </el-header>
       <el-main
-        style="height: 450px;" 
+        style="height: 450px;margin-top: 15px;" 
         v-loading="loadStatus"
         element-loading-text="Loading..."
         :element-loading-spinner="svg"
@@ -15,18 +16,64 @@
         element-loading-background="#ffffff"
       >
         <el-row :gutter="20">
-          <template v-for="file in fileList" :key="file.fileIndex">
+          <template v-for="file in fileList" :key="file.fileId">
               <el-col :span="8">
                 <el-card class="box-card">
                   <template #header>
                     <div class="card-header">
-                      <span><el-link type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link></span>
+                      <span>
+                        <el-link v-if="file.isFolder===false" type="success" target="_blank" :href="file.fileId">{{file.fileName}}</el-link>
+                        <el-link v-if="file.isFolder===true" type="success" href="javascript:void(0);" @click="onGoNextDir(file)">{{file.fileName}}</el-link>
+                      </span>
                       <span>{{file.fileSize}}</span>
+                      <span 
+                        v-if="file.isFolder===false"
+                        style="float: right;"
+                        v-loading="file.downloadStatus"
+                        element-loading-text="Loading..."
+                        :element-loading-spinner="svg"
+                        element-loading-svg-view-box="-10, -10, 50, 50"
+                        element-loading-background="#ffffff"
+                      >
+                        <el-button type="success" size="small" @click="onDownloadFile(file)">
+                          <el-icon><Download /></el-icon>
+                        </el-button>
+                      </span>                      
                     </div>
                   </template>
-                  <iframe v-if="file.fileType===4" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileId" style="height:150px;width: 200px;" />
+                  <img v-if="file.fileType===0" :src="(file.isDecrypt||!file.isEncrypt)?file.fileDecrypt:empty" style="height:150px;width: 200px;" />
+                  <audio v-if="file.fileType===1" :src="file.fileDecrypt" controls preload style="height:150px;width: 200px;" />
+                  <video v-if="file.fileType===2" :src="file.fileDecrypt" controls preload style="height:150px;width: 200px;" />
+                  <iframe v-if="file.fileType===3" frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="file.fileDecrypt" style="height:150px;width: 200px;" />
+                  
+                  <el-icon v-if="file.fileType===4" :size="150" color="#409EFF" style="height: 150px;width: 200px;" @click="onGoNextDir(file)"><FolderOpened /></el-icon>
+                  
+
                   <el-button-group>
-                    <el-button type="danger" size="small" @click="onDeleteFile(file.fileIndex)">
+                    <el-button 
+                      v-if="file.isFolder===false&&file.isEncrypt===true&&file.isDecrypt===false"
+                      type="success" 
+                      size="small"
+                      v-loading="file.encryptStatus"
+                      element-loading-text="Loading..."
+                      :element-loading-spinner="svg"
+                      element-loading-svg-view-box="-10, -10, 50, 50"
+                      element-loading-background="#ffffff"
+                      @click="onDecriptFile(file)"
+                    >
+                      Decrypt<el-icon><View /></el-icon>
+                    </el-button>
+                    <el-button 
+                      type="primary"
+                      v-if="file.fileType===0||file.fileType==1||file.fileType==2"
+                      :disabled="file.nftMinted"
+                      size="small"
+                      style="margin-left: 5px;margin-right: 5px;"
+                      @click="onMintNft(file.fileType, file.fileId)"
+                    >
+                      {{file.nftMinted ? "Minted" : "MintNFT"}}<el-icon><share /></el-icon>
+                    </el-button>
+                    <el-button v-if="file.fileIndex>0" type="danger" size="small" @click="onDeleteFile(file.fileIndex)">
                       Delete<el-icon><delete /></el-icon>
                     </el-button>
                   </el-button-group>
@@ -68,7 +115,12 @@ import * as filemanager from "../libs/filemanager"
 import * as tools from "../libs/tools"
 import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
+import * as storage from '../libs/storage'
+import * as web3nft from "../libs/web3nft"
+import * as crypto from "../libs/crypto"
 import * as constant from "../constant"
+
+const empty = require('@/assets/empty.png');
 
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
@@ -76,6 +128,10 @@ const pageSize = ref(6);
 const currentPage = ref(0);
 const fileTotal = ref(0);
 const fileList = ref(new Array());
+
+const currentDir = ref(["."]);
+const currentCid = ref("");
+const currentEncrypt = ref(false);
 
 const svg = `
         <path class="path" d="
@@ -98,6 +154,32 @@ const transactionExplorerUrl = (transaction:string) => {
   }
 
   return transaction;
+}
+
+//click to go back last dir
+const onGoBackLastDir = async () => {
+  currentDir.value.pop();
+
+  //set to default
+  if(currentDir.value.length <= 1){
+    currentDir.value = ["."];
+    currentCid.value = '';
+  }
+
+  handleClick();
+}
+
+//click to go next dir
+const onGoNextDir = async (file: any) => {
+  currentDir.value.push(file.fileName);
+
+  if(currentCid.value === ''){
+    currentCid.value = file.fileId;
+  }
+
+  currentEncrypt.value = file.isEncrypt;
+
+  handleClick();
 }
 
 //click to delete file
@@ -123,8 +205,197 @@ const onDeleteFile = async (fileid:number) => {
 
 }
 
+// click to mint nft
+const onMintNft = async (filetype:string, fileid:string) => {
+
+  try{
+
+    const tx = await web3nft.mint(filetype, fileid);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+
+    const msg = '<div><span>Mint success! Transaction: </span><a href="' + 
+      transactionExplorerUrl(tx) + 
+      '" target="_blank">' + tx + '</a></div>';
+
+    element.elMessage('success', msg, true);  
+
+    handleClick();
+
+  }catch(e){
+    element.alertMessage(e);
+  }
+
+}
+
+//click to download file
+const onDownloadFile = async (file:any) => {
+
+  const a = document.createElement("a");
+
+  try{
+    file.downloadStatus = true;
+
+    if(file.isEncrypt && !file.isDecrypt){
+      await onDecriptFile(file);
+
+      if(file.fileDecrypt === file.fileId){
+        element.alertMessage("decrypt file failed!");
+        file.downloadStatus = false;
+        return;
+      }
+
+      a.href = file.fileDecrypt;
+    }else{
+      const res = await fetch(file.fileId, {
+        "referrer": (window as any).location.href,
+        "referrerPolicy": "no-referrer-when-downgrade",
+        "method": "GET",
+        "credentials": "omit",
+        "redirect": "follow",
+      });    
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      a.href = url;
+    }
+  }catch(e){
+    element.alertMessage("download file failed!");
+    file.downloadStatus = false;
+    return;
+  }finally{
+    file.downloadStatus = false;
+  }
+
+  a.style.display = "none";
+  a.download = file.fileName;
+
+  document.body.appendChild(a);
+
+  const event = document.createEvent("MouseEvents");
+  event.initEvent("click", true, true);
+  a.dispatchEvent(event);
+
+  document.body.removeChild(a);
+}
+
+//click to decrypt file
+const onDecriptFile = async (file:any) => {
+
+  try{
+    file.encryptStatus = true;
+
+    let res = await fetch(file.fileId, {
+      "referrer": (window as any).location.href,
+      "referrerPolicy": "no-referrer-when-downgrade",
+      "method": "GET",
+      "credentials": "omit",
+      "redirect": "follow",
+    });  
+
+    if (res.status >= 200 && res.status <= 299){
+      res = await res.json();
+
+      const passward = await crypto.decryptPasswordWithWallet(res);
+      const content = await crypto.decryptDataWithCryptoJs(res?.encrypt_data, passward);
+      const decrypt_file = tools.makeFileObject(file.fileName, content);
+
+      file.fileDecrypt = URL.createObjectURL(decrypt_file.raw);
+      file.isDecrypt = true;
+
+    }else{
+      element.alertMessage("fetch file content failed!");
+    }
+  }catch(e){
+    element.alertMessage(e);
+  }finally{
+    file.encryptStatus = false;
+  }
+
+}
+
+//get file from dir
+const getFileFromDir = async() => {
+  const dir = currentDir.value.slice(2,).join("/");
+
+  const res = await storage.listDirs(currentCid.value, dir);
+
+  const newFileList = new Array();
+
+  for(const i in res){
+    const name = res[i].fileName;
+
+    if(connectState.search === '' ||
+      name.indexOf(connectState.search) != -1 || 
+      name.search(connectState.search) != -1){
+
+      let fileId = '';
+      if(dir === ''){
+        fileId = `${currentCid.value}/${res[i].fileName}`;
+      }else{
+        fileId = `${currentCid.value}/${dir}/${res[i].fileName}`;
+      }
+
+      const fileType = tools.fileType(name);
+      let types = 0;
+      switch(fileType.split("/")[0]){
+        case 'image':
+          types = 0;
+          break;
+        case 'audio':
+          types = 1;
+          break;
+        case 'video':
+          types = 2;
+          break;
+        default:
+          types = 3;
+          break;
+      }
+
+      if(res[i].isFolder){
+        types = 4;
+      }
+
+      newFileList.push({
+        fileIndex: 0,
+        fileName: res[i].fileName,
+        fileId: fileId,
+        fileDecrypt: fileId,
+        fileType: types,
+        fileSize: res[i].fileSize,
+        isEncrypt: currentEncrypt.value,
+        isDecrypt: false,
+        nftMinted: false, //todo
+        encryptStatus: false, //todo
+        downloadStatus: false, //todo
+        isFolder: res[i].isFolder,
+      });
+    }
+  }
+
+  fileList.value = newFileList;
+  for(const i in fileList.value){
+    if(fileList.value[i].fileSize === 0){
+      fileList.value[i].fileSize = '';
+    }else{
+      fileList.value[i].fileSize = tools.fileSize(fileList.value[i].fileSize);
+    }
+    if(fileList.value[i].isFolder===false&&fileList.value[i].fileType<3){
+      fileList.value[i].nftMinted = (await web3nft.minted(fileList.value[i].fileId));
+    }
+  }
+
+  fileTotal.value = fileList.value.length;  
+}
+
 //get total file count and pull files info
 const getFileCount = async (filetype:string) => {
+  if(currentDir.value.length > 1){
+    return getFileFromDir();
+  }
+
   const res = await filemanager.getIndexsByFileType(filetype);
 
   const newFileList = new Array();
@@ -150,6 +421,7 @@ const getFileCount = async (filetype:string) => {
         nftMinted: false,
         encryptStatus: false,
         downloadStatus: false,
+        isFolder: true,
       });
     }
   }

@@ -40,13 +40,35 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   });
 }
 
-//get files from the filcoin
-export const getFiles = async (cid:string) => {
-	const client = getClient();
+//list dirs from the filcoin
+export const listDirs = async(cid:string, dir:string = '') => {
+  const dirList = new Array();
 
-	const res = await client.get(cid);
+  const url = `${constant.ipfsHost}/api/v0/ls?arg=${cid}/${dir}`;
 
-	const files = await (res as any).files();
+  try{
+    let res = await fetch(url, {
+      "referrer": (window as any).location.href,
+      "referrerPolicy": "no-referrer-when-downgrade",
+      "method": "GET",
+      "credentials": "omit",
+      "redirect": "follow",
+    });  
 
-	return files;
+    if (res.status >= 200 && res.status <= 299){
+      res = await res.json();
+      const links = (res as any).Objects[0]?.Links;
+      for(const i in links){
+        dirList.push({
+          fileName: links[i]?.Name,
+          fileSize: links[i]?.Size,
+          isFolder: links[i]?.Type === 1,
+        });
+      }
+    }
+  }catch(e){
+    return dirList;
+  }
+
+  return dirList;
 }

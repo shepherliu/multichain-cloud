@@ -121,7 +121,19 @@ export const uploadFolder = async (dirPath: string, files: any[], isEncrypt:bool
 export const listDirs = async(cid:string, dir:string = '') => {
   let res = new Array();
 
-  switch (connectState.storage){
+  let storageType = 'filcoin';
+
+  if(cid.indexOf(".ipfs.dweb.link") >= 0){
+    storageType = 'filcoin';
+  }else if(cid.indexOf("https://api.gateway.ethswarm.org/bzz/") === 0){
+    storageType = 'swarm';
+  }else if(cid.indexOf("https://arweave.net") === 0){
+    storageType = 'bundlr';
+  }else{
+    storageType = 'filcoin';
+  }
+
+  switch (storageType){
     case 'bundlr':
       break;
     case 'swarm':

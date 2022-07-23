@@ -3,13 +3,24 @@ import { Web3Storage } from 'web3.storage'
 import * as path from "path"
 
 import { connectState } from './connect'
+import { getLocalStorage } from './localstorage'
 import * as constant from "../constant"
 
 //get web3 storage client
 const getClient = () => {
-  const apiToken = connectState.web3Storage === '' ? constant.web3StorageAppKey : connectState.web3Storage;
+  const key = `${connectState.userAddr.value.toLowerCase()}_web3storage_apikey`;
+
+  const apiToken = getLocalStorage(key);
+
+  if(connectState.web3Storage === undefined || 
+    connectState.web3Storage === null || 
+    connectState.web3Storage === ''){
+
+    connectState.web3Storage = (apiToken === null || apiToken === '') ? constant.web3StorageAppKey : apiToken;
+  }
+
   // Construct with token and endpoint
-  const client = new Web3Storage({ token: apiToken, endpoint: new URL(constant.web3StorageHost) });
+  const client = new Web3Storage({ token: connectState.web3Storage, endpoint: new URL(constant.web3StorageHost) });
 
   return client;
 }

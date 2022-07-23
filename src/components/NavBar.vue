@@ -220,6 +220,7 @@ import * as tools from "../libs/tools"
 import * as connect from "../libs/connect"
 import * as network from "../libs/network"
 import * as element from "../libs/element"
+import { setLocalStorage } from '../libs/localstorage'
 
 import * as constant from "../constant"
 
@@ -410,6 +411,9 @@ const confirmSwitchNetwork = async () => {
       }
 
       connect.connectState.web3Storage = apiTokenSelected.value;
+
+      const key = `${connect.connectState.userAddr.value.toLowerCase()}_web3storage_apikey`;
+      setLocalStorage(key, apiTokenSelected.value);
     }
 
     element.elMessage('success', 'Config network success!');

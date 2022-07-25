@@ -104,9 +104,9 @@
                       </el-button-group>
                     </div>
                   </template>
-                  <img v-if="nft.tokenType===0" :src="nft.tokenUri" style="width: 200px;height: 200px;" />
-                  <audio v-if="nft.tokenType===1" :src="nft.tokenUri" controls preload style="width: 200px;height: 200px;" />
-                  <video v-if="nft.tokenType===2" :src="nft.tokenUri" controls preload style="width: 200px;height: 200px;" />
+                  <img v-if="nft.tokenType===0" :src="nft.decryptUri" style="width: 200px;height: 200px;" />
+                  <audio v-if="nft.tokenType===1" :src="nft.decryptUri" controls preload style="width: 200px;height: 200px;" />
+                  <video v-if="nft.tokenType===2" :src="nft.decryptUri" controls preload style="width: 200px;height: 200px;" />
                   <div>
                     <el-link type="primary" @click="onLikeNft(nft.tokenId)">Likes : {{nft.tokenLikes}}</el-link>
                     <el-link type="warning" @click="onHateNft(nft.tokenId)">Hates : {{nft.tokenHates}}</el-link>
@@ -153,6 +153,8 @@ import Resolution from "@unstoppabledomains/resolution";
 import * as web3nft from "../libs/web3nft"
 import { connected, connectState } from "../libs/connect"
 import * as element from "../libs/element"
+import * as crypto from "../libs/crypto"
+
 import * as constant from "../constant"
 import * as tools from "../libs/tools"
 
@@ -498,6 +500,32 @@ const sendNFT = async (name:string, address:string, tokenId:number) => {
   });  
 }
 
+//click to decrypt nft
+const decriptNFT = async (nft:any) => {
+
+  if(nft.tokenSecret === ''){
+    return;
+  }
+
+  let res = await fetch(nft.tokenUri, {
+    "referrer": (window as any).location.href,
+    "referrerPolicy": "no-referrer-when-downgrade",
+    "method": "GET",
+    "credentials": "omit",
+    "redirect": "follow",
+  });  
+
+  if (res.status >= 200 && res.status <= 299){
+    res = await res.json();
+
+    const content = await crypto.decryptDataWithCryptoJs(res?.encrypt_data, nft.tokenSecret);
+    const decrypt_file = tools.makeFileObject(nft.tokenId, content);
+
+    nft.decryptUri = URL.createObjectURL(decrypt_file.raw);
+  }
+
+}
+
 //get nft count and pull nft info
 const getNftCount = async (nfttype:string) => {
   const newNftList = new Array();
@@ -526,7 +554,7 @@ const getNftCount = async (nfttype:string) => {
         (String(tokenId)).indexOf(connectState.search) != -1 ||
         (String(tokenId)).search(connectState.search) != -1){
 
-        newNftList.push({
+        const nft = {
           tokenId: tokenId,
           tokenOwner: tokenOwner.toLowerCase() === connectState.userAddr.value,
           tokenType: tokenInfo[0],
@@ -535,8 +563,17 @@ const getNftCount = async (nfttype:string) => {
           tokenRewards: Number(utils.formatEther(tokenInfo[3])),
           tokenPrices: Number(utils.formatEther(tokenInfo[4])),
           tokenUri: tokenInfo[5],
+          decryptUri: tokenInfo[5],
           tokenSecret: tokenInfo[6],
-        });
+        };
+
+        newNftList.push(nft);
+
+        try{
+          decriptNFT(nft);
+        }catch(e){
+          continue;
+        }
 
       }
     }
@@ -552,7 +589,7 @@ const getNftCount = async (nfttype:string) => {
         (String(tokenId)).indexOf(connectState.search) != -1 ||
         (String(tokenId)).search(connectState.search) != -1){
 
-       newNftList.push({
+        const nft = {
           tokenId: tokenId,
           tokenOwner: tokenOwner.toLowerCase() === connectState.userAddr.value,
           tokenType: tokenInfo[0],
@@ -561,9 +598,17 @@ const getNftCount = async (nfttype:string) => {
           tokenRewards: Number(utils.formatEther(tokenInfo[3])),
           tokenPrices: Number(utils.formatEther(tokenInfo[4])),
           tokenUri: tokenInfo[5],
+          decryptUri: tokenInfo[5],
           tokenSecret: tokenInfo[6],
-        });
+        };
 
+        newNftList.push(nft);
+
+        try{
+          decriptNFT(nft);
+        }catch(e){
+          continue;
+        }
       }
     }    
   }

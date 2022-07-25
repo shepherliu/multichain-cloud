@@ -69,7 +69,7 @@
                       :disabled="file.nftMinted"
                       size="small"
                       style="margin-left: 5px;margin-right: 5px;"
-                      @click="onMintNft(file.fileType, file.fileId)"
+                      @click="onMintNft(file)"
                     >
                       {{file.nftMinted ? "Minted" : "MintNFT"}}<el-icon><share /></el-icon>
                     </el-button>
@@ -206,11 +206,20 @@ const onDeleteFile = async (fileid:number) => {
 }
 
 // click to mint nft
-const onMintNft = async (filetype:string, fileid:string) => {
+const onMintNft = async (file:any) => {
 
   try{
 
-    const tx = await web3nft.mint(filetype, fileid);
+    if(file.isEncrypt === true && file.isDecrypt === false){
+      await onDecriptFile(file);
+
+      if(file.fileDecrypt === file.fileId){
+        element.alertMessage("decrypt file failed!");
+        return;
+      }
+    }    
+
+    const tx = await web3nft.mint(file.fileType, file.fileId, file.filePassword);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
 
@@ -302,6 +311,7 @@ const onDecriptFile = async (file:any) => {
       const decrypt_file = tools.makeFileObject(file.fileName, content);
 
       file.fileDecrypt = URL.createObjectURL(decrypt_file.raw);
+      file.filePassword = passward;
       file.isDecrypt = true;
 
     }else{
@@ -365,11 +375,12 @@ const getFileFromDir = async() => {
         fileDecrypt: fileId,
         fileType: types,
         fileSize: res[i].fileSize,
+        filePassword: '',
         isEncrypt: currentEncrypt.value,
         isDecrypt: false,
-        nftMinted: false, //todo
-        encryptStatus: false, //todo
-        downloadStatus: false, //todo
+        nftMinted: false, 
+        encryptStatus: false, 
+        downloadStatus: false, 
         isFolder: res[i].isFolder,
       });
     }
@@ -416,6 +427,7 @@ const getFileCount = async (filetype:string) => {
         fileDecrypt: fileInfo[1],
         fileType: fileInfo[2],
         fileSize: fileInfo[3],
+        filePassword: '',
         isEncrypt: fileInfo[4],
         isDecrypt: false,
         nftMinted: false,

@@ -45,16 +45,6 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
 
   *9. see daemon video login in with unstoppable domains: https://youtu.be/0hidXL9Pc78*
 
-  *10. smart contracts*
-
-      rinkeby testnet contracts:
-
-          compiled with chainIDE https://chainide.com/s/ethereum/5eace4704dac4a59ae1b135127c27ab9 
-
-          filemanager: https://rinkeby.etherscan.io/address/0x1FCCEc0056F29DB240D12Aca627E5AEa171bE1e0
-
-          web3nft: https://rinkeby.etherscan.io/address/0x21efFF2e6B35a84B12DDa9103b14c5658a291C39
-
 ***How it works***:
 
 <img width="981" alt="2022-05-10 11 49 34" src="https://user-images.githubusercontent.com/84829620/167539118-8c52b2b3-3f09-48f1-974c-ce8d571fb813.png">
@@ -78,16 +68,11 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
   Finally all the uploaded file, folder and website will show on the dapp web pages. Now we are support to mint NFTs with the uploaded images, audios and videos.
   
 ***Future Plans***:
-
-   *1. Multi Chain Full Support.*
    
-   *2. Swarm Storage Full Support.*
+   *1. Swarm Storage Full Support.*
    
-   *3. Arweave Storage Full Support.*
+   *2. Arweave Storage Full Support.*
    
-   *4. File/Folder Encrypt And Decrypt Support.*
-   
-   *5. User friendly design*
    
 ***Resources:***
 

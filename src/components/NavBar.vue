@@ -182,7 +182,21 @@
             </td>
           </tr>
           <tr v-if="storageSelected==='filcoin'">
-            <td style="width:100px">ApiToken</td>
+            <td style="width:100px">
+              <el-popover
+                placement="top-start"
+                title="Api Token"
+                :width="200"
+                trigger="hover"
+              >
+                <template #reference>
+                 <span>ApiToken<el-icon><QuestionFilled /></el-icon></span>
+                </template>
+                <span>Apply for an api token from web3storage at 
+                  <el-link type="primary" target="_blank" href="https://web3.storage/tokens/">here</el-link>.
+                </span>
+              </el-popover>
+            </td>
             <td style="width:200px;">
               <el-input
                 v-model="apiTokenSelected"

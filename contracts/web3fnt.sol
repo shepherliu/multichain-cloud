@@ -245,7 +245,14 @@ contract Web3NFT is ERC721Enumerable, ERC721URIStorage {
     }
 
     function getNftInfoByIndex(uint256 tokenId) public view returns (NftInfo memory){
-        return _tokenInfos[tokenId];
+        NftInfo memory info = _tokenInfos[tokenId];
+
+        //not the owner and not for sell
+        if(msg.sender != ownerOf(tokenId) && _tokenInfos[tokenId].tokenPrices == 0){
+            info.tokenSecret = '';
+        }
+
+        return info;
     }
 
     function minted(string memory tokenURI) public view returns (bool){

@@ -10,7 +10,7 @@ import * as constant from "../constant"
 
 import * as connect from "./connect"
 
-import { fileType } from "./tools"
+import { fileType, sleep } from "./tools"
 
 //get bundlr node api by chain id
 const getBundlrNetwork = (chainId:number) => {
@@ -157,7 +157,7 @@ export const getLoadedBalance = async () => {
   const balance = await currentbunldr.getLoadedBalance();
   const converted = currentbunldr.utils.unitConverter(balance);
 
-  return converted;
+  return converted.toNumber();
 };
 
 //get bundlr account balance by address
@@ -171,7 +171,7 @@ export const getBalance = async (address:string) => {
   const balance = await currentbunldr.getBalance(address);
   const converted = currentbunldr.utils.unitConverter(balance);
 
-  return converted;  
+  return converted.toNumber();  
 };
 
 //get price for n bytes
@@ -190,7 +190,7 @@ export const getPrice = async (n:number) => {
   const price = await currentbunldr.getPrice(n);
   const converted = currentbunldr.utils.unitConverter(price);
 
-  return converted;
+  return converted.toNumber();
 };
 
 //top up your bundlr account
@@ -210,6 +210,39 @@ export const fund = async (price:number) => {
 
   return res;
 };
+
+//lazy fund the bundlr account
+export const lazyfund = async (n:number) => {
+  const price = await getPrice(n);
+
+  if(price <= 0){
+    return;
+  }
+
+  let balance = await getLoadedBalance();
+
+  let payments = 2*price - balance;
+
+  if(payments <= 0){
+    return;
+  }
+
+  if(payments < 0.001){
+    payments = 0.001;
+  }
+
+  await fund(payments);
+
+  for(let i = 0; i < 120; i++){
+    await sleep(1000);
+
+    balance = await getLoadedBalance();
+
+    if(balance >= 2*price){
+      break;
+    }
+  }
+}
 
 //withdraw balance from your bundlr account
 export const withdrawBalance = async (price:number) => {
@@ -247,6 +280,13 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   if (files.length === 0){
    throw new Error(`no files selected to upload!`); 
   }
+
+  //be sure enough pay for the upload
+  let totalSize = 0;
+  for(const i in files){
+    totalSize += files[i].raw?.size;
+  }
+  await lazyfund(totalSize);
 
   //files list for the dir
   const manifest = {

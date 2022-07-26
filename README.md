@@ -66,13 +66,6 @@ Remeber users whose NFTs got more than 1000 unlikes will be in blacklist, so tha
   After success uploaded to the Decentralized Storage, it will return the file id to the dapp, and we will upload the file name and file id to the filemanager smart contract.
   
   Finally all the uploaded file, folder and website will show on the dapp web pages. Now we are support to mint NFTs with the uploaded images, audios and videos.
-  
-***Future Plans***:
-   
-   *1. Swarm Storage Full Support.*
-   
-   *2. Arweave Storage Full Support.*
-   
    
 ***Resources:***
 

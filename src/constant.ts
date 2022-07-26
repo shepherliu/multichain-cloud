@@ -49,6 +49,9 @@ export const fileContractAddress = {
   4: "0xd2ed8Ac64BDb92F7e942c360060E4811fCbd123a",
   5: "0xa9376e8B93693D2EC2D648B3d0F6108e743F6b11",
   50: "0x2Ff04e34aeaC3757dFb317bC5072547AdFEeFA40",
+  100: "0x7823Fd479e19569647B38449fe2A8AA1061Fef34",
+  250: "0x5EB533ad6a1D2cB3C02c8ec96229005bE3190046",
+  1088: "0xA5a275096AA2512E2FC32c003e87dd9fae7515C3",
   80001: "0xEF4671692A5BD16DE1AEde478A75827385aA8D33",
 };
 
@@ -57,6 +60,9 @@ export const nftContractAddress = {
   4: "0xbf753D281d530AF1c1953977C029eaCD8baeA68a",
   5: "0x324F96D796eEFF2de8b9c58067b129e8290d1bA5",
   50: "0xC781D6c0FE604eb04c83018255304E027C93aC73",
+  100: "0xE6630439f0C0f2446092FfD1a2dd5FC623713E22",
+  250: "0x2Ff04e34aeaC3757dFb317bC5072547AdFEeFA40",
+  1088: "",
   80001: "0xE24C3bc18465782F8498d13398d4513C26698091",
 };
 
@@ -65,6 +71,9 @@ export const voteContractAddress = {
   4: "0x079B90B2De1Dd1D84C65D08575ba44b4facB548D",
   5: "0xC80A496cdDDb01257d554a1Db9aa3Db917a9A8AD",
   50: "0x5EB533ad6a1D2cB3C02c8ec96229005bE3190046",
+  100: "0xDA4b2Cd691c23D7626C7326Ad252661C1874fa30",
+  250: "0xC781D6c0FE604eb04c83018255304E027C93aC73",
+  1088: "",
   80001: "0x63A44b45dE9dE05B2868a2d3F7F798f4e079e134",
 }
 
@@ -186,8 +195,8 @@ export const chainList = [
     chainId: 100,
     chainName: "Gnosis Chain Mainnet",
     nativeCurrency: "xDAI",
-    rpcUrls: 'https://rpc.xdaichain.com',
-    blockExplorerUrls: 'https://blockscout.com/poa/xdai',
+    rpcUrls: 'https://rpc.gnosischain.com',
+    blockExplorerUrls: 'https://blockscout.com/xdai/mainnet',
   },
   {
     chainId: 128,
@@ -200,7 +209,7 @@ export const chainList = [
     chainId: 137,
     chainName: 'Polygon Chain Mainnet',
     nativeCurrency: 'MATIC',
-    rpcUrls: 'https://rpc-mainnet.matic.network',
+    rpcUrls: 'https://polygon-rpc.com',
     blockExplorerUrls: 'https://polygonscan.com',
   },  
   {

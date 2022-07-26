@@ -1,4 +1,5 @@
 import { Web3Storage } from 'web3.storage'
+import CryptoJS from 'crypto-js';
 
 import * as path from "path"
 
@@ -45,8 +46,10 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     }
   }
 
+  const md5sum = CryptoJS.MD5(`${dirPath}.${(new Date()).getTime()}`).toString();
+
   return await client.put(data, {
-    name: dirPath,
+    name: md5sum,
     maxRetries: 3,
   });
 }

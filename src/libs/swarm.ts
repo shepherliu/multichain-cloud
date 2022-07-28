@@ -7,7 +7,7 @@ import * as constant from "../constant"
 
 // fetch file from swarm by hash
 export const getFileFromSwarm = async (hash: string, name = '') => {
-  const res = await fetch(constant.swarmGateway + hash + "/" + name, {
+  const res = await fetch(`${constant.swarmGateway}${hash}/${name}`, {
     headers: {
       "accept": "application/json, text/plain, */*",
       "accept-language": "zh-CN,zh;q=0.9",
@@ -77,7 +77,7 @@ export const uploadFile = async (file: any) => {
 export const uploadFolder = async (dirPath: string, files: any[]) => {
  const tar = new Tar();
 
- const metadata = {name: "", size: 0, type:""};
+ const metadata = {name: "", size: 0, type:"", path: new Array()};
 
  if (files.length === 0){
     throw new Error(`no files selected to upload!`); 
@@ -94,6 +94,7 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     const data = await files[i].raw.arrayBuffer();
 
     metadata.size += files[i].raw.size;
+    metadata.path.push(relpath);
 
     if(files.length === 1 && ((files[0].raw) as any).webkitRelativePath === '') {
       metadata.name = files[i].name;
@@ -121,4 +122,56 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
  tar.append(constant.META_FILE_NAME, JSON.stringify(metadata), {}, callback);
 
  return await uploadDataToSwarm(tar.out, indexDocuemnt);
+}
+
+//list dirs from the filcoin
+export const listDirs = async(cid:string, dir:string = '') => {
+  const dirList = new Array();
+  const dirMap = Object();
+
+  try{
+    const res = await getFileFromSwarm(cid, constant.META_FILE_NAME);
+
+    const pathList = JSON.parse(res)?.path;
+
+    const depth = dir === '' ? 1 : dir.split("/").length + 1;
+
+    for(const i in pathList){
+      if(dir != pathList[i].split("/").slice(0, depth-1).join("/")){
+        continue;
+      }else if(pathList[i].split("/").length === depth){
+        const name = path.basename(pathList[i]);
+
+        if(dirMap[name]){
+          continue;
+        }else{
+          dirMap[name] = true;
+        }
+
+        dirList.push({
+          fileName: name,
+          fileSize: 0,
+          isFolder: false,
+        })
+      }else{
+        const name = pathList[i].split("/")[depth-1];
+        
+        if(dirMap[name]){
+          continue;
+        }else{
+          dirMap[name] = true;
+        }
+
+        dirList.push({
+          fileName: name,
+          fileSize: 0,
+          isFolder: true,
+        })
+      }
+    }
+  }catch(e){
+    return dirList;
+  }
+
+  return dirList;
 }

@@ -148,6 +148,7 @@ export const listDirs = async(cid:string, dir:string = '') => {
       break;
     case 'swarm':
       cid = cid.replace(constant.swarmGateway, "").split(".")[0];
+      res = await swarm.listDirs(cid, dir);
       break;
     case 'filcoin':
       cid = cid.replace("https://", "").split(".")[0];

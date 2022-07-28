@@ -568,13 +568,6 @@ const getNftCount = async (nfttype:string) => {
         };
 
         newNftList.push(nft);
-
-        try{
-          decriptNFT(nft);
-        }catch(e){
-          continue;
-        }
-
       }
     }
   }else{
@@ -603,12 +596,6 @@ const getNftCount = async (nfttype:string) => {
         };
 
         newNftList.push(nft);
-
-        try{
-          decriptNFT(nft);
-        }catch(e){
-          continue;
-        }
       }
     }    
   }
@@ -675,6 +662,14 @@ const handleClick = async () => {
       currentUserRewards: Number(utils.formatEther(userPrameters[2])).toFixed(3),
       currentUserBanned: userPrameters[3],
     };
+
+    for(const i in nftList.value){
+      try{
+        decriptNFT(nftList.value[i]);
+      }catch(e){
+        continue;
+      }
+    }
 
   }catch(e){
      nftList.value = new Array();

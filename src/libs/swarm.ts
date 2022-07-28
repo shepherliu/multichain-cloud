@@ -31,7 +31,7 @@ export const getFileFromSwarm = async (hash: string, name = '') => {
 //upload ts-tar files collection to swarm and return the file reference
 //try every swarm gateway until it success, because swarm is not so stable now.
 
-export const uploadDataToSwarm = async (data: Uint8Array) => {
+export const uploadDataToSwarm = async (data: Uint8Array, index:string = '') => {
   for(let i = 0; i < constant.swarmGatewayList.length; i++){
     try {
 
@@ -47,7 +47,7 @@ export const uploadDataToSwarm = async (data: Uint8Array) => {
           "sec-fetch-mode": "cors",
           "sec-fetch-site": "same-site",
           "swarm-collection": "true",
-          "swarm-index-document": "index.html",
+          "swarm-index-document": index,
           "swarm-postage-batch-id": "0000000000000000000000000000000000000000000000000000000000000000"
         },
         "referrer": (window as any).location.href,
@@ -83,6 +83,8 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     throw new Error(`no files selected to upload!`); 
  }
 
+ const callback = (output:Uint8Array) => {};
+
  //js tar the files
  for(const i in files){
     const type = fileType(files[i].name);
@@ -96,21 +98,27 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
     if(files.length === 1 && ((files[0].raw) as any).webkitRelativePath === '') {
       metadata.name = files[i].name;
       metadata.type = type;
-      tar.append(files[i].name, new Uint8Array(data), {}, function(output:Uint8Array){});
+      tar.append(files[i].name, new Uint8Array(data), {}, callback);
     } else if (relpath === 'index.html'){
       metadata.name = 'website';
-      tar.append(relpath, new Uint8Array(data), {}, function(output:Uint8Array){});
+      tar.append(relpath, new Uint8Array(data), {}, callback);
     }else{
-      tar.append(relpath, new Uint8Array(data), {}, function(output:Uint8Array){});
+      tar.append(relpath, new Uint8Array(data), {}, callback);
     }
  }
 
+ let indexDocuemnt = '';
+
  if(metadata.name === ''){
   metadata.name = dirPath;
+ }else if(metadata.name === 'website'){
+  indexDocuemnt = 'index.html';
+ }else{
+  indexDocuemnt = files[0].raw?.name;
  }
 
  //add meta file
- tar.append(constant.META_FILE_NAME, JSON.stringify(metadata), {}, function(output:Uint8Array){});
+ tar.append(constant.META_FILE_NAME, JSON.stringify(metadata), {}, callback);
 
- return await uploadDataToSwarm(tar.out);
+ return await uploadDataToSwarm(tar.out, indexDocuemnt);
 }

@@ -20,19 +20,28 @@ const getFileLink = (filename:string, filetype:string, fileid:string) => {
     
   switch(connectState.storage){
     case 'bundlr':
-      return constant.arweaveUrl + fileid;
+      if(filetype==='folder'){
+        return `${constant.arweaveUrl}${fileid}`;
+      }else if (filetype==='website'){
+        return `${constant.arweaveUrl}${fileid}/index.html`;
+      }else{
+        return `${constant.arweaveUrl}${fileid}`;
+      }      
     case 'swarm':
-      return constant.swarmGateway + fileid;
+      if(filetype==='folder'){
+        return `${constant.swarmGateway}${fileid}`;
+      }else if (filetype==='website'){
+        return `${constant.swarmGateway}${fileid}/index.html`;
+      }else{
+        return `${constant.swarmGateway}${fileid}/${filename}`;
+      }
     case 'filcoin':
       if(filetype==='folder'){
         return `https://${fileid}.ipfs.dweb.link`;
-        // return constant.web3Gateway + fileid;
       } else if (filetype==='website'){
         return `https://${fileid}.ipfs.dweb.link/index.html`;
-        // return constant.web3Gateway + fileid + '/index.html';
       } else {
         return `https://${fileid}.ipfs.dweb.link/${filename}`;
-        // return constant.web3Gateway + fileid + '/' + filename;
       }
   }
 
@@ -125,9 +134,9 @@ export const listDirs = async(cid:string, dir:string = '') => {
 
   if(cid.indexOf(".ipfs.dweb.link") >= 0){
     storageType = 'filcoin';
-  }else if(cid.indexOf("https://api.gateway.ethswarm.org/bzz/") === 0){
+  }else if(cid.indexOf(constant.swarmGateway) === 0){
     storageType = 'swarm';
-  }else if(cid.indexOf("https://arweave.net") === 0){
+  }else if(cid.indexOf(constant.arweaveUrl) === 0){
     storageType = 'bundlr';
   }else{
     storageType = 'filcoin';
@@ -135,8 +144,10 @@ export const listDirs = async(cid:string, dir:string = '') => {
 
   switch (storageType){
     case 'bundlr':
+      cid = cid.replace(constant.arweaveUrl, "").split(".")[0];
       break;
     case 'swarm':
+      cid = cid.replace(constant.swarmGateway, "").split(".")[0];
       break;
     case 'filcoin':
       cid = cid.replace("https://", "").split(".")[0];

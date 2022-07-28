@@ -4,6 +4,9 @@ export const transakUrl = 'https://staging-global.transak.com/?apiKey=5aed5b3c-f
 //swarm ts-tar metafile name
 export const META_FILE_NAME = '.swarmgatewaymeta.json';
 
+//infura id
+export const INFURA_ID = 'b98ca6418a744c9da461e23151b8c6a2';
+
 //web3 storage url
 export const web3StorageHost = 'https://api.web3.storage';
 

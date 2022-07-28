@@ -107,7 +107,7 @@ export const getBundlrCurrency = (chainId:number, currency: string) => {
 const getProviderUrl = (chainId: number) => {
   for (const i in constant.chainList){
     if(constant.chainList[i].chainId === chainId){
-      return constant.chainList[i].rpcUrls;
+      return `${constant.chainList[i].rpcUrls}/${constant.INFURA_ID}`;
     }
   }
 

@@ -485,7 +485,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 //login to wallet and switch to the target chain.
 const login = async () => {
   await connectNetwork();
-  await confirmSwitchNetwork();
+  // await confirmSwitchNetwork();
   connect.connectState.searchCallback();
 };
 

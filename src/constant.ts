@@ -60,6 +60,7 @@ export const fileContractAddress = {
   1088: "0xA5a275096AA2512E2FC32c003e87dd9fae7515C3",
   2828: "0x5fB12101ead1dB37122EA598FAE8094c204F24d2",
   8217: "0xA5a275096AA2512E2FC32c003e87dd9fae7515C3",
+  9001: "0x5fB12101ead1dB37122EA598FAE8094c204F24d2",
   80001: "0xEF4671692A5BD16DE1AEde478A75827385aA8D33",
 };
 
@@ -76,6 +77,7 @@ export const nftContractAddress = {
   1088: "0x5755579e4eD12D114CcdaB4AE69c99eb00479476",
   2828: "0xE893271D80e844318756F9d7Eda7A1f629F8c08B",
   8217: "0x5755579e4eD12D114CcdaB4AE69c99eb00479476",
+  9001: "0xE893271D80e844318756F9d7Eda7A1f629F8c08B",
   80001: "0xE24C3bc18465782F8498d13398d4513C26698091",
 };
 
@@ -92,6 +94,7 @@ export const voteContractAddress = {
   1088: "0x9aD8d42FF933F684aa64455d4f18E20F24a4a5C2",
   2828: "0x969Ca348819DF3033bb8039cFEAdA25974EB5C7E",
   8217: "0x9aD8d42FF933F684aa64455d4f18E20F24a4a5C2",
+  9001: "0x969Ca348819DF3033bb8039cFEAdA25974EB5C7E",
   80001: "0x63A44b45dE9dE05B2868a2d3F7F798f4e079e134",
 }
 
@@ -120,6 +123,8 @@ export const tokenList = {
   2828: ['LYXT'],
   4689: ['IOTX'],
   8217: ['KLAY'],
+  9000: ['tEVMOS'],
+  9001: ['EVMOS'],
   42161: ['ETH'],
   43114: ['AVAX'],
   80001: ['MATIC'],
@@ -288,6 +293,20 @@ export const chainList = [
     rpcUrls: 'https://public-node-api.klaytnapi.com/v1/cypress',
     blockExplorerUrls: 'https://scope.klaytn.com',
   },    
+  {
+    chainId: 9000,
+    chainName: 'Evmos Chain Testnet',
+    nativeCurrency: 'tEVMOS',
+    rpcUrls: 'https://eth.bd.evmos.dev:8545',
+    blockExplorerUrls: 'https://evm.evmos.dev',
+  },
+  {
+    chainId: 9001,
+    chainName: 'Evmos Chain Mainnet',
+    nativeCurrency: 'EVMOS',
+    rpcUrls: 'https://eth.bd.evmos.org:8545',
+    blockExplorerUrls: 'https://mintscan.io/evmos',
+  },
   {
     chainId: 42161,
     chainName: 'Arbitrum Chain Mainnet',

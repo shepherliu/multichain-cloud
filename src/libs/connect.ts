@@ -12,7 +12,7 @@ import { shortString } from "./tools"
 import { ref } from "vue"
 
 export const connectState = {
-  chainId: 5,
+  chainId: 5001,
   chainName: '',
   userName: ref(''),
   shortName: ref(''),

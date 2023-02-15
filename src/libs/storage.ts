@@ -37,11 +37,11 @@ const getFileLink = (filename:string, filetype:string, fileid:string) => {
       }
     case 'filcoin':
       if(filetype==='folder'){
-        return `https://${fileid}.ipfs.dweb.link`;
+        return `https://${fileid}.ipfs.w3s.link`;
       } else if (filetype==='website'){
-        return `https://${fileid}.ipfs.dweb.link/index.html`;
+        return `https://${fileid}.ipfs.w3s.link/index.html`;
       } else {
-        return `https://${fileid}.ipfs.dweb.link/${filename}`;
+        return `https://${fileid}.ipfs.w3s.link/${filename}`;
       }
   }
 
@@ -132,7 +132,7 @@ export const listDirs = async(cid:string, dir:string = '') => {
 
   let storageType = 'filcoin';
 
-  if(cid.indexOf(".ipfs.dweb.link") >= 0){
+  if(cid.indexOf(".ipfs.dweb.link") >= 0 || cid.indexOf(".ipfs.w3s.link") >= 0){
     storageType = 'filcoin';
   }else if(cid.indexOf(constant.swarmGateway) === 0){
     storageType = 'swarm';

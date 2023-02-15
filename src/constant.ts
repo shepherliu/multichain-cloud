@@ -125,6 +125,7 @@ export const tokenList = {
   8217: ['KLAY'],
   9000: ['tEVMOS'],
   9001: ['EVMOS'],
+  15555: ['EVM'],
   42161: ['ETH'],
   43114: ['AVAX'],
   80001: ['MATIC'],
@@ -306,6 +307,13 @@ export const chainList = [
     nativeCurrency: 'EVMOS',
     rpcUrls: 'https://eth.bd.evmos.org:8545',
     blockExplorerUrls: 'https://mintscan.io/evmos',
+  },
+  {
+    chainId: 15555,
+    chainName: 'Trust EVM Testnet',
+    nativeCurrency:'EVM',
+    rpcUrls: 'https://api.testnet-dev.trust.one',
+    blockExplorerUrls: 'https://trustscan.one',
   },
   {
     chainId: 42161,

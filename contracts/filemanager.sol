@@ -99,7 +99,7 @@ contract FileManager is ERC721Enumerable {
 
         if(count > 0){
             indexList = new uint256[](count);
-            for(uint i = 0; i < count; count++){
+            for(uint i = 0; i < count; i++){
                 indexList[i] = tmpList[i];
             }
         }
